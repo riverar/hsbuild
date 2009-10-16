@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <DefaultLanguageSourceExtension>.vala</DefaultLanguageSourceExtension>
+        <Language>Vala</Language>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Package Include="gobject-2.0" />
+    </ItemGroup>
+
+    <Target
+      Name="EnsureValaCompile"
+      Condition=" '@(Compile)' != ''"
+      >
+        <!-- Setup Vala compile sources if Compile used -->
+        <ItemGroup>
+            <ValaCompile Include="@(Compile)" Condition="'%(Extension)'=='.vala'" />
+            <Compile Remove="@(ValaCompile)" />
+        </ItemGroup>
+    </Target>
+
+    <Target
+      Name="CompileValaFilesToC"
+      DependsOnTargets="EnsureValaCompile"
+      Outputs="$(TargetPath)"
+      >
+        <!-- Compile Vala files -->
+        <Vala
+          Sources="@(ValaCompile)"
+          Packages="@(Package);@(ValaPackage)"
+          PkgConfigPaths="$(PkgConfigOutputPath);$(HSBuildInstalledPkgConfigPath)"
+          BaseDirectory="%(ValaCompile.BaseDirectory)"
+          OutputDirectory="$(IntDir)"
+          VapiDirectories="%(ValaCompile.VapiDirectory)"
+          VapiFileName="%(ValaCompile.VapiFileName)"
+          Library="%(ValaCompile.LibraryName)"
+          HeaderFileName="%(ValaCompile.HeaderFileName)"
+          Debug="%(ValaCompile.Debug)"
+          Verbose="%(ValaCompile.Verbose)"
+          ToolPath="$(HSBuildToolPath)"
+          >
+            <Output TaskParameter="DestinationFiles" ItemName="ClCompile"/>
+            <Output TaskParameter="HeaderFile" ItemName="InstallInclude"/>
+            <Output TaskParameter="VapiFile" ItemName="DataFile"/>
+            <Output TaskParameter="SymbolsFile" ItemName="SymbolFile"/>
+
+            <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+            <Output TaskParameter="HeaderFile" ItemName="FileWrites"/>
+            <Output TaskParameter="VapiFile" ItemName="FileWrites"/>
+            <Output TaskParameter="SymbolsFile" ItemName="FileWrites"/>
+            <!-- <Output TaskParameter="GirFile" ItemName="FileWrites"/> -->
+        </Vala>
+    </Target>
+
+    <PropertyGroup>
+      <CoreCompileDependsOn>
+        PkgConfigFlagsQuery;
+        CompileValaFilesToC;
+        BuildNativeAssembly
+      </CoreCompileDependsOn>
+    </PropertyGroup>
+
+    <Target
+      Name="CoreCompile"
+      DependsOnTargets="$(CoreCompileDependsOn)"
+      />
+
+    <Import Project="HSBuild.Common.targets" />
+</Project>

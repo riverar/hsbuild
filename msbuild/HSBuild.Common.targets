@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" InitialTargets="_CheckConfigurationPlatformAndOutput" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Import all HSBUILD tasks -->
+  <PropertyGroup>
+      <HSBuildTasksDir        Condition=" '$(HSBuildTasksDir)' == '' and '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\HSBuild\</HSBuildTasksDir>
+      <HSBuildTasksDir        Condition=" '$(HSBuildTasksDir)' == '' "              >$(MSBuildExtensionsPath)\HSBuild\</HSBuildTasksDir>
+      <HSBuildTasksBin        Condition=" '$(HSBuildTasksBin)' == '' "              >HSBuildTasks.dll</HSBuildTasksBin>
+      <HSBuildTasksPath       Condition=" '$(HSBuildTasksPath)' == '' "             >$(HSBuildTasksDir)$(HSBuildTasksBin)</HSBuildTasksPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(HSBuildToolPath)' == '' ">
+      <HSBuildToolPath        Condition=" '$(HSBUILD_INSTALLED_PATH)' != '' "       >$(HSBUILD_INSTALLED_PATH)bin\</HSBuildToolPath>
+  </PropertyGroup>
+
+  <Import     Project="$(MSBuildToolsPath)\Microsoft.Common.Tasks" />
+  <UsingTask  TaskName="Vala"                      AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="PkgConfig"                 AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="PkgConfigQueryVariable"    AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="Substitute"                AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="Aggregator"                AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="MSVCCompiler"              AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="MSResourceCompiler"        AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="MSManifest"                AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="MSManifestResource"        AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="MSVCLinker"                AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="MSVCLib"                   AssemblyFile="$(HSBuildTasksPath)" />
+
+  <Import     Project="HSBuild.MSVC.targets" />
+
+  <!-- Output initialization        - is set by HSBUILD_PREFIX_PATH environment variable   -->
+  <PropertyGroup>
+      <OutputPath         Condition=" '$(HSBUILD_PREFIX_PATH)' != '' "              >$(HSBUILD_PREFIX_PATH)</OutputPath>
+      <OutputPath                                                                   >$(OutputPath)$(Platform)\$(Configuration)\</OutputPath>
+
+      <!-- Substitute OutputType synonyms to the default value for each OutputType -->
+      <OutputType         Condition=" '$(OutputType)' == 'library' "                >dll</OutputType>
+      <OutputType         Condition=" '$(OutputType)' == 'dynamic-library' "        >dll</OutputType>
+      <OutputType         Condition=" '$(OutputType)' == 'static-library' "         >lib</OutputType>
+      <OutputType         Condition=" '$(OutputType)' == '' "                       >exe</OutputType>
+
+      <CleanFile          Condition=" '$(CleanFile)' == '' "                        >$(MSBuildProjectFile).CleanList.txt</CleanFile>
+      <BinaryOutputPath>$(OutputPath)bin\</BinaryOutputPath>
+      <LibraryOutputPath>$(OutputPath)lib\</LibraryOutputPath>
+      <IncludeOutputPath>$(OutputPath)include\</IncludeOutputPath>
+      <DataOutputPath>$(OutputPath)share\</DataOutputPath>
+      <PkgConfigOutputPath>$(LibraryOutputPath)pkgconfig\</PkgConfigOutputPath>
+  </PropertyGroup>
+
+  <!-- Configuration/Platform defaults                            -->
+  <PropertyGroup>
+      <Configuration      Condition=" '$(Configuration)' == '' "                    >Debug</Configuration>
+      <Platform           Condition=" '$(Platform)' == '' "                         >x86</Platform>
+  </PropertyGroup>
+
+  <!-- Intermediate initialization  - MAY be overridden           -->
+  <PropertyGroup>
+      <IntermediatePath   Condition=" '$(IntermediatePath)' == '' "                 >$(Platform)\$(Configuration)\obj\$(MSBuildProjectName)\</IntermediatePath>
+      <IntermediatePath   Condition=" !HasTrailingSlash('$(IntermediatePath)') "    >$(IntermediatePath)\</IntermediatePath>
+
+      <IntDir>$(IntermediatePath)</IntDir>
+  </PropertyGroup>
+
+  <!-- Target initialization        - Can NOT be overridden       -->
+  <PropertyGroup>
+      <AssemblyName       Condition=" '$(AssemblyName)'=='' "                       >$(MSBuildProjectName)</AssemblyName>
+
+      <!-- Suffix based on c-runtime -->
+      <TargetSuffix       Condition=" '$(Configuration)' == 'Debug' "               >-$(CRTSuffix)d</TargetSuffix>
+      <TargetSuffix       Condition=" '$(Configuration)' == 'Release' "             >-$(CRTSuffix)</TargetSuffix>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(OutputType)' == 'exe' or '$(OutputType)' == 'winexe' ">
+      <TargetExt>.exe</TargetExt>
+      <TargetName>$(AssemblyName)</TargetName>
+      <TargetFileName>$(TargetName)$(TargetExt)</TargetFileName>
+      <TargetDir>$(BinaryOutputPath)</TargetDir>
+      <TargetPath>$(TargetDir)$(TargetFileName)</TargetPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OutputType)' == 'dll' ">
+      <TargetExt>.dll</TargetExt>
+      <TargetName>$(AssemblyName)$(TargetSuffix)</TargetName>
+      <TargetFileName>$(TargetName)$(TargetExt)</TargetFileName>
+      <TargetDir>$(BinaryOutputPath)</TargetDir>
+      <TargetPath>$(TargetDir)$(TargetFileName)</TargetPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OutputType)' == 'lib' ">
+      <TargetExt>.lib</TargetExt>
+      <TargetName>$(AssemblyName)</TargetName>
+      <TargetFileName>$(TargetName)$(TargetExt)</TargetFileName>
+      <TargetDir>$(LibraryOutputPath)</TargetDir>
+      <TargetPath>$(TargetDir)$(TargetFileName)</TargetPath>
+  </PropertyGroup>
+
+  <!-- Version properties - Initialize to 1.0.0.0 if not already set -->
+  <PropertyGroup>
+    <VersionMajor         Condition=" '$(VersionMajor)' == '' "                     >1</VersionMajor>
+    <VersionMinor         Condition=" '$(VersionMinor)' == '' "                     >0</VersionMinor>
+    <VersionMicro         Condition=" '$(VersionMicro)' == '' "                     >0</VersionMicro>
+    <VersionNano          Condition=" '$(VersionNano)' == '' "                      >0</VersionNano>
+    <Version              Condition=" '$(Version)' == '' "                          >$(VersionMajor).$(VersionMinor).$(VersionMicro).$(VersionNano)</Version>
+    <VersionApi           Condition=" '$(VersionApi)' == '' "                       >$(VersionMajor).$(VersionMinor)</VersionApi>
+
+    <VersionFull                                                                    >$(VersionMajor).$(VersionMinor).$(VersionMicro).$(VersionNano)</VersionFull>
+  </PropertyGroup>
+
+  <!-- TARGET: Generate Config Header -->
+  <Target
+    Name="GenerateConfigHeader"
+    Condition=" '$(DisableConfigHeaderGeneration)' != 'true' "
+    >
+      <ItemGroup>
+          <CIncludeDirectory Include="$(IntermediatePath)" />
+      </ItemGroup>
+
+      <ItemGroup>
+          <ConfigPreprocessor Include="VERSION $(Version)" />
+          <ConfigPreprocessor Include="PACKAGE_VERSION &quot;$(Version)&quot;" />
+          <ConfigPreprocessor Include="PACKAGE_DATADIR &quot;inavlid-for-win32&quot;" />
+      </ItemGroup>
+
+      <PropertyGroup Condition=" '$(ConfigHeader)' == '' ">
+          <ConfigHeader>$(HSBUILD_INSTALLED_PATH)\templates\$(Platform)\config.h</ConfigHeader>
+      </PropertyGroup>
+
+      <Copy
+        SourceFiles="$(ConfigHeader)"
+        Condition=" '$(ConfigHeader)' != '$(IntDir)config.h' "
+        DestinationFiles="$(IntDir)config.h"
+        >
+          <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+      </Copy>
+
+      <WriteLinesToFile
+        File="$(IntDir)config.h"
+        Lines="@(ConfigPreprocessor->'#define %(Identity)')"
+        Condition=" '@(ConfigPreprocessor)' != '' "
+        Overwrite="false"
+        />
+  </Target>
+
+  <!-- TARGET: Generate intermediate files by substitution -->
+  <Target
+    Name="GenerateIntermediateFiles"
+    Condition="'@(InFile)' != ''"
+    >
+      <MakeDir Condition="!Exists('$(IntDir)%(InFile.SubDirectory)')" Directories="$(IntDir)%(InFile.SubDirectory)" />
+
+      <Substitute
+        SourceFiles="@(InFile)"
+        Expressions="%(InFile.Expressions)"
+        OutputDirectory="$(IntDir)%(InFile.SubDirectory)"
+        OutputFileName="%(InFile.OutputFileName)"
+        >
+          <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
+      </Substitute>
+  </Target>
+
+  <!-- TARGET: PkgConfig Flags Query -->
+  <Target
+    Name="PkgConfigFlagsQuery"
+    Condition="'@(Package)' != ''"
+    >
+    <PkgConfig
+      Packages="@(Package)"
+      PkgConfigPaths="$(PkgConfigOutputPath)"
+      ToolPath="$(HSBuildToolPath)"
+      >
+        <Output TaskParameter="CIncludes" ItemName="CIncludeDirectory" />
+        <Output TaskParameter="LibPaths"  ItemName="LinkLibPath" />
+        <Output TaskParameter="Libs"      ItemName="_PkgConfigLibs" />
+    </PkgConfig>
+
+    <ItemGroup>
+        <LinkLibrary Include="@(_PkgConfigLibs->'%(Identity).lib')" />
+    </ItemGroup>
+  </Target>
+
+  <!-- TARGET: GenerateSymbols -->
+  <PropertyGroup>
+      <GenerateSymbolsDependsOn>
+
+      </GenerateSymbolsDependsOn>
+  </PropertyGroup>
+  <Target
+    Name="GenerateSymbols"
+    Condition=" '$(OutputType)' == 'dll' and '$(DefFile)' == '' "
+    DependsOnTargets="$(GenerateSymbolsDependsOn)"
+    >
+      <PropertyGroup>
+          <DefFile>$(IntDir)$(AssemblyName).def</DefFile>
+      </PropertyGroup>
+
+      <ItemGroup>
+          <FileWrites Include="$(DefFile)" />
+      </ItemGroup>
+
+      <Aggregator
+        SourceFiles="@(SymbolFile)"
+        OutputFile="$(DefFile)"
+        HeadLines="EXPORTS"
+        />
+  </Target>
+
+  <!-- TARGET: BuildNativeAssembly -->
+  <PropertyGroup>
+      <BuildNativeAssemblyDependsOn>
+          PkgConfigFlagsQuery;
+          GenerateConfigHeader;
+          $(GenerateFilesTargets);
+          GenerateIntermediateFiles;
+          CompileCToObject;
+          CompileResourceToObject;
+          GenerateSymbols;
+          GenerateNativeAssembly;
+      </BuildNativeAssemblyDependsOn>
+  </PropertyGroup>
+  <Target
+    Name="BuildNativeAssembly"
+    DependsOnTargets="$(BuildNativeAssemblyDependsOn)"
+    />
+
+  <!-- ======================================================================== -->
+  <!--                             Install targets                              -->
+  <!-- ======================================================================== -->
+  <!-- TARGET: Install Package Config files -->
+  <Target
+    Name="_GeneratePkgConfigFiles"
+    Condition=" '@(PCInstall)' != '' "
+    >
+      <ItemGroup>
+          <_SubstExpr Include="s#@prefix@#c:/AutoResolved#g" />
+
+          <_SubstExpr Include="s#@exec_prefix@#${prefix}#g" />
+          <_SubstExpr Include="s#@bindir@#${exec_prefix}/bin#g" />
+          <_SubstExpr Include="s#@sbindir@#${exec_prefix}/sbin#g" />
+          <_SubstExpr Include="s#@libexecdir@#${exec_prefix}/libexec#g" />
+
+          <_SubstExpr Include="s#@datarootdir@#${prefix}/share#g" />
+          <_SubstExpr Include="s#@datadir@#${datarootdir}#g" />
+          <_SubstExpr Include="s#@sysconfdir@#${prefix}/etc#g" />
+          <_SubstExpr Include="s#@sharedstatedir@#${prefix}/com#g" />
+          <_SubstExpr Include="s#@localstatedir@#${prefix}/var#g" />
+
+          <_SubstExpr Include="s#@docdir@#${datarootdir}/doc#g" />
+          <_SubstExpr Include="s#@htmldir@#${docdir}#g" />
+          <_SubstExpr Include="s#@dvidir@#${docdir}#g" />
+          <_SubstExpr Include="s#@pdfdir@#${docdir}#g" />
+          <_SubstExpr Include="s#@psdir@#${docdir}#g" />
+          <_SubstExpr Include="s#@infodir@#${datarootdir}/info#g" />
+          <_SubstExpr Include="s#@localedir@#${datarootdir}/locale#g" />
+          <_SubstExpr Include="s#@mandir@#${datarootdir}/man#g" />
+
+          <_SubstExpr Include="s#@includedir@#${prefix}/include#g" />
+          <_SubstExpr Include="s#@libdir@#${prefix}/lib#g" />
+
+          <_SubstExpr Include="s/@VERSION@/$(Version)/g" />
+      </ItemGroup>
+
+      <Substitute
+        SourceFiles="@(PCInstall)"
+        Condition=" '%(PCInstall.Extension)' == '.in' "
+        Expressions="%(PCInstall.SubstitutionExpression);@(_SubstExpr)"
+        OutputDirectory="$(IntDir)"
+        >
+          <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
+          <Output TaskParameter="DestinationFiles" ItemName="PCInstall" />
+      </Substitute>
+
+      <ItemGroup>
+          <PCInstall Remove="@(PCInstall)" Condition=" '%(PCInstall.Extension)' == '.in' " />
+      </ItemGroup>
+  </Target>
+
+  <Target
+    Name="InstallPkgConfig"
+    Condition=" '@(PCInstall)' != '' "
+    DependsOnTargets="_GeneratePkgConfigFiles"
+    >
+      <MakeDir Directories="$(PkgConfigOutputPath)" />
+
+      <!-- Copy all PkgConfig files. -->
+      <Copy
+        SourceFiles="@(PCInstall)"
+        Condition=" '%(PCInstall.OutputFileName)' == '' "
+        DestinationFolder="$(PkgConfigOutputPath)"
+        SkipUnchangedFiles="true"
+        OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)">
+          <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+      </Copy>
+      <Copy
+        SourceFiles="@(PCInstall)"
+        Condition=" '%(PCInstall.OutputFileName)' != '' "
+        DestinationFiles="$(PkgConfigOutputPath)%(PCInstall.OutputFileName)"
+        SkipUnchangedFiles="true"
+        OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)">
+          <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+      </Copy>
+  </Target>
+
+  <!-- TARGET: Install C Headers -->
+  <Target
+    Name="_CheckClIncludeForInstall"
+    Condition=" '@(ClInclude)' != '' "
+    >
+      <ItemGroup>
+          <InstallInclude Include="@(ClInclude)" Condition=" '%(ClInclude.Install)' != '' ">
+            <SubDirectory>%(ClInclude.SubDirectory)</SubDirectory>
+          </InstallInclude>
+      </ItemGroup>
+  </Target>
+
+  <Target
+    Name="InstallCHeaders"
+    Condition=" '@(InstallInclude)' != '' "
+    DependsOnTargets="_CheckClIncludeForInstall"
+    >
+      <MakeDir Directories="$(IncludeOutputPath)" />
+
+      <!-- Copy all installable header files. -->
+      <Copy
+        SourceFiles="@(InstallInclude)"
+        DestinationFolder="$(IncludeOutputPath)%(InstallInclude.SubDirectory)"
+        SkipUnchangedFiles="true"
+        OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)">
+          <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+      </Copy>
+  </Target>
+
+  <!-- TARGET: Install Data Files -->
+  <Target
+    Name="InstallData"
+    Condition=" '@(DataFile)' != '' "
+    >
+      <MakeDir Directories="$(DataOutputPath)" />
+
+      <!-- Copy all installable data files. -->
+      <Copy
+        SourceFiles="@(DataFile)"
+        DestinationFolder="$(DataOutputPath)%(DataFile.SubDirectory)"
+        SkipUnchangedFiles="true"
+        OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)">
+          <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+      </Copy>
+  </Target>
+
+  <!-- ======================================================================== -->
+  <!--                              Common targets                              -->
+  <!-- ======================================================================== -->
+  <Target
+    Name="_CheckConfigurationPlatformAndOutput"
+    >
+      <Message Text="Configuration=$(Configuration)" Importance="Low" />
+      <Message Text="Platform=$(Platform)" Importance="Low" />
+      <Message Text="TargetPath=$(TargetPath)" Importance="Low" />
+
+      <!-- Configuration and Platform MUST be specified by the top project file it self! -->
+      <Error
+        Condition=" '$(Configuration)' == '' "
+        Text="The Configuration is not specified."
+        />
+      <Error
+        Condition=" '$(Platform)' == '' "
+        Text="The Platform is not specified."
+        />
+
+      <!-- Although we try to ensure a trailing slash, it's possible to circumvent this if the property is set on the command line -->
+      <Error
+        Condition=" '$(OutputPath)' != '' and !HasTrailingSlash('$(OutputPath)') "
+        Text="The OutputPath property must end with a trailing slash."
+        />
+      <Error
+        Condition=" '$(IntermediatePath)' != '' and !HasTrailingSlash('$(IntermediatePath)') "
+        Text="The IntermediatePath must end with a trailing slash."
+        />
+  </Target>
+
+  <!-- TARGET: Compile -->
+  <PropertyGroup>
+      <CompileDependsOn>
+          BeforeCompile;
+          CoreCompile;
+          AfterCompile
+      </CompileDependsOn>
+  </PropertyGroup>
+  <Target
+    Name="Compile"
+    DependsOnTargets="$(CompileDependsOn)"
+    />
+
+  <!-- TARGET: PrepareFileWrites -->
+  <Target
+    Name="PrepareFileWrites"
+    >
+      <!-- Read in list of files that were written to disk in past builds. -->
+      <ReadLinesFromFile File="$(IntDir)$(CleanFile)">
+          <Output TaskParameter="Lines" ItemName="FileWrites" />
+      </ReadLinesFromFile>
+  </Target>
+
+  <!-- TARGET: CreateIntDir -->
+  <Target
+    Name="CreateIntDir"
+    >
+      <MakeDir Condition="!Exists('$(IntDir)')" Directories="$(IntDir)" />
+  </Target>
+
+  <!-- TARGET: CommitFileWrites -->
+  <Target
+    Name="CommitFileWrites"
+    Condition=" '@(FileWrites)' != '' "
+    >
+      <!-- Write FileWrites item group to clean file so that a later Clean can delete them! -->
+      <WriteLinesToFile
+        File="$(IntDir)$(CleanFile)"
+        Lines="@(FileWrites)"
+        Overwrite="true"
+        />
+  </Target>
+
+  <!-- TARGET: Build -->
+  <PropertyGroup>
+      <BuildDependsOn>
+          PrepareFileWrites;
+          CreateIntDir;
+          BeforeBuild;
+          Compile;
+          Install;
+          CommitFileWrites;
+          AfterBuild
+      </BuildDependsOn>
+  </PropertyGroup>
+  <Target
+    Name="Build"
+    DependsOnTargets="$(BuildDependsOn)"
+    Outputs="$(TargetPath)"
+    />
+
+  <!-- TARGET: Rebuild -->
+  <PropertyGroup>
+      <RebuildDependsOn>
+          BeforeRebuild;
+          Clean;
+          $(MSBuildProjectDefaultTargets);
+          AfterRebuild;
+      </RebuildDependsOn>
+
+      <RebuildDependsOn Condition=" '$(MSBuildProjectDefaultTargets)' == 'Rebuild' " >
+          BeforeRebuild;
+          Clean;
+          Build;
+          AfterRebuild;
+      </RebuildDependsOn>
+  </PropertyGroup>
+  <Target
+    Name="Rebuild"
+    DependsOnTargets="$(RebuildDependsOn)"
+    />
+
+  <!-- TARGET: Clean -->
+  <PropertyGroup>
+      <CleanDependsOn>
+          BeforeClean;
+          CoreClean;
+          AfterClean
+      </CleanDependsOn>
+  </PropertyGroup>
+  <Target
+    Name="Clean"
+    DependsOnTargets="$(CleanDependsOn)"
+    />
+
+  <PropertyGroup>
+      <CoreCleanDependsOn>
+          PrepareFileWrites
+      </CoreCleanDependsOn>
+  </PropertyGroup>
+  <Target
+    Name="CoreClean"
+    DependsOnTargets="$(CoreCleanDependsOn)"
+    >
+      <!-- Delete those files. -->
+      <Delete
+          Files="@(FileWrites);$(IntDir)$(CleanFile)"
+          TreatErrorsAsWarnings="true" />
+  </Target>
+
+  <!-- TARGET: Install -->
+  <PropertyGroup>
+      <InstallDependsOn>
+          PrepareFileWrites;
+          BeforeInstall;
+          InstallCHeaders;
+          InstallData;
+          InstallPkgConfig;
+          AfterInstall
+      </InstallDependsOn>
+  </PropertyGroup>
+  <Target
+    Name="Install"
+    DependsOnTargets="$(InstallDependsOn)"
+    />
+
+  <!-- TARGET: Run -->
+  <Target
+    Name="Run"
+    >
+      <Error Text="Cannot run '$(TargetPath)' because project output type is not '.exe'" Condition="'$(TargetExt)'!='.exe'"/>
+      <Exec Command="$(TargetPath) $(StartArguments)" WorkingDirectory="$(OutDir)" Condition=" '$(StartWorkingDirectory)' == '' "/>
+      <Exec Command="$(TargetPath) $(StartArguments)" WorkingDirectory="$(StartWorkingDirectory)" Condition=" '$(StartWorkingDirectory)' != '' "/>
+  </Target>
+
+  <!-- Redefine these targets in your .hsproj -->
+  <Target Name="BeforeCompile" />
+  <Target Name="AfterCompile" />
+  <Target Name="BeforeBuild" />
+  <Target Name="AfterBuild" />
+  <Target Name="BeforeRebuild"/>
+  <Target Name="AfterRebuild"/>
+  <Target Name="BeforeInstall" />
+  <Target Name="AfterInstall" />
+  <Target Name="BeforeClean"/>
+  <Target Name="AfterClean"/>
+
+</Project>

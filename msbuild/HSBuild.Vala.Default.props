@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="HSBuild.C.Default.props" />
+  <ItemDefinitionGroup>
+    <ValaCompile>
+      <LibraryName Condition=" '$(OutputType)' == 'library' ">$(AssemblyName)</LibraryName>
+      <VapiDirectory>$(DataOutputPath)vala/vapi</VapiDirectory>
+    </ValaCompile>
+    <InstallInclude>
+      <SubDirectory>$(AssemblyName)</SubDirectory>
+    </InstallInclude>
+  </ItemDefinitionGroup>
+</Project>

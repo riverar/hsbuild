@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+  <!-- Find visual studio 2008 (9.0) -->
+  <PropertyGroup Condition=" '$(MSVCToolPath)' == '' " >
+      <_VC90Path>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\9.0\Setup\VC@ProductDir)</_VC90Path>
+      <_VC90ExpressPath>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VCExpress\9.0\Setup\VC@ProductDir)</_VC90ExpressPath>
+      <MSVCToolPath       Condition=" '$(_VC90ExpressPath)' != '' "             >$(_VC90ExpressPath)bin\</MSVCToolPath>
+      <MSVCToolPath       Condition=" '$(_VC90Path)' != '' "                    >$(_VC90Path)bin\</MSVCToolPath>
+      <CRTSuffix          Condition=" '$(MSVCToolPath)' != '' "                 >vc90</CRTSuffix>
+  </PropertyGroup>
+
+  <!-- Find visual studio 2005 (8.0) -->
+  <PropertyGroup Condition=" '$(MSVCToolPath)' == '' " >
+      <_VC80Path>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\8.0\Setup\VC@ProductDir)</_VC80Path>
+      <_VC80ExpressPath>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VCExpress\8.0\Setup\VC@ProductDir)</_VC80ExpressPath>
+      <MSVCToolPath       Condition=" '$(_VC80ExpressPath)' != '' "             >$(_VC80ExpressPath)bin\</MSVCToolPath>
+      <MSVCToolPath       Condition=" '$(_VC80Path)' != '' "                    >$(_VC80Path)bin\</MSVCToolPath>
+      <CRTSuffix          Condition=" '$(MSVCToolPath)' != '' "                 >vc80</CRTSuffix>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(MSVCToolPath)' != '' " >
+      <CC                 Condition=" '$(CC)' == '' "                           >$(MSVCToolPath)cl.exe</CC>
+  </PropertyGroup>
+
+  <Target
+    Name="_EnsureClCompile"
+    Condition=" '@(Compile)' != ''"
+    >
+      <!-- Setup Cl compile sources if Compile used -->
+      <ItemGroup>
+          <ClCompile Include="@(Compile)" Condition="'%(Extension)'=='.c'" />
+      </ItemGroup>
+  </Target>
+  <Target
+    Name="_EnsureResourceCompile"
+    Condition=" '@(Compile)' != ''"
+    >
+      <!-- Setup RC compile sources if Compile used -->
+      <ItemGroup>
+          <ResourceCompile Include="@(Compile)" Condition="'%(Extension)'=='.rc'" />
+      </ItemGroup>
+  </Target>
+
+  <!-- TARGET: Compile C To Object -->
+  <Target
+    Name="CompileCToObject"
+    DependsOnTargets="_EnsureClCompile"
+    >
+      <RemoveDuplicates Inputs="@(CIncludeDirectory)">
+          <Output TaskParameter="Filtered" ItemName="_ClIncDir" />
+      </RemoveDuplicates>
+
+      <!-- Compile C sources -->
+      <MSVCCompiler
+        ToolPath="$(MSVCToolPath)"
+
+        SourceFiles="@(ClCompile)"
+        AdditionalIncludeDirectories="@(_ClIncDir);%(ClCompile.AdditionalIncludeDirectories)"
+        PreprocessorDefinitions="%(ClCompile.PreprocessorDefinitions)"
+        ForceIncludes="%(ClCompile.ForceIncludes)"
+        ForceUsing="%(ClCompile.ForceUsing)"
+        ObjectFileName="%(ClCompile.ObjectFileName)"
+        ProgramDataBaseFileName="%(ClCompile.ProgramDataBaseFileName)"
+        PrecompiledHeaderOutputFile="%(ClCompile.PrecompiledHeaderOutputFile)"
+        AssemblerListingLocation="%(ClCompile.AssemblerListingLocation)"
+
+        ErrorReport="%(ClCompile.ErrorReport)"
+        WarningLevel="%(ClCompile.WarningLevel)"
+        TreatWarningAsError="%(ClCompile.TreatWarningAsError)"
+
+        RuntimeLibrary="%(ClCompile.RuntimeLibrary)"
+        Optimization="%(ClCompile.Optimization)"
+        FavorSizeOrSpeed="%(ClCompile.FavorSizeOrSpeed)"
+        MinimalRebuild="%(ClCompile.MinimalRebuild)"
+        InlineFunctionExpansion="%(ClCompile.InlineFunctionExpansion)"
+        IntrinsicFunctions="%(ClCompile.IntrinsicFunctions)"
+        DebugInformationFormat="%(ClCompile.DebugInformationFormat)"
+        BasicRuntimeChecks="%(ClCompile.BasicRuntimeChecks)"
+        SmallerTypeCheck="%(ClCompile.SmallerTypeCheck)"
+        BufferSecurityCheck="%(ClCompile.BufferSecurityCheck)"
+        RuntimeTypeInfo="%(ClCompile.RuntimeTypeInfo)"
+        StringPooling="%(ClCompile.StringPooling)"
+
+        AdditionalOptions="%(ClCompile.AdditionalOptions)"
+        />
+
+      <ItemGroup>
+          <Compile Remove="@(ClCompile)" />
+
+          <Link Include="@(ClCompile->'$(IntDir)\%(FileName).obj')" />
+          <FileWrites Include="@(Link)" />
+      </ItemGroup>
+  </Target>
+
+  <!-- TARGET: Compile resource files (.rc) To Object -->
+  <Target
+    Name="CompileResourceToObject"
+    DependsOnTargets="_EnsureResourceCompile"
+    Condition=" '@(ResourceCompile)' != '' "
+    >
+      <!-- Compile resources -->
+      <MSResourceCompiler
+        SourceFile="%(ResourceCompile.Identity)"
+        OutputFile="$(IntDir)%(ResourceCompile.FileName).res"
+        AdditionalIncludeDirectories="%(ResourceCompile.AdditionalIncludeDirectories)"
+        PreprocessorDefinitions="%(ResourceCompile.PreprocessorDefinitions)"
+        AdditionalOptions="%(ResourceCompile.AdditionalOptions)"
+        Verbose="%(ResourceCompile.Verbose)"
+        />
+
+      <ItemGroup>
+          <Compile Remove="@(ResourceCompile)" />
+
+          <Link Include="@(ResourceCompile->'$(IntDir)%(FileName).res')" />
+          <FileWrites Include="@(Link)" />
+      </ItemGroup>
+  </Target>
+
+  <!-- TARGET: LinkObjectToNativeAssembly -->
+  <Target
+    Name="LinkObjectToNativeAssembly"
+    >
+      <Error Condition=" '$(OutputType)' == 'lib' " Text="LinkObjectToNativeAssembly can't be used for static link libraries!" />
+
+      <!-- LINK -->
+      <PropertyGroup Condition="'$(LinkIncremental)' == ''">
+          <LinkIncremental>true</LinkIncremental>
+          <LinkIncremental Condition=" '$(MSBuildProjectDefaultTargets)' == 'Rebuild' ">false</LinkIncremental>
+      </PropertyGroup>
+
+      <PropertyGroup Condition="'$(ManifestFile)' == ''">
+          <ManifestFile>$(IntDir)$(TargetFileName).intermediate.manifest</ManifestFile>
+      </PropertyGroup>
+
+      <PropertyGroup Condition=" '$(OutputType)'=='dll' ">
+          <_LinkDLL>true</_LinkDLL>
+          <ExpLibFile Condition=" '$(ImpLibFile)' == '' ">$(LibraryOutputPath)$(AssemblyName).exp</ExpLibFile>
+          <ImpLibFile Condition=" '$(ImpLibFile)' == '' ">$(LibraryOutputPath)$(AssemblyName).lib</ImpLibFile>
+      </PropertyGroup>
+
+      <PropertyGroup>
+          <SubSystem Condition="'$(OutputType)'=='exe'">CONSOLE</SubSystem>
+          <SubSystem Condition="'$(OutputType)'=='dll'">CONSOLE</SubSystem>
+          <SubSystem Condition="'$(OutputType)'=='winexe'">WINDOWS</SubSystem>
+      </PropertyGroup>
+
+      <PropertyGroup>
+          <_ManifestResource>$(IntDir)$(TargetFileName).manifest.res</_ManifestResource>
+      </PropertyGroup>
+
+      <Touch Files="$(IntDir)$(TargetFileName).embed.manifest" AlwaysCreate="true">
+          <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+      </Touch>
+
+      <MSManifestResource
+        Manifest="$(IntDir)$(TargetFileName).embed.manifest"
+        Dll="$(_LinkDLL)"
+        OutputResource="$(_ManifestResource)"
+        />
+
+      <ItemGroup>
+          <Link Include="$(_ManifestResource)" />
+          <FileWrites Include="$(_ManifestResource)" />
+      </ItemGroup>
+
+      <MSVCLinker
+        Sources="@(Link)"
+        AdditionalLibPaths="@(LinkLibPath)"
+        AdditionalLibraries="@(LinkLibrary)"
+        OutputFile="$(TargetPath)"
+        Incremental="$(LinkIncremental)"
+        DefFile="$(DefFile)"
+        ImpLibFile="$(ImpLibFile)"
+        ManifestFile="$(ManifestFile)"
+        Dll="$(_LinkDLL)"
+        SubSystem="$(SubSystem)"
+        Machine="$(Machine)"
+        ErrorReport="$(ErrorReport)"
+        ToolPath="$(MSVCToolPath)"
+        />
+
+        <ItemGroup>
+            <FileWrites Include="$(ManifestFile)" />
+            <FileWrites Include="$(TargetPath)" />
+            <FileWrites Condition="Exists('$(TargetDir)$(TargetName).ilk')" Include="$(TargetDir)$(TargetName).ilk" />
+            <FileWrites Condition="Exists('$(TargetDir)$(TargetName).pdb')" Include="$(TargetDir)$(TargetName).pdb" />
+            <FileWrites Condition=" '$(ImpLibFile)' != '' " Include="$(ImpLibFile)" />
+            <FileWrites Condition=" '$(ExpLibFile)' != '' " Include="$(ExpLibFile)" />
+        </ItemGroup>
+
+      <MSManifest
+        InputManifest="$(ManifestFile)"
+        OutputManifest="$(IntDir)$(TargetFileName).embed.manifest"
+        />
+
+      <MSManifestResource
+        Manifest="$(IntDir)$(TargetFileName).embed.manifest"
+        Dll="$(_LinkDLL)"
+        OutputResource="$(_ManifestResource)"
+        />
+
+      <!-- Re-link with manifest resource file! -->
+      <MSVCLinker
+        Sources="@(Link)"
+        AdditionalLibPaths="@(LinkLibPath)"
+        AdditionalLibraries="@(LinkLibrary)"
+        OutputFile="$(TargetPath)"
+        Incremental="$(LinkIncremental)"
+        DefFile="$(DefFile)"
+        ImpLibFile="$(ImpLibFile)"
+        ManifestFile="$(ManifestFile)"
+        Dll="$(_LinkDLL)"
+        SubSystem="$(SubSystem)"
+        Machine="$(Machine)"
+        ErrorReport="$(ErrorReport)"
+        ToolPath="$(MSVCToolPath)"
+        />
+  </Target>
+
+  <Target
+    Name="GenerateNativeStaticLibraryAssembly"
+    >
+      <Error Condition=" '$(OutputType)' != 'lib' " Text="GenerateNativeStaticLibraryAssembly can only be used for static libraries!" />
+
+      <MSVCLib
+        Sources="@(Link)"
+        AdditionalLibPaths="@(LinkLibPath)"
+        AdditionalLibraries="@(LinkLibrary)"
+        OutputFile="$(TargetPath)"
+        DefFile="$(DefFile)"
+        SubSystem="$(SubSystem)"
+        Machine="$(Machine)"
+        ErrorReport="$(ErrorReport)"
+        ToolPath="$(MSVCToolPath)"
+        />
+  </Target>
+
+  <!-- TARGET: GenerateNativeAssembly -->
+  <Target
+    Name="GenerateNativeAssembly"
+    >
+      <PropertyGroup>
+          <Machine Condition="'$(Platform)'=='x86'">X86</Machine>
+          <Machine Condition="'$(Platform)'=='x64'">X64</Machine>
+          <Machine Condition="'$(Platform)'=='Itanium'">IA64</Machine>
+      </PropertyGroup>
+
+      <Warning Condition=" '$(Machine)' == '' " Text="PlatformTarget not set" />
+
+      <MakeDir Directories="$(LibraryOutputPath);$(BinaryOutputPath)" />
+
+      <CallTarget
+        Condition=" '$(OutputType)' != 'lib' "
+        Targets="LinkObjectToNativeAssembly"
+        />
+
+      <CallTarget
+        Condition=" '$(OutputType)' == 'lib' "
+        Targets="GenerateNativeStaticLibraryAssembly"
+        />
+  </Target>
+
+</Project>
+

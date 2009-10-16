@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <GLibVersionApi Condition=" '$(GLibVersionApi)' == '' ">2.0</GLibVersionApi>
+    <GenerateFilesTargets>$(GenerateFilesTargets);GLibGenmarshal</GenerateFilesTargets>
+  </PropertyGroup>
+
+  <Target
+    Name="_GLibGetExecPrefix"
+    Condition=" '$(GLibExecPrefix)' == '' "
+    >
+      <PkgConfigQueryVariable
+        Packages="glib-$(GLibVersionApi)"
+        PkgConfigPaths="$(PkgConfigOutputPath);$(HSBuildInstalledPkgConfigPath)"
+        ToolPath="$(HSBuildToolPath)"
+        Key="exec_prefix"
+        >
+          <Output TaskParameter="Value" PropertyName="GLibExecPrefix" />
+      </PkgConfigQueryVariable>
+
+      <Error
+        Condition=" '$(GLibExecPrefix)' == '' "
+        Text="exec_prefix was not found in glib-$(GLibVersionApi).pc"
+        />
+  </Target>
+
+  <!-- TARGET: GlibGenmarshal -->
+  <Target
+    Name="GLibGenmarshal"
+    Condition=" '@(GLibGenmarshalFile)' != '' "
+    DependsOnTargets="_GLibGetExecPrefix"
+    >
+      <PkgConfigQueryVariable
+        Packages="glib-$(GLibVersionApi)"
+        PkgConfigPaths="$(PkgConfigOutputPath);$(HSBuildInstalledPkgConfigPath)"
+        ToolPath="$(HSBuildToolPath)"
+        Key="glib_genmarshal"
+        >
+          <Output TaskParameter="Value" PropertyName="_GLibGenmarshalExec" />
+      </PkgConfigQueryVariable>
+      <Error
+        Condition=" '$(_GLibGenmarshalExec)' == '' "
+        Text="glib_genmarshal was not found in glib-$(GLibVersionApi).pc"
+        />
+
+      <Error
+        Condition=" '%(GLibGenmarshalFile.Prefix)' == '' "
+        Text="GLibGenMarshalFiles missing prefix metadata: @(GLibGenmarshalFile)"
+        />
+
+      <MakeDir
+        Directories="$(IntDir)%(GLibGenmarshalFile.SubDirectory)"
+        Condition=" '%(GLibGenmarshalFile.SubDirectory)' != '' "
+        />
+
+      <!-- Use standard gmarshl.h include! -->
+      <Exec
+        Condition=" '%(GLibGenmarshalFile.NoStdInc)' != 'true' "
+        Command="
+          &quot;$(GLibExecPrefix)/bin/$(_GLibGenmarshalExec)&quot; --header --skip-source --prefix=%(GLibGenmarshalFile.Prefix) %(GLibGenmarshalFile.Identity) &gt; &quot;$(IntDir)%(GLibGenmarshalFile.SubDirectory)/%(GLibGenmarshalFile.Filename).h&quot;
+          &quot;$(GLibExecPrefix)/bin/$(_GLibGenmarshalExec)&quot; --body --skip-source --prefix=%(GLibGenmarshalFile.Prefix) %(GLibGenmarshalFile.Identity) &gt; &quot;$(IntDir)%(GLibGenmarshalFile.SubDirectory)/%(GLibGenmarshalFile.Filename).c&quot;
+          "
+        />
+
+      <!-- Do NOT use standard gmarshl.h include! -->
+      <Exec
+        Condition=" '%(GLibGenmarshalFile.NoStdInc)' == 'true' "
+        Command="
+          &quot;$(GLibExecPrefix)/bin/$(_GLibGenmarshalExec)&quot; --header --nostdinc --skip-source --prefix=%(GLibGenmarshalFile.Prefix) %(GLibGenmarshalFile.Identity) &gt; &quot;$(IntDir)%(GLibGenmarshalFile.SubDirectory)/%(GLibGenmarshalFile.Filename).h&quot;
+          &quot;$(GLibExecPrefix)/bin/$(_GLibGenmarshalExec)&quot; --body --nostdinc --skip-source --prefix=%(GLibGenmarshalFile.Prefix) %(GLibGenmarshalFile.Identity) &gt; &quot;$(IntDir)%(GLibGenmarshalFile.SubDirectory)/%(GLibGenmarshalFile.Filename).c&quot;
+          "
+        />
+
+  </Target>
+</Project>
+
