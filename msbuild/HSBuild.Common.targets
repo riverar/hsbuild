@@ -1,11 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" InitialTargets="_CheckConfigurationPlatformAndOutput" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Configuration/Platform defaults                            -->
+  <PropertyGroup>
+      <Configuration      Condition=" '$(Configuration)' == '' "                    >Debug</Configuration>
+      <Platform           Condition=" '$(Platform)' == '' "                         >x86</Platform>
+  </PropertyGroup>
+
+  <!-- Intermediate initialization  - MAY be overridden           -->
+  <PropertyGroup>
+      <IntermediatePath   Condition=" '$(IntermediatePath)' == '' "                 >$(Platform)\$(Configuration)\obj\$(MSBuildProjectName)\</IntermediatePath>
+      <IntermediatePath   Condition=" !HasTrailingSlash('$(IntermediatePath)') "    >$(IntermediatePath)\</IntermediatePath>
+
+      <IntDir>$(IntermediatePath)</IntDir>
+  </PropertyGroup>
+
   <!-- Import all HSBUILD tasks -->
   <PropertyGroup>
       <HSBuildTasksDir        Condition=" '$(HSBuildTasksDir)' == '' and '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\HSBuild\</HSBuildTasksDir>
       <HSBuildTasksDir        Condition=" '$(HSBuildTasksDir)' == '' "              >$(MSBuildExtensionsPath)\HSBuild\</HSBuildTasksDir>
       <HSBuildTasksBin        Condition=" '$(HSBuildTasksBin)' == '' "              >HSBuildTasks.dll</HSBuildTasksBin>
       <HSBuildTasksPath       Condition=" '$(HSBuildTasksPath)' == '' "             >$(HSBuildTasksDir)$(HSBuildTasksBin)</HSBuildTasksPath>
+      <HSBuildTemplates       Condition=" '$(HSBuildTemplates)' == '' "             >$(HSBuildTasksDir)templates\$(Platform)\</HSBuildTasksPath>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(HSBuildToolPath)' == '' ">
@@ -44,20 +59,6 @@
       <IncludeOutputPath>$(OutputPath)include\</IncludeOutputPath>
       <DataOutputPath>$(OutputPath)share\</DataOutputPath>
       <PkgConfigOutputPath>$(LibraryOutputPath)pkgconfig\</PkgConfigOutputPath>
-  </PropertyGroup>
-
-  <!-- Configuration/Platform defaults                            -->
-  <PropertyGroup>
-      <Configuration      Condition=" '$(Configuration)' == '' "                    >Debug</Configuration>
-      <Platform           Condition=" '$(Platform)' == '' "                         >x86</Platform>
-  </PropertyGroup>
-
-  <!-- Intermediate initialization  - MAY be overridden           -->
-  <PropertyGroup>
-      <IntermediatePath   Condition=" '$(IntermediatePath)' == '' "                 >$(Platform)\$(Configuration)\obj\$(MSBuildProjectName)\</IntermediatePath>
-      <IntermediatePath   Condition=" !HasTrailingSlash('$(IntermediatePath)') "    >$(IntermediatePath)\</IntermediatePath>
-
-      <IntDir>$(IntermediatePath)</IntDir>
   </PropertyGroup>
 
   <!-- Target initialization        - Can NOT be overridden       -->
@@ -119,7 +120,7 @@
       </ItemGroup>
 
       <PropertyGroup Condition=" '$(ConfigHeader)' == '' ">
-          <ConfigHeader>$(HSBUILD_INSTALLED_PATH)\templates\$(Platform)\config.h</ConfigHeader>
+          <ConfigHeader>$(HSBuildTemplates)config.h</ConfigHeader>
       </PropertyGroup>
 
       <Copy
