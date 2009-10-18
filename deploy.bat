@@ -3,4 +3,4 @@
 @copy "%~dp0\msbuild\*.targets" "%ProgramFiles%\MSBuild\HSBuild"
 @copy "%~dp0\msbuild\*.props" "%ProgramFiles%\MSBuild\HSBuild"
 @xcopy /I /Y /E "%~dp0\msbuild\templates" "%ProgramFiles%\MSBuild\HSBuild\templates"
-
+@if exist "%ProgramFiles% (x86)" mklink /D "%ProgramFiles% (x86)\MSBuild\HSBuild" "%ProgramFiles%\MSBuild\HSBuild"
