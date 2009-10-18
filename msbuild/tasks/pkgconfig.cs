@@ -25,14 +25,16 @@ namespace Oah.Tasks
         string oldEnv = Environment.GetEnvironmentVariable("PKG_CONFIG_PATH");
 
         List<string> lst = new List<string>(this.pkgcfgPaths.Length + 1);
-        if (!string.IsNullOrEmpty(oldEnv))
-          lst.Add(oldEnv);
 
         foreach (ITaskItem item in this.pkgcfgPaths)
         {
           if (!string.IsNullOrEmpty(item.ItemSpec))
             lst.Add(item.ItemSpec);
         }
+
+        // search environment last
+        if (!string.IsNullOrEmpty(oldEnv))
+            lst.Add(oldEnv);
 
         string newEnv = string.Join(";", lst.ToArray());
         Log.LogMessage(MessageImportance.Low, "Set PKG_CONFIG_PATH from \"{0}\" to \"{1}\"", oldEnv, newEnv);
