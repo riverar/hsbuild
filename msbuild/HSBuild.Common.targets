@@ -20,7 +20,7 @@
       <HSBuildTasksDir        Condition=" '$(HSBuildTasksDir)' == '' "              >$(MSBuildExtensionsPath)\HSBuild\</HSBuildTasksDir>
       <HSBuildTasksBin        Condition=" '$(HSBuildTasksBin)' == '' "              >HSBuildTasks.dll</HSBuildTasksBin>
       <HSBuildTasksPath       Condition=" '$(HSBuildTasksPath)' == '' "             >$(HSBuildTasksDir)$(HSBuildTasksBin)</HSBuildTasksPath>
-      <HSBuildTemplates       Condition=" '$(HSBuildTemplates)' == '' "             >$(HSBuildTasksDir)templates\$(Platform)\</HSBuildTasksPath>
+      <HSBuildTemplates       Condition=" '$(HSBuildTemplates)' == '' "             >$(HSBuildTasksDir)templates\$(Platform)\</HSBuildTemplates>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(HSBuildToolPath)' == '' ">
