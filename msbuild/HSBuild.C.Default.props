@@ -26,7 +26,8 @@
   <ItemDefinitionGroup Condition=" '$(Configuration)' == 'Release' ">
     <ClCompile>
       <RuntimeLibrary>MultiThreadedDll</RuntimeLibrary>
-      <Optimization>Full</Optimization>
+      <Optimization>MinSize</Optimization>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <StringPooling>true</StringPooling>
