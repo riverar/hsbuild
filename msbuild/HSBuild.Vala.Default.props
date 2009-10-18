@@ -3,7 +3,7 @@
   <Import Project="HSBuild.C.Default.props" />
   <ItemDefinitionGroup>
     <ValaCompile>
-      <LibraryName Condition=" '$(OutputType)' == 'library' ">$(AssemblyName)</LibraryName>
+      <LibraryName Condition=" '$(OutputType)' == 'dll' ">$(AssemblyName)</LibraryName>
       <VapiDirectory>$(DataOutputPath)vala/vapi</VapiDirectory>
     </ValaCompile>
     <InstallInclude>
