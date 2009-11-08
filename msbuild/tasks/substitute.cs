@@ -63,52 +63,74 @@ namespace Oah.Tasks
 
       foreach (ITaskItem file in sourceFiles)
       {
-        StreamReader input;
-        StreamWriter output;
-        string outFile;
-
-        try
-        {
-          input = new StreamReader(file.ItemSpec, true);
-        }
-        catch (Exception ex)
-        {
-          ret = false;
-          Log.LogErrorFromException(ex, false, true, file.ItemSpec);
-          continue;
-        }
-
-        outFile = GetOutputFile(file.ItemSpec);
-        if (string.IsNullOrEmpty(outFile))
+        string outName = GetOutputFile(file.ItemSpec);
+        if (string.IsNullOrEmpty(outName))
           continue;
 
-        StringBuilder buffer = new StringBuilder(input.ReadToEnd());
-        try
+        DateTime lastWrite = File.GetLastAccessTimeUtc(file.ItemSpec);
+        FileInfo tmpFile = SubstituteFile(file.ItemSpec);
+
+        FileInfo outFile = new FileInfo(outName);
+        if (outFile.Exists)
         {
-          Encoding enc = input.CurrentEncoding;
-          if (enc == Encoding.UTF8)
-            enc = Encoding.Default;
+          if (outFile.Length == tmpFile.Length && outFile.LastWriteTimeUtc == lastWrite)
+          {
+            Log.LogMessage(MessageImportance.Normal, "Skip Substitute {0} -> {1}", file.ItemSpec, outName);
+            continue;
+          }
 
-          output = new StreamWriter(outFile, false, enc);
-        }
-        catch (Exception ex)
-        {
-          ret = false;
-          Log.LogErrorFromException(ex, false, true, outFile);
-          continue;
+          outFile.Delete();
         }
 
-        Log.LogMessage(MessageImportance.Normal, "Substitute {0} -> {1}", file.ItemSpec, outFile);
-        outputFiles.Add(new TaskItem(outFile, file.CloneCustomMetadata()));
+        tmpFile.MoveTo(outName);
+        File.SetLastWriteTimeUtc(outName, lastWrite);
 
-        input.Close();
-
-        foreach (ITaskItem exp in expressions)
-          ExecuteExpression(buffer, exp.ItemSpec);
-
-        output.Write(buffer);
-        output.Close();
+        Log.LogMessage(MessageImportance.Normal, "Substitute {0} -> {1}", file.ItemSpec, outName);
+        outputFiles.Add(new TaskItem(outName, file.CloneCustomMetadata()));
       }
+
+      return ret;
+    }
+
+    public FileInfo SubstituteFile(string inFile)
+    {
+      StreamReader input;
+      try
+      {
+        input = new StreamReader(inFile, true);
+      }
+      catch (Exception ex)
+      {
+        Log.LogErrorFromException(ex, false, true, inFile);
+        return null;
+      }
+
+      var ret = new FileInfo(Path.GetTempFileName());
+
+      StreamWriter output;
+      try
+      {
+        Encoding enc = input.CurrentEncoding;
+        if (enc == Encoding.UTF8)
+          enc = Encoding.Default;
+
+        output = new StreamWriter(ret.FullName, false, enc);
+      }
+      catch (Exception ex)
+      {
+        Log.LogErrorFromException(ex, false, true, ret.FullName);
+        return null;
+      }
+
+      StringBuilder buffer = new StringBuilder(input.ReadToEnd());
+
+      input.Close();
+
+      foreach (ITaskItem exp in expressions)
+        ExecuteExpression(buffer, exp.ItemSpec);
+
+      output.Write(buffer);
+      output.Close();
 
       return ret;
     }
