@@ -125,17 +125,29 @@
 
       <Copy
         SourceFiles="$(ConfigHeader)"
-        Condition=" '$(ConfigHeader)' != '$(IntDir)config.h' "
+        DestinationFiles="$(IntDir)_config.h"
+        Condition=" Exists ('$(ConfigHeader)')"
+        />
+
+      <WriteLinesToFile
+        File="$(IntDir)_config.h"
+        Lines="@(ConfigPreprocessor->'#define %(Identity)')"
+        Condition=" '@(ConfigPreprocessor)' != '' and Exists ('$(IntDir)_config.h')"
+        Overwrite="false"
+        />
+
+      <Copy
+        SourceFiles="$(IntDir)_config.h"
+        Condition=" Exists ('$(IntDir)_config.h') "
         DestinationFiles="$(IntDir)config.h"
+        SkipUnchangedFiles="true"
         >
           <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
       </Copy>
 
-      <WriteLinesToFile
-        File="$(IntDir)config.h"
-        Lines="@(ConfigPreprocessor->'#define %(Identity)')"
-        Condition=" '@(ConfigPreprocessor)' != '' "
-        Overwrite="false"
+      <Delete
+        Files="$(IntDir)_config.h"
+        Condition=" Exists ('$(IntDir)_config.h') "
         />
   </Target>
 
