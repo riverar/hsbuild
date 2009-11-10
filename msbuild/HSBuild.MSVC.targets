@@ -50,8 +50,19 @@
           <Output TaskParameter="Filtered" ItemName="_ClIncDir" />
       </RemoveDuplicates>
 
+      <ItemGroup>
+        <ClCompile>
+          <PrecompiledHeaderOutputFile  Condition="'%(ClCompile.PrecompiledHeader)' == 'NotUsing' or '%(ClCompile.PrecompiledHeader)' == ''"></PrecompiledHeaderOutputFile>
+          <PrecompiledHeaderFile        Condition="'%(ClCompile.PrecompiledHeader)' == 'NotUsing' or '%(ClCompile.PrecompiledHeader)' == ''"></PrecompiledHeaderFile>
+          <AssemblerListingLocation     Condition="'%(ClCompile.AssemblerOutput)' == 'NoListing' or '%(ClCompile.AssemblerOutput)' == ''"></AssemblerListingLocation>
+          <CompileAs                    Condition="'%(ClCompile.CompileAs)' == 'Default' and '%(ClCompile.Extension)' == '.c'">CompileAsC</CompileAs>
+          <CompileAs                    Condition="'%(ClCompile.CompileAs)' == 'Default' and '%(ClCompile.Extension)' != '.c'">CompileAsCpp</CompileAs>
+          <MinimalRebuildFromTracking   Condition="'%(ClCompile.MinimalRebuildFromTracking)'    == '' and '$(BuildType)' == 'Build' and '$(ForceRebuild)' != 'true'">true</MinimalRebuildFromTracking>
+        </ClCompile>
+      </ItemGroup>
+
       <!-- Compile C sources -->
-      <MSVCCompiler
+      <MSVCCompiler Condition="'%(ClCompile.ExcludedFromBuild)'!='true'"
         ToolPath="$(MSVCToolPath)"
 
         SourceFiles="@(ClCompile)"
@@ -82,6 +93,8 @@
         StringPooling="%(ClCompile.StringPooling)"
 
         AdditionalOptions="%(ClCompile.AdditionalOptions)"
+
+        MinimalRebuildFromTracking="%(ClCompile.MinimalRebuildFromTracking)"
         />
 
       <ItemGroup>
