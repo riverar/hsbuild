@@ -12,6 +12,7 @@ namespace Oah.Tasks
     private const string MSVCCompilerToolName = "cl.exe";
 
     private ITaskItem[] sourceFiles;
+    private ITaskItem[] inputfiles;
     private ITaskItem[] includeDirectories;
     private ITaskItem[] preprocessors;
     private ITaskItem[] forceIncludes;
@@ -36,6 +37,7 @@ namespace Oah.Tasks
     private bool bufferSecurityCheck = true;
     private bool runtimeTypeInfo = true;
     private bool stringPooling = false;
+    private bool minimalRebuildFromTracking = true;
 
     #region Tool properties
     [Required]
@@ -189,6 +191,12 @@ namespace Oah.Tasks
       set { this.stringPooling = value; }
     }
 
+    public bool MinimalRebuildFromTracking
+    {
+      get { return this.minimalRebuildFromTracking; }
+      set { this.minimalRebuildFromTracking = value; }
+    }
+
     #endregion
 
     protected override string ToolName
@@ -204,6 +212,25 @@ namespace Oah.Tasks
       }
 
       return Path.Combine(Path.GetFullPath(ToolPath), ToolName);
+    }
+
+    public override bool Execute()
+    {
+      inputfiles = GetFilteredSourceFiles();
+      return base.Execute();
+    }
+
+    protected override bool SkipTaskExecution()
+    {
+     if (inputfiles == null || inputfiles.Length == 0)
+     {
+        if (sourceFiles != null && sourceFiles.Length > 0)
+          Log.LogMessage("Skip due to Minimal Rebuild tracking");
+
+        return true;
+      }
+
+      return base.SkipTaskExecution();
     }
 
     protected override string GenerateCommandLineCommands()
@@ -279,9 +306,73 @@ namespace Oah.Tasks
           builder.AppendSwitchUnquotedIfNotNull("/I", dir);
       }
 
-      builder.AppendFileNamesIfNotNull(SourceFiles, " ");
+      builder.AppendFileNamesIfNotNull(inputfiles, " ");
 
       return builder.ToString();
+    }
+
+    private ITaskItem[] GetFilteredSourceFiles()
+    {
+      if (MinimalRebuildFromTracking)
+      {
+        List<ITaskItem> ret = new List<ITaskItem>();
+        HSBuild.MSF.MR.Engine engine;
+
+        try
+        {
+          FileInfo mrdbfile = FindMrDatabaseFile();
+          if (mrdbfile == null || !mrdbfile.Exists)
+            return sourceFiles;
+
+          Log.LogMessage(MessageImportance.Low, "Using Minimal Rebuild Database {0}", mrdbfile.FullName);
+          engine = new HSBuild.MSF.MR.Engine(mrdbfile.FullName);
+        }
+        catch (Exception ex)
+        {
+          Log.LogWarningFromException(ex);
+          return sourceFiles;
+        }
+
+        string dueTo;
+        foreach (var item in sourceFiles)
+        {
+          if (!engine.IsFileUpToDate(item.ItemSpec, out dueTo))
+            ret.Add(item);
+          else
+            Log.LogMessage(MessageImportance.Low, "Skip due to MR {0}", item.ItemSpec);
+        }
+
+        engine.Dispose();
+        return ret.ToArray();
+      }
+
+      return sourceFiles;
+    }
+
+    private FileInfo FindMrDatabaseFile()
+    {
+      DirectoryInfo mrdbdir;
+
+      if (Directory.Exists(ObjectFileName.ItemSpec))
+        mrdbdir = new DirectoryInfo(ObjectFileName.ItemSpec);
+      else
+      {
+        mrdbdir = new DirectoryInfo(Path.GetDirectoryName(ObjectFileName.ItemSpec));
+        if (!mrdbdir.Exists)
+          mrdbdir = new DirectoryInfo(Environment.CurrentDirectory);
+      }
+
+      var files = mrdbdir.GetFiles("*.idb");
+      if (files.Length == 0)
+      {
+        Log.LogWarning("Could find Minimal Rebuild Database in {0}", mrdbdir.FullName);
+        return null;
+      }
+
+      if (files.Length > 1)
+        Log.LogWarning("Found more than one .idb file in {0}", mrdbdir.FullName);
+
+      return files[0];
     }
 
     private string GetWarningLevelSwitch()

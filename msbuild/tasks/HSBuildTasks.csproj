@@ -62,6 +62,13 @@
     <Compile Include="aggregator.cs" />
     <Compile Include="vala.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="HSBuild.MSF\HSBuild.MSF.csproj">
+      <Project>{A2589642-04D5-441B-9B6A-31625B5B2877}</Project>
+      <Name>HSBuild.MSF</Name>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
