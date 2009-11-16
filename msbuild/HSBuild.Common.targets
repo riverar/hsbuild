@@ -240,7 +240,7 @@
   <!-- TARGET: Install Package Config files -->
   <Target
     Name="_GeneratePkgConfigFiles"
-    Condition=" '@(PCInstall)' != '' "
+    Condition=" '@(InstallPkgConfig)' != '' "
     >
       <ItemGroup>
           <_SubstExpr Include="s#@prefix@#c:/AutoResolved#g" />
@@ -272,40 +272,37 @@
       </ItemGroup>
 
       <Substitute
-        SourceFiles="@(PCInstall)"
-        Condition=" '%(PCInstall.Extension)' == '.in' "
-        Expressions="%(PCInstall.SubstitutionExpression);@(_SubstExpr)"
+        SourceFiles="@(InstallPkgConfig)"
+        Condition=" '%(InstallPkgConfig.Extension)' == '.in' "
+        Expressions="%(InstallPkgConfig.SubstitutionExpression);@(_SubstExpr)"
         OutputDirectory="$(IntDir)"
         >
           <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
-          <Output TaskParameter="DestinationFiles" ItemName="PCInstall" />
+          <Output TaskParameter="DestinationFiles" ItemName="InstallPkgConfig" />
       </Substitute>
 
       <ItemGroup>
-          <PCInstall Remove="@(PCInstall)" Condition=" '%(PCInstall.Extension)' == '.in' " />
+          <InstallPkgConfig Remove="@(InstallPkgConfig)" Condition=" '%(InstallPkgConfig.Extension)' == '.in' " />
       </ItemGroup>
   </Target>
 
   <Target
     Name="InstallPkgConfig"
-    Condition=" '@(PCInstall)' != '' "
+    Condition=" '@(InstallPkgConfig)' != '' "
     DependsOnTargets="_GeneratePkgConfigFiles"
     >
       <MakeDir Directories="$(PkgConfigOutputPath)" />
 
+      <ItemGroup>
+          <InstallPkgConfig Condition=" '%(InstallPkgConfig.OutputFileName)' == '' ">
+              <OutputFileName>%(InstallPkgConfig.FileName)%(InstallPkgConfig.Extension)</OutputFileName>
+          </InstallPkgConfig>
+      </ItemGroup>
+
       <!-- Copy all PkgConfig files. -->
       <Copy
-        SourceFiles="@(PCInstall)"
-        Condition=" '%(PCInstall.OutputFileName)' == '' "
-        DestinationFolder="$(PkgConfigOutputPath)"
-        SkipUnchangedFiles="true"
-        OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)">
-          <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
-      </Copy>
-      <Copy
-        SourceFiles="@(PCInstall)"
-        Condition=" '%(PCInstall.OutputFileName)' != '' "
-        DestinationFiles="$(PkgConfigOutputPath)%(PCInstall.OutputFileName)"
+        SourceFiles="@(InstallPkgConfig)"
+        DestinationFiles="$(PkgConfigOutputPath)%(InstallPkgConfig.OutputFileName)"
         SkipUnchangedFiles="true"
         OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)">
           <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
