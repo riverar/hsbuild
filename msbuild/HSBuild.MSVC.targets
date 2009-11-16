@@ -46,10 +46,6 @@
     Name="CompileCToObject"
     DependsOnTargets="_EnsureClCompile"
     >
-      <RemoveDuplicates Inputs="@(CIncludeDirectory)">
-          <Output TaskParameter="Filtered" ItemName="_ClIncDir" />
-      </RemoveDuplicates>
-
       <ItemGroup>
         <ClCompile>
           <PrecompiledHeaderOutputFile  Condition="'%(ClCompile.PrecompiledHeader)' == 'NotUsing' or '%(ClCompile.PrecompiledHeader)' == ''"></PrecompiledHeaderOutputFile>
@@ -66,7 +62,7 @@
         ToolPath="$(MSVCToolPath)"
 
         SourceFiles="@(ClCompile)"
-        AdditionalIncludeDirectories="@(_ClIncDir);%(ClCompile.AdditionalIncludeDirectories)"
+        AdditionalIncludeDirectories="%(ClCompile.AdditionalIncludeDirectories)"
         PreprocessorDefinitions="%(ClCompile.PreprocessorDefinitions)"
         ForceIncludes="%(ClCompile.ForceIncludes)"
         ForceUsing="%(ClCompile.ForceUsing)"
@@ -178,8 +174,8 @@
 
       <MSVCLinker
         Sources="@(Link)"
-        AdditionalLibPaths="@(LinkLibPath)"
-        AdditionalLibraries="@(LinkLibrary)"
+        AdditionalLibPaths="%(Link.AdditionalLibPaths)"
+        AdditionalLibraries="%(Link.AdditionalLibraries)"
         OutputFile="$(TargetPath)"
         Incremental="$(LinkIncremental)"
         DefFile="$(DefFile)"
@@ -215,8 +211,8 @@
       <!-- Re-link with manifest resource file! -->
       <MSVCLinker
         Sources="@(Link)"
-        AdditionalLibPaths="@(LinkLibPath)"
-        AdditionalLibraries="@(LinkLibrary)"
+        AdditionalLibPaths="%(Link.AdditionalLibPaths)"
+        AdditionalLibraries="%(Link.AdditionalLibraries)"
         OutputFile="$(TargetPath)"
         Incremental="$(LinkIncremental)"
         DefFile="$(DefFile)"
@@ -237,8 +233,8 @@
 
       <MSVCLib
         Sources="@(Link)"
-        AdditionalLibPaths="@(LinkLibPath)"
-        AdditionalLibraries="@(LinkLibrary)"
+        AdditionalLibPaths="%(Link.AdditionalLibPaths)"
+        AdditionalLibraries="%(Link.AdditionalLibraries)"
         OutputFile="$(TargetPath)"
         DefFile="$(DefFile)"
         SubSystem="$(SubSystem)"

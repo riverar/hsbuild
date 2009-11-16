@@ -110,7 +110,9 @@
     Condition=" '$(DisableConfigHeaderGeneration)' != 'true' "
     >
       <ItemGroup>
-          <CIncludeDirectory Include="$(IntermediatePath)" />
+          <ClCompile>
+              <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(IntermediatePath)</AdditionalIncludeDirectories>
+          </ClCompile>
       </ItemGroup>
 
       <ItemGroup>
@@ -178,13 +180,19 @@
       PkgConfigPaths="$(PkgConfigOutputPath)"
       ToolPath="$(HSBuildToolPath)"
       >
-        <Output TaskParameter="CIncludes" ItemName="CIncludeDirectory" />
-        <Output TaskParameter="LibPaths"  ItemName="LinkLibPath" />
+        <Output TaskParameter="CIncludes" ItemName="_PkgConfigIncludeDirs" />
+        <Output TaskParameter="LibPaths"  ItemName="_PkgConfigLibPaths" />
         <Output TaskParameter="Libs"      ItemName="_PkgConfigLibs" />
     </PkgConfig>
 
     <ItemGroup>
-        <LinkLibrary Include="@(_PkgConfigLibs->'%(Identity).lib')" />
+        <ClCompile>
+            <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);@(_PkgConfigIncludeDirs)</AdditionalIncludeDirectories>
+        </ClCompile>
+        <Link>
+            <AdditionalLibPaths>%(AdditionalLibPaths);@(_PkgConfigLibPaths)</AdditionalLibPaths>
+            <AdditionalLibraries>%(AdditionalLibraries);@(_PkgConfigLibs->'%(Identity).lib')</AdditionalLibraries>
+        </Link>
     </ItemGroup>
   </Target>
 
