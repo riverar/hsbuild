@@ -33,12 +33,6 @@
   <UsingTask  TaskName="PkgConfigQueryVariable"    AssemblyFile="$(HSBuildTasksPath)" />
   <UsingTask  TaskName="Substitute"                AssemblyFile="$(HSBuildTasksPath)" />
   <UsingTask  TaskName="Aggregator"                AssemblyFile="$(HSBuildTasksPath)" />
-  <UsingTask  TaskName="MSVCCompiler"              AssemblyFile="$(HSBuildTasksPath)" />
-  <UsingTask  TaskName="MSResourceCompiler"        AssemblyFile="$(HSBuildTasksPath)" />
-  <UsingTask  TaskName="MSManifest"                AssemblyFile="$(HSBuildTasksPath)" />
-  <UsingTask  TaskName="MSManifestResource"        AssemblyFile="$(HSBuildTasksPath)" />
-  <UsingTask  TaskName="MSVCLinker"                AssemblyFile="$(HSBuildTasksPath)" />
-  <UsingTask  TaskName="MSVCLib"                   AssemblyFile="$(HSBuildTasksPath)" />
 
   <Import     Project="HSBuild.MSVC.targets" />
 

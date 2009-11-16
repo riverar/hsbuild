@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+
+  <UsingTask  TaskName="MSVCCompiler"              AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="MSResourceCompiler"        AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="MSManifest"                AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="MSManifestResource"        AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="MSVCLinker"                AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="MSVCLib"                   AssemblyFile="$(HSBuildTasksPath)" />
+
   <!-- Find visual studio 2008 (9.0) -->
   <PropertyGroup Condition=" '$(MSVCToolPath)' == '' " >
       <_VC90Path>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\9.0\Setup\VC@ProductDir)</_VC90Path>
