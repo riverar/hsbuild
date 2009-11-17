@@ -274,7 +274,7 @@
       <Substitute
         SourceFiles="@(InstallPkgConfig)"
         Condition=" '%(InstallPkgConfig.Extension)' == '.in' "
-        Expressions="%(InstallPkgConfig.SubstitutionExpression);@(_SubstExpr)"
+        Expressions="%(InstallPkgConfig.SubstitutionExpressions);@(_SubstExpr)"
         OutputDirectory="$(IntDir)"
         >
           <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
