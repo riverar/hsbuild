@@ -40,12 +40,22 @@
       </ItemGroup>
   </Target>
   <Target
-    Name="_EnsureResourceCompile"
-    Condition=" '@(Compile)' != ''"
+    Name="_PreprocessResourceCompile"
     >
+      <Substitute
+        SourceFiles="@(ResourceCompile)"
+        Condition=" '%(ResourceCompile.Extension)' == '.in' "
+        Expressions="%(ResourceCompile.SubstitutionExpressions)"
+        OutputDirectory="$(IntDir)"
+        >
+          <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
+          <Output TaskParameter="DestinationFiles" ItemName="ResourceCompile" />
+      </Substitute>
+	
       <!-- Setup RC compile sources if Compile used -->
       <ItemGroup>
           <ResourceCompile Include="@(Compile)" Condition="'%(Extension)'=='.rc'" />
+          <ResourceCompile Remove="@(ResourceCompile)" Condition="'%(Extension)'=='.in'" />
       </ItemGroup>
   </Target>
 
@@ -112,7 +122,7 @@
   <!-- TARGET: Compile resource files (.rc) To Object -->
   <Target
     Name="CompileResourceToObject"
-    DependsOnTargets="_EnsureResourceCompile"
+    DependsOnTargets="_PreprocessResourceCompile"
     Condition=" '@(ResourceCompile)' != '' "
     >
       <!-- Compile resources -->
