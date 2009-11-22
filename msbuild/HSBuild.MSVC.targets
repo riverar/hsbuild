@@ -80,7 +80,7 @@
         ToolPath="$(MSVCToolPath)"
 
         SourceFiles="@(ClCompile)"
-        AdditionalIncludeDirectories="%(ClCompile.AdditionalIncludeDirectories)"
+        AdditionalIncludeDirectories="%(ClCompile.AdditionalIncludeDirectories);@(AdditionalIncludeDirectories)"
         PreprocessorDefinitions="%(ClCompile.PreprocessorDefinitions)"
         ForceIncludes="%(ClCompile.ForceIncludes)"
         ForceUsing="%(ClCompile.ForceUsing)"
@@ -192,8 +192,8 @@
 
       <MSVCLinker
         Sources="@(Link)"
-        AdditionalLibPaths="%(Link.AdditionalLibPaths)"
-        AdditionalLibraries="%(Link.AdditionalLibraries)"
+        AdditionalLibPaths="%(Link.AdditionalLibPaths);@(AdditionalLibPaths)"
+        AdditionalLibraries="%(Link.AdditionalLibraries);@(AdditionalLibraries)"
         OutputFile="$(TargetPath)"
         Incremental="$(LinkIncremental)"
         DefFile="$(DefFile)"
@@ -229,8 +229,8 @@
       <!-- Re-link with manifest resource file! -->
       <MSVCLinker
         Sources="@(Link)"
-        AdditionalLibPaths="%(Link.AdditionalLibPaths)"
-        AdditionalLibraries="%(Link.AdditionalLibraries)"
+        AdditionalLibPaths="%(Link.AdditionalLibPaths);@(AdditionalLibPaths)"
+        AdditionalLibraries="%(Link.AdditionalLibraries);@(AdditionalLibraries)"
         OutputFile="$(TargetPath)"
         Incremental="$(LinkIncremental)"
         DefFile="$(DefFile)"
@@ -251,8 +251,8 @@
 
       <MSVCLib
         Sources="@(Link)"
-        AdditionalLibPaths="%(Link.AdditionalLibPaths)"
-        AdditionalLibraries="%(Link.AdditionalLibraries)"
+        AdditionalLibPaths="%(Link.AdditionalLibPaths);@(AdditionalLibPaths)"
+        AdditionalLibraries="%(Link.AdditionalLibraries);@(AdditionalLibraries)"
         OutputFile="$(TargetPath)"
         DefFile="$(DefFile)"
         SubSystem="$(SubSystem)"
