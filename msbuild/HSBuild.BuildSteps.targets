@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" InitialTargets="_CheckConfigurationPlatformAndOutput" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target
+    Name="_CheckConfigurationPlatformAndOutput"
+    >
+      <Message Text="Configuration=$(Configuration)" Importance="Low" />
+      <Message Text="Platform=$(Platform)" Importance="Low" />
+      <Message Text="TargetPath=$(TargetPath)" Importance="Low" />
+
+      <!-- Configuration and Platform MUST be specified by the top project file it self! -->
+      <Error
+        Condition=" '$(Configuration)' == '' "
+        Text="The Configuration is not specified."
+        />
+      <Error
+        Condition=" '$(Platform)' == '' "
+        Text="The Platform is not specified."
+        />
+
+      <!-- Although we try to ensure a trailing slash, it's possible to circumvent this if the property is set on the command line -->
+      <Error
+        Condition=" '$(OutputPath)' != '' and !HasTrailingSlash('$(OutputPath)') "
+        Text="The OutputPath property must end with a trailing slash."
+        />
+      <Error
+        Condition=" '$(IntermediatePath)' != '' and !HasTrailingSlash('$(IntermediatePath)') "
+        Text="The IntermediatePath must end with a trailing slash."
+        />
+  </Target>
+
+  <Target Name="IsProjectFileNewer"
+		Outputs="$(IntDir)lastbuild.timestamp"
+		Inputs="$(ProjectFileName)" >
+    <CreateProperty Condition="'$(BuildType)' == ''" Value="Rebuild">
+      <Output TaskParameter="ValueSetByTask" PropertyName="BuildType"/>
+    </CreateProperty>
+  </Target>
+
+  <Target
+    Name="PrepareFileWrites"
+    >
+      <!-- Read in list of files that were written to disk in past builds. -->
+      <ReadLinesFromFile File="$(IntDir)$(CleanFile)">
+          <Output TaskParameter="Lines" ItemName="FileWrites" />
+      </ReadLinesFromFile>
+  </Target>
+
+  <Target
+    Name="CommitFileWrites"
+    Condition=" '@(FileWrites)' != '' "
+    >
+      <!-- Write FileWrites item group to clean file so that a later Clean can delete them! -->
+      <WriteLinesToFile
+        File="$(IntDir)$(CleanFile)"
+        Lines="@(FileWrites)"
+        Overwrite="true"
+        />
+  </Target>
+
+  <Target
+    Name="DeleteFileWrites"
+    >
+      <!-- Delete those files. -->
+      <Delete
+        Files="@(FileWrites);$(IntDir)$(CleanFile)"
+        TreatErrorsAsWarnings="true"
+        />
+  </Target>
+
+  <!-- ======================================================================== -->
+  <!--                              Common targets                              -->
+  <!-- ======================================================================== -->
+
+  <!-- TARGET: Build -->
+  <Target Name="_PrepareForBuild" DependsOnTargets="IsProjectFileNewer">
+    <PropertyGroup>
+      <BuildType Condition="'$(BuildType)' == ''">Build</BuildType>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(IntDir)"/>
+    <Touch AlwaysCreate="true" Files="$(IntDir)lastbuild.timestamp"/>
+  </Target>
+
+  <Target Name="_AfterBuild">
+    <Touch AlwaysCreate="true" Files="$(IntDir)LastSuccessfulBuild.timestamp"/>
+  </Target>
+
+  <PropertyGroup>
+    <BuildSteps Condition="'$(BuildSteps)' == ''">
+      SetBuildDefaultEnvironmentVariables;
+      SetUserMacroEnvironmentVariables;
+      PrepareForBuild;
+      BuildGenerateSources;
+      BuildCompile;
+      BuildLink;
+      BuildInstall;
+    </BuildSteps>
+
+    <BuildDependsOn>
+      _PrepareForBuild;
+      BeforeBuild;
+      PrepareFileWrites;
+      $(BuildSteps);
+      CommitFileWrites;
+      AfterBuild;
+      _AfterBuild;
+    </BuildDependsOn>
+  </PropertyGroup>
+  <Target
+      Name="Build"
+      Condition=" '$(_InvalidConfigurationWarning)' != 'true' "
+      DependsOnTargets="$(BuildDependsOn)"
+      Outputs="@(ManagedTargetPath)" >
+    <ItemGroup>
+      <ManagedTargetPath Include="$(TargetPath)" Condition="'$(ManagedAssembly)' == 'true'" />
+    </ItemGroup>
+  </Target>
+
+  <!-- TARGET: Rebuild -->
+  <Target Name="_PrepareForRebuild">
+    <PropertyGroup>
+      <BuildType Condition="'$(BuildType)' == ''">Rebuild</BuildType>
+    </PropertyGroup>
+  </Target>
+
+  <PropertyGroup>
+    <RebuildDependsOn>
+      _PrepareForRebuild;
+      BeforeRebuild;
+      Clean;
+      Build;
+      AfterRebuild;
+    </RebuildDependsOn>
+  </PropertyGroup>
+  <Target
+      Name="Rebuild"
+      Condition=" '$(_InvalidConfigurationWarning)' != 'true' "
+      DependsOnTargets="$(RebuildDependsOn)"
+      Outputs="@(ManagedTargetPath)">
+    <ItemGroup>
+      <ManagedTargetPath Include="$(TargetPath)" Condition="'$(ManagedAssembly)' == 'true'" />
+    </ItemGroup>
+  </Target>
+
+  <!-- TARGET: Clean -->
+  <Target
+    Name="_PrepareForClean"
+    >
+      <PropertyGroup>
+        <BuildType Condition="'$(BuildType)' == ''">Clean</BuildType>
+      </PropertyGroup>
+
+      <Delete
+        Files="$(IntDir)lastbuild.timestamp;$(IntDir)lastsuccessfulbuild.timestamp"
+        />
+  </Target>
+
+  <PropertyGroup>
+    <CleanDependsOn>
+      _PrepareForClean;
+      BeforeClean;
+      PrepareFileWrites;
+      DeleteFileWrites;
+      AfterClean
+    </CleanDependsOn>
+  </PropertyGroup>
+  <Target
+    Name="Clean"
+    DependsOnTargets="$(CleanDependsOn)"
+    />
+
+  <!-- TARGET: Run -->
+  <PropertyGroup>
+    <RunDependsOn>
+      BeforeRun;
+      _DoRun;
+      AfterRun
+    </RunDependsOn>
+  </PropertyGroup>
+  <Target
+    Name="Run"
+    DependsOnTargets="$(RunDependsOn)"
+    />
+  <Target
+    Name="_DoRun"
+    >
+      <Error Text="Cannot run '$(TargetPath)' because project output type is not '.exe'" Condition="'$(TargetExt)'!='.exe'"/>
+      <Exec Command="$(TargetPath) $(StartArguments)" WorkingDirectory="$(OutDir)" Condition=" '$(StartWorkingDirectory)' == '' "/>
+      <Exec Command="$(TargetPath) $(StartArguments)" WorkingDirectory="$(StartWorkingDirectory)" Condition=" '$(StartWorkingDirectory)' != '' "/>
+  </Target>
+
+  <!-- Redefine these targets in your .hsproj -->
+  <Target Name="BeforeBuild" />
+  <Target Name="AfterBuild" />
+  <Target Name="BeforeRebuild" />
+  <Target Name="AfterRebuild" />
+  <Target Name="BeforeClean" />
+  <Target Name="AfterClean" />
+  <Target Name="BeforeRun" />
+  <Target Name="AfterRun" />
+
+
+  <!-- ======================================================================== -->
+  <!--                            BuildSteps targets                            -->
+  <!-- ======================================================================== -->
+
+  <PropertyGroup>
+    <BuildGenerateSourcesDependsOn>
+      BeforeBuildGenerateSources;
+      $(BuildGenerateSourcesTargets);
+      AfterBuildGenerateSources
+    </BuildGenerateSourcesDependsOn>
+  </PropertyGroup>
+  <Target
+    Name="BuildGenerateSources"
+    DependsOnTargets="$(BuildGenerateSourcesDependsOn)"
+    />
+
+  <PropertyGroup>
+      <BuildCompileDependsOn>
+          BeforeBuildCompile;
+          $(BuildCompileTargets);
+          AfterBuildCompile
+      </BuildCompileDependsOn>
+  </PropertyGroup>
+  <Target
+    Name="BuildCompile"
+    DependsOnTargets="$(BuildCompileDependsOn)"
+    />
+
+  <PropertyGroup>
+      <BuildLinkDependsOn>
+          BeforeBuildLink;
+          $(BuildLinkTargets);
+          AfterBuildLink
+      </BuildLinkDependsOn>
+  </PropertyGroup>
+  <Target
+    Name="BuildLink"
+    DependsOnTargets="$(BuildLinkDependsOn)"
+    />
+
+  <PropertyGroup>
+    <BuildInstallDependsOn>
+      BeforeBuildInstall;
+      $(BuildInstallTargets);
+      AfterBuildInstall
+    </BuildInstallDependsOn>
+  </PropertyGroup>
+  <Target
+    Name="BuildInstall"
+    DependsOnTargets="$(BuildInstallDependsOn)"
+    />
+
+  <!-- Redefine these targets in your .hsproj -->
+  <Target Name="BeforeBuildGenerateSources" />
+  <Target Name="AfterBuildGenerateSources" />
+  <Target Name="BeforeBuildCompile" />
+  <Target Name="AfterBuildCompile" />
+  <Target Name="BeforeBuildLink" />
+  <Target Name="AfterBuildLink" />
+  <Target Name="BeforeBuildInstall" />
+  <Target Name="AfterBuildInstall" />
+
+  <Target Name="SetBuildDefaultEnvironmentVariables" />
+  <Target Name="SetUserMacroEnvironmentVariables" />
+  <Target Name="PrepareForBuild" />
+</Project>

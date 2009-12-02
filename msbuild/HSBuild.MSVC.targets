@@ -9,21 +9,19 @@
   <UsingTask  TaskName="MSVCLib"                   AssemblyFile="$(HSBuildTasksPath)" />
 
   <!-- Find visual studio 2008 (9.0) -->
-  <PropertyGroup Condition=" '$(MSVCToolPath)' == '' " >
+  <PropertyGroup Condition=" '$(PlatformToolset)' == 'v90' and '$(MSVCToolPath)' == '' " >
       <_VC90Path>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\9.0\Setup\VC@ProductDir)</_VC90Path>
       <_VC90ExpressPath>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VCExpress\9.0\Setup\VC@ProductDir)</_VC90ExpressPath>
       <MSVCToolPath       Condition=" '$(_VC90ExpressPath)' != '' "             >$(_VC90ExpressPath)bin\</MSVCToolPath>
       <MSVCToolPath       Condition=" '$(_VC90Path)' != '' "                    >$(_VC90Path)bin\</MSVCToolPath>
-      <CRTSuffix          Condition=" '$(MSVCToolPath)' != '' "                 >vc90</CRTSuffix>
   </PropertyGroup>
 
   <!-- Find visual studio 2005 (8.0) -->
-  <PropertyGroup Condition=" '$(MSVCToolPath)' == '' " >
+  <PropertyGroup Condition=" '$(PlatformToolset)' == 'v80' and '$(MSVCToolPath)' == '' " >
       <_VC80Path>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\8.0\Setup\VC@ProductDir)</_VC80Path>
       <_VC80ExpressPath>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VCExpress\8.0\Setup\VC@ProductDir)</_VC80ExpressPath>
       <MSVCToolPath       Condition=" '$(_VC80ExpressPath)' != '' "             >$(_VC80ExpressPath)bin\</MSVCToolPath>
       <MSVCToolPath       Condition=" '$(_VC80Path)' != '' "                    >$(_VC80Path)bin\</MSVCToolPath>
-      <CRTSuffix          Condition=" '$(MSVCToolPath)' != '' "                 >vc80</CRTSuffix>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(MSVCToolPath)' != '' " >

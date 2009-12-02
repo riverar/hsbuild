@@ -1,20 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <PropertyGroup>
-        <DefaultLanguageSourceExtension>.c</DefaultLanguageSourceExtension>
-        <Language>C</Language>
-    </PropertyGroup>
+  <PropertyGroup>
+    <DefaultLanguageSourceExtension>.c</DefaultLanguageSourceExtension>
+    <Language>C</Language>
+  </PropertyGroup>
 
-    <PropertyGroup>
-      <CoreCompileDependsOn>
-        BuildNativeAssembly
-      </CoreCompileDependsOn>
-    </PropertyGroup>
+  <PropertyGroup>
+    <BuildCompileTargets>
+      $(BuildCompileTargets);
+      CompileCToObject;
+      CompileResourceToObject;
+    </BuildCompileTargets>
 
-    <Target
-      Name="CoreCompile"
-      DependsOnTargets="$(CoreCompileDependsOn)"
-      />
+    <BuildLinkTargets>
+      $(BuildLinkTargets);
+      GenerateNativeAssembly;
+    </BuildLinkTargets>
 
-    <Import Project="HSBuild.Common.targets" />
+    <BuildInstallTargets>
+      $(BuildInstallTargets);
+      InstallHeaders;
+    </BuildInstallTargets>
+  </PropertyGroup>
+
+  <Import Project="HSBuild.Common.targets" />
+  <Import Project="HSBuild.MSVC.targets" />
+
+  <!-- TARGET: Install C Headers -->
+  <Target
+    Name="_CheckClIncludeForInstall"
+    Condition=" '@(ClInclude)' != '' "
+    >
+      <ItemGroup>
+          <InstallInclude Include="@(ClInclude)" Condition=" '%(ClInclude.Install)' != '' ">
+            <SubDirectory>%(ClInclude.SubDirectory)</SubDirectory>
+          </InstallInclude>
+      </ItemGroup>
+  </Target>
+
+  <Target
+    Name="InstallHeaders"
+    Condition=" '@(InstallInclude)' != '' "
+    DependsOnTargets="_CheckClIncludeForInstall"
+    >
+      <MakeDir Directories="$(IncludeOutputPath)" />
+
+      <!-- Copy all installable header files. -->
+      <Copy
+        SourceFiles="@(InstallInclude)"
+        DestinationFolder="$(IncludeOutputPath)%(InstallInclude.SubDirectory)"
+        SkipUnchangedFiles="true"
+        OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)">
+          <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+      </Copy>
+  </Target>
+
 </Project>

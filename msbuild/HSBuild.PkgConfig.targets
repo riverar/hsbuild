@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <BuildGenerateSourcesTargets>
+      PkgConfigFlagsQuery;
+      $(BuildGenerateSourcesTargets);
+    </BuildGenerateSourcesTargets>
+
+    <BuildInstallTargets>
+      $(BuildInstallTargets);
+      InstallPkgConfig;
+    </BuildInstallTargets>
+  </PropertyGroup>
+
+  <UsingTask  TaskName="PkgConfig"                 AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="PkgConfigQueryVariable"    AssemblyFile="$(HSBuildTasksPath)" />
+
+  <!-- TARGET: PkgConfig Flags Query -->
+  <Target
+    Name="PkgConfigFlagsQuery"
+    Condition="'@(Package)' != ''"
+    >
+    <PkgConfig
+      Packages="@(Package)"
+      PkgConfigPaths="$(PkgConfigOutputPath)"
+      ToolPath="$(HSBuildToolPath)"
+      >
+        <Output TaskParameter="CIncludes" ItemName="AdditionalIncludeDirectories" />
+        <Output TaskParameter="LibPaths"  ItemName="AdditionalLibPaths" />
+        <Output TaskParameter="Libs"      ItemName="_PkgConfigLibs" />
+    </PkgConfig>
+
+    <ItemGroup>
+        <AdditionalLibraries Include="@(_PkgConfigLibs->'%(Identity).lib')" />
+    </ItemGroup>
+  </Target>
+
+  <!-- TARGET: Install Package Config files -->
+  <Target
+    Name="_GeneratePkgConfigFiles"
+    Condition=" '@(InstallPkgConfig)' != '' "
+    >
+      <ItemGroup>
+          <_SubstExpr Include="s#@prefix@#c:/AutoResolved#g" />
+
+          <_SubstExpr Include="s#@exec_prefix@#${prefix}#g" />
+          <_SubstExpr Include="s#@bindir@#${exec_prefix}/bin#g" />
+          <_SubstExpr Include="s#@sbindir@#${exec_prefix}/sbin#g" />
+          <_SubstExpr Include="s#@libexecdir@#${exec_prefix}/libexec#g" />
+
+          <_SubstExpr Include="s#@datarootdir@#${prefix}/share#g" />
+          <_SubstExpr Include="s#@datadir@#${datarootdir}#g" />
+          <_SubstExpr Include="s#@sysconfdir@#${prefix}/etc#g" />
+          <_SubstExpr Include="s#@sharedstatedir@#${prefix}/com#g" />
+          <_SubstExpr Include="s#@localstatedir@#${prefix}/var#g" />
+
+          <_SubstExpr Include="s#@docdir@#${datarootdir}/doc#g" />
+          <_SubstExpr Include="s#@htmldir@#${docdir}#g" />
+          <_SubstExpr Include="s#@dvidir@#${docdir}#g" />
+          <_SubstExpr Include="s#@pdfdir@#${docdir}#g" />
+          <_SubstExpr Include="s#@psdir@#${docdir}#g" />
+          <_SubstExpr Include="s#@infodir@#${datarootdir}/info#g" />
+          <_SubstExpr Include="s#@localedir@#${datarootdir}/locale#g" />
+          <_SubstExpr Include="s#@mandir@#${datarootdir}/man#g" />
+
+          <_SubstExpr Include="s#@includedir@#${prefix}/include#g" />
+          <_SubstExpr Include="s#@libdir@#${prefix}/lib#g" />
+
+          <_SubstExpr Include="s/@VERSION@/$(Version)/g" />
+      </ItemGroup>
+
+      <Substitute
+        SourceFiles="@(InstallPkgConfig)"
+        Condition=" '%(InstallPkgConfig.Extension)' == '.in' "
+        Expressions="%(InstallPkgConfig.SubstitutionExpressions);@(_SubstExpr)"
+        OutputDirectory="$(IntDir)"
+        >
+          <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
+          <Output TaskParameter="DestinationFiles" ItemName="InstallPkgConfig" />
+      </Substitute>
+
+      <ItemGroup>
+          <InstallPkgConfig Remove="@(InstallPkgConfig)" Condition=" '%(InstallPkgConfig.Extension)' == '.in' " />
+      </ItemGroup>
+  </Target>
+
+  <Target
+    Name="InstallPkgConfig"
+    Condition=" '@(InstallPkgConfig)' != '' "
+    DependsOnTargets="_GeneratePkgConfigFiles"
+    >
+      <MakeDir Directories="$(PkgConfigOutputPath)" />
+
+      <ItemGroup>
+          <InstallPkgConfig Condition=" '%(InstallPkgConfig.OutputFileName)' == '' ">
+              <OutputFileName>%(InstallPkgConfig.FileName)%(InstallPkgConfig.Extension)</OutputFileName>
+          </InstallPkgConfig>
+      </ItemGroup>
+
+      <!-- Copy all PkgConfig files. -->
+      <Copy
+        SourceFiles="@(InstallPkgConfig)"
+        DestinationFiles="$(PkgConfigOutputPath)%(InstallPkgConfig.OutputFileName)"
+        SkipUnchangedFiles="true"
+        OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)">
+          <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+      </Copy>
+  </Target>
+
+</Project>
