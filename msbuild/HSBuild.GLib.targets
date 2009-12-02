@@ -8,6 +8,7 @@
     <BuildGenerateSourcesTargets>
       $(BuildGenerateSourcesTargets);
       GLibGenmarshal;
+      GLibMkenums;
     </BuildGenerateSourcesTargets>
   </PropertyGroup>
 
@@ -54,6 +55,31 @@
       </PropertyGroup>
   </Target>
 
+  <Target
+    Name="GLibGetMkenumsExecPath"
+    Condition=" '$(GLibMkenumsExec)' == '' or '$(GLibMkenumsExecPath)' == '' "
+    DependsOnTargets="_GLibGetExecPrefix"
+    >
+      <PkgConfigQueryVariable
+        Packages="glib-$(GLibVersionApi)"
+        PkgConfigPaths="$(PkgConfigOutputPath);$(HSBuildInstalledPkgConfigPath)"
+        ToolPath="$(HSBuildToolPath)"
+        Key="glib_mkenums"
+        >
+          <Output TaskParameter="Value" PropertyName="GLibMkenumsExec" />
+      </PkgConfigQueryVariable>
+
+      <Error
+        Condition=" '$(GLibMkenumsExec)' == '' "
+        Text="glib_genmarshal was not found in glib-$(GLibVersionApi).pc"
+        />
+
+      <PropertyGroup>
+        <GLibMkenumsExec>$(GLibMkenumsExec).pl</GLibMkenumsExec>
+        <GLibMkenumsExecPath Condition=" $(GLibMkenumsExecPath) == '' ">$(GLibExecPrefix)/bin/$(GLibMkenumsExec)</GLibMkenumsExecPath>
+      </PropertyGroup>
+  </Target>
+
   <!-- TARGET: GLibGenmarshal -->
   <Target
     Name="GLibGenmarshal"
@@ -62,7 +88,7 @@
     >
       <Error
         Condition=" '%(GLibGenmarshal.Prefix)' == '' "
-        Text="GLibGenMarshalFiles missing prefix metadata: @(GLibGenmarshal)"
+        Text="GLibGenMarshal missing prefix metadata: %(GLibGenmarshal.Identity)"
         />
 
       <MakeDir
@@ -91,6 +117,39 @@
       <ItemGroup>
         <Compile Condition=" '%(GLibGenmarshal.Compile)' == 'true' " Include="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c" />
         <InstallInclude Condition=" '%(GLibGenmarshal.Internal)' != 'true' " Include="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h" />
+      </ItemGroup>
+  </Target>
+
+  <!-- TARGET: GLibMkenums -->
+  <Target
+    Name="GLibMkenums"
+    Condition=" '@(GLibMkenums)' != '' "
+    DependsOnTargets="GLibGetMkenumsExecPath"
+    >
+      <Error
+        Condition=" '%(GLibMkenums.InputHeaders)' == '' "
+        Text="GLibMkenums missing InputHeaders metadata: %(GLibMkenums.Identity)"
+        />
+
+      <MakeDir
+        Directories="$(IntDir)%(GLibMkenums.SubDirectory)"
+        Condition=" '%(GLibMkenums.SubDirectory)' != '' "
+        />
+
+      <Exec
+        Command="
+          perl.exe &quot;$(GLibMkenumsExecPath)&quot; --template %(GLibMkenums.Identity) %(GLibMkenums.InputHeaders) &gt; &quot;$(IntDir)%(GLibMkenums.SubDirectory)/%(GLibMkenums.Filename)&quot;
+          "
+        />
+
+      <ItemGroup>
+        <_MkenumsOut Include="$(IntDir)%(GLibMkenums.SubDirectory)/%(GLibMkenums.Filename)">
+          <Internal Condition=" '%(GLibMkenums.Internal)' != '' ">%(GLibMkenums.Internal)</Internal>
+          <Compile  Condition=" '%(GLibMkenums.Compile)'  != '' ">%(GLibMkenums.Compile)</Compile>
+        </_MkenumsOut>
+
+        <Compile        Include="@(_MkenumsOut)" Condition=" '%(_MkenumsOut.Extension)' == '.c' and '%(_MkenumsOut.Compile)'  == 'true' " />
+        <InstallInclude Include="@(_MkenumsOut)" Condition=" '%(_MkenumsOut.Extension)' == '.h' and '%(_MkenumsOut.Internal)' != 'true' " />
       </ItemGroup>
   </Target>
 </Project>
