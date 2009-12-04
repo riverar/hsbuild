@@ -85,6 +85,8 @@
     Name="GLibGenmarshal"
     Condition=" '@(GLibGenmarshal)' != '' "
     DependsOnTargets="GLibGetGenmarshalExecPath"
+    Inputs="@(GLibGenmarshal)"
+    Outputs="$(IntDir)%(SubDirectory)/%(Filename).h;$(IntDir)%(SubDirectory)/%(Filename).c"
     >
       <Error
         Condition=" '%(GLibGenmarshal.Prefix)' == '' "
