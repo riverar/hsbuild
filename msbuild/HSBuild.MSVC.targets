@@ -35,10 +35,22 @@
       <!-- Setup Cl compile sources if Compile used -->
       <ItemGroup>
           <ClCompile Include="@(Compile)" Condition="'%(Extension)'=='.c'" />
+          <Compile Remove="@(ClCompile)" />
+      </ItemGroup>
+  </Target>
+  <Target
+    Name="_EnsureResourceCompile"
+    Condition=" '@(Compile)' != ''"
+    >
+      <!-- Setup RC compile sources if Compile used -->
+      <ItemGroup>
+          <ResourceCompile Include="@(Compile)" Condition="'%(Extension)'=='.rc'" />
+          <Compile Remove="@(ResourceCompile)" />
       </ItemGroup>
   </Target>
   <Target
     Name="_PreprocessResourceCompile"
+    Condition=" '@(ResourceCompile)' != '' "
     >
       <Substitute
         SourceFiles="@(ResourceCompile)"
@@ -47,12 +59,10 @@
         OutputDirectory="$(IntDir)"
         >
           <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
-          <Output TaskParameter="DestinationFiles" ItemName="ResourceCompile" />
       </Substitute>
-	
-      <!-- Setup RC compile sources if Compile used -->
+
       <ItemGroup>
-          <ResourceCompile Include="@(Compile)" Condition="'%(Extension)'=='.rc'" />
+          <ResourceCompile Include="@(ResourceCompile->'$(IntDir)\%(FileName)')" Condition="'%(Extension)'=='.in'" />
           <ResourceCompile Remove="@(ResourceCompile)" Condition="'%(Extension)'=='.in'" />
       </ItemGroup>
   </Target>
@@ -110,8 +120,6 @@
         />
 
       <ItemGroup>
-          <Compile Remove="@(ClCompile)" />
-
           <Link Include="@(ClCompile->'$(IntDir)\%(FileName).obj')" />
           <FileWrites Include="@(Link)" />
       </ItemGroup>
@@ -120,7 +128,7 @@
   <!-- TARGET: Compile resource files (.rc) To Object -->
   <Target
     Name="CompileResourceToObject"
-    DependsOnTargets="_PreprocessResourceCompile"
+    DependsOnTargets="_PreprocessResourceCompile;_EnsureResourceCompile"
     Condition=" '@(ResourceCompile)' != '' "
     >
       <!-- Compile resources -->
@@ -134,8 +142,6 @@
         />
 
       <ItemGroup>
-          <Compile Remove="@(ResourceCompile)" />
-
           <Link Include="@(ResourceCompile->'$(IntDir)%(FileName).res')" />
           <FileWrites Include="@(Link)" />
       </ItemGroup>
