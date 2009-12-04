@@ -127,8 +127,11 @@ namespace HSBuild.MSF
 
         public HSBuild.MSF.MR.FilesDataStream GetFileStream(uint idxFile, Parser parser)
         {
-            uint i = (uint)GetStreamID(string.Format("/mr/files/{0:x8}", idxFile));
-            return new HSBuild.MSF.MR.FilesDataStream(i, new BitHelper(parser.GetStreamBytes(i)));
+            int i = GetStreamID(string.Format("/mr/files/{0:x8}", idxFile));
+            if (i < 0)
+                return null;
+
+            return new HSBuild.MSF.MR.FilesDataStream((uint)i, new BitHelper(parser.GetStreamBytes((uint)i)));
         }
 
         private Int32 m_sig;

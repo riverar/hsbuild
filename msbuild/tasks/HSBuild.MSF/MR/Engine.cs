@@ -102,21 +102,24 @@ namespace HSBuild.MSF.MR
                 ret = GetFileInfo(namesIdx);
 
                 if (ret != null)
-                    QueryFileInfoDeps(ret, out obj, out deps);
+                {
+                    var nfo = m_index.GetFileStream(ret.ID, m_parser);
+                    if (nfo == null)
+                    {
+                        ret = null;
+                    }
+                    else
+                    {
+                        if (string.IsNullOrEmpty(ret.FileName))
+                            ret.SetFilename(m_names.FindByKey(ret.ID));
+
+                        obj = GetFileInfo(nfo.OBJFile);
+                        deps = GetFiles(nfo.FileDeps.List);
+                    }
+                }
             }
 
             return ret;
-        }
-
-        public void QueryFileInfoDeps(FileInfo file, out FileInfo obj, out List<FileInfo> deps)
-        {
-            if (string.IsNullOrEmpty(file.FileName))
-                file.SetFilename(m_names.FindByKey(file.ID));
-
-            var nfo = m_index.GetFileStream(file.ID, m_parser);
-
-            obj = GetFileInfo(nfo.OBJFile);
-            deps = GetFiles(nfo.FileDeps.List);
         }
 
         private bool IsFilesUpToDate(List<FileInfo> deps, out string dueToFile)
