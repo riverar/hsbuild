@@ -337,7 +337,10 @@ namespace Oah.Tasks
         foreach (var item in sourceFiles)
         {
           if (!engine.IsFileUpToDate(item.ItemSpec, out dueTo))
+          {
             ret.Add(item);
+            Log.LogMessage(MessageImportance.Low, "Compile {0} due to {1}", item.ItemSpec, dueTo);
+          }
           else
             Log.LogMessage(MessageImportance.Low, "Skip due to MR {0}", item.ItemSpec);
         }
