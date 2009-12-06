@@ -68,6 +68,7 @@
           <_SubstExpr Include="s#@libdir@#${prefix}/lib#g" />
 
           <_SubstExpr Include="s/@VERSION@/$(Version)/g" />
+          <_SubstExpr Include="s/@VERSION_MAJOR_MINOR@/$(VersionMajorMinor)/g" />
       </ItemGroup>
 
       <Substitute
