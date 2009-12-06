@@ -82,8 +82,12 @@
       $(BuildGenerateSourcesTargets);
       GenerateConfigHeader;
       GenerateIntermediateFiles;
-      GenerateSymbols;
     </BuildGenerateSourcesTargets>
+
+    <BuildLinkTargets>
+      GenerateSymbols;
+      $(BuildLinkTargets);
+    </BuildLinkTargets>
 
     <BuildInstallTargets>
       $(BuildInstallTargets);
