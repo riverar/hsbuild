@@ -73,6 +73,7 @@
     <Version              Condition=" '$(Version)' == '' "                          >$(VersionMajor).$(VersionMinor).$(VersionMicro).$(VersionNano)</Version>
     <VersionApi           Condition=" '$(VersionApi)' == '' "                       >$(VersionMajor).$(VersionMinor)</VersionApi>
 
+    <VersionMajorMinor                                                              >$(VersionMajor).$(VersionMinor)</VersionMajorMinor>
     <VersionFull                                                                    >$(VersionMajor).$(VersionMinor).$(VersionMicro).$(VersionNano)</VersionFull>
   </PropertyGroup>
 
