@@ -98,12 +98,24 @@
         Condition=" '%(GLibGenmarshal.SubDirectory)' != '' "
         />
 
+      <WriteLinesToFile
+        File="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h"
+        Lines="%(GLibGenmarshal.HeaderPrependLines)"
+        Overwrite="true"
+       />
+
+      <WriteLinesToFile
+        File="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c"
+        Lines="%(GLibGenmarshal.BodyPrependLines)"
+        Overwrite="true"
+       />
+
       <!-- Use standard gmarshal.h include! -->
       <Exec
         Condition=" '%(GLibGenmarshal.NoStdInc)' != 'true' "
         Command="
-          &quot;$(GLibGenmarshalExecPath)&quot; --header --skip-source --prefix=%(GLibGenmarshal.Prefix) %(GLibGenmarshal.Identity) &gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h&quot;
-          &quot;$(GLibGenmarshalExecPath)&quot; --body --skip-source --prefix=%(GLibGenmarshal.Prefix) %(GLibGenmarshal.Identity) &gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c&quot;
+          &quot;$(GLibGenmarshalExecPath)&quot; --header --skip-source --prefix=%(GLibGenmarshal.Prefix) %(GLibGenmarshal.Identity) &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h&quot;
+          &quot;$(GLibGenmarshalExecPath)&quot; --body --skip-source --prefix=%(GLibGenmarshal.Prefix) %(GLibGenmarshal.Identity) &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c&quot;
           "
         />
 
@@ -111,10 +123,22 @@
       <Exec
         Condition=" '%(GLibGenmarshal.NoStdInc)' == 'true' "
         Command="
-          &quot;$(GLibGenmarshalExecPath)&quot; --header --nostdinc --skip-source --prefix=%(GLibGenmarshal.Prefix) %(GLibGenmarshal.Identity) &gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h&quot;
-          &quot;$(GLibGenmarshalExecPath)&quot; --body --nostdinc --skip-source --prefix=%(GLibGenmarshal.Prefix) %(GLibGenmarshal.Identity) &gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c&quot;
+          &quot;$(GLibGenmarshalExecPath)&quot; --header --nostdinc --skip-source --prefix=%(GLibGenmarshal.Prefix) %(GLibGenmarshal.Identity) &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h&quot;
+          &quot;$(GLibGenmarshalExecPath)&quot; --body --nostdinc --skip-source --prefix=%(GLibGenmarshal.Prefix) %(GLibGenmarshal.Identity) &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c&quot;
           "
         />
+
+      <WriteLinesToFile
+        File="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h"
+        Lines="%(GLibGenmarshal.HeaderAppendLines)"
+        Condition=" '%(GLibGenmarshal.HeaderAppendLines)' != '' "
+       />
+
+      <WriteLinesToFile
+        File="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c"
+        Lines="%(GLibGenmarshal.BodyAppendLines)"
+        Condition=" '%(GLibGenmarshal.BodyAppendLines)' != '' "
+       />
 
       <ItemGroup>
         <Compile Condition=" '%(GLibGenmarshal.Compile)' == 'true' " Include="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c" />
