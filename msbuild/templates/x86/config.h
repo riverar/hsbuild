@@ -1,5 +1,8 @@
 /* Manually created for OAH */
 
+/* the host CPU */
+#define HOST_CPU "i686"
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
@@ -36,9 +39,6 @@
 
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 #undef NO_MINUS_C_MINUS_O
-
-/* Define to the address where bug reports for this package should be sent. */
-#undef PACKAGE_BUGREPORT
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
