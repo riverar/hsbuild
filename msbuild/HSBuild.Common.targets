@@ -127,8 +127,17 @@
           <AdditionalIncludeDirectories Include="$(IntermediatePath)" />
       </ItemGroup>
 
+      <PropertyGroup>
+        <Package Condition=" '$(Package)' == '' ">$(MSBuildProjectName)</Package>
+        <PackageName Condition=" '$(PackageName)' == '' ">$(PackageName)</PackageName>
+        <PackageString Condition=" '$(PackageString)' == '' ">$(PackageName) $(Version)</PackageString>
+      </PropertyGroup>
+
       <ItemGroup>
-          <ConfigPreprocessor Include="VERSION $(Version)" />
+          <ConfigPreprocessor Include="VERSION &quot;$(Version)&quot;" />
+          <ConfigPreprocessor Include="PACKAGE &quot;$(Package)&quot;" />
+          <ConfigPreprocessor Include="PACKAGE_NAME &quot;$(PackageName)&quot;" />
+          <ConfigPreprocessor Include="PACKAGE_STRING &quot;$(PackageString)&quot;" />
           <ConfigPreprocessor Include="PACKAGE_VERSION &quot;$(Version)&quot;" />
           <ConfigPreprocessor Include="PACKAGE_DATADIR &quot;inavlid-for-win32&quot;" />
       </ItemGroup>
