@@ -82,6 +82,8 @@
       $(BuildGenerateSourcesTargets);
       GenerateConfigHeader;
       GenerateIntermediateFiles;
+      GenerateBisonFiles;
+      GenerateFlexFiles;
     </BuildGenerateSourcesTargets>
 
     <BuildLinkTargets>
@@ -189,6 +191,78 @@
         >
           <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
       </Substitute>
+  </Target>
+
+  <!-- TARGET: Generate bison files -->
+  <Target
+    Name="GenerateBisonFiles"
+    Condition="'@(Bison)' != ''"
+    >
+      <MakeDir Condition="!Exists('$(IntDir)%(Bison.SubDirectory)')" Directories="$(IntDir)%(Bison.SubDirectory)" />
+
+      <Copy
+        SourceFiles="@(Bison)"
+        DestinationFolder="$(IntDir)%(Bison.SubDirectory)"
+        SkipUnchangedFiles="true"
+        />
+
+      <Exec
+        WorkingDirectory="$(IntDir)%(Bison.SubDirectory)"
+        Command="&quot;$(HSBuildToolPath)bisonflex-dist.exe&quot; -y 1&gt;NUL"
+        />
+
+      <Exec
+        WorkingDirectory="$(IntDir)%(Bison.SubDirectory)"
+        Command="
+          set M4=./bisonflex-dist/m4.exe
+          set BISON_PKGDATADIR=./bisonflex-dist/bison
+          &quot;bisonflex-dist/bison.exe&quot; -d -v -p%(Bison.Prefix) &quot;%(Bison.Filename)%(Bison.Extension)&quot; -o %(Bison.Filename).tab.c
+        "
+        />
+
+      <ItemGroup>
+        <Compile Condition=" '%(Bison.Compile)' == 'true' " Include="$(IntDir)%(Bison.SubDirectory)/%(Bison.Filename).tab.c" />
+      </ItemGroup>
+
+      <RemoveDir
+        Directories="$(IntDir)%(Bison.SubDirectory)/bisonflex-dist"
+        />
+  </Target>
+
+  <!-- TARGET: Generate flex files -->
+  <Target
+    Name="GenerateFlexFiles"
+    Condition="'@(Flex)' != ''"
+    >
+      <MakeDir Condition="!Exists('$(IntDir)%(Flex.SubDirectory)')" Directories="$(IntDir)%(Flex.SubDirectory)" />
+
+      <Copy
+        SourceFiles="@(Flex)"
+        DestinationFolder="$(IntDir)%(Flex.SubDirectory)"
+        SkipUnchangedFiles="true"
+        />
+
+      <Exec
+        WorkingDirectory="$(IntDir)%(Flex.SubDirectory)"
+        Command="&quot;$(HSBuildToolPath)bisonflex-dist.exe&quot; -y 1&gt;NUL"
+        />
+
+      <Exec
+        WorkingDirectory="$(IntDir)%(Flex.SubDirectory)"
+        Command="
+          set M4=./bisonflex-dist/m4.exe
+          set BISON_PKGDATADIR=./bisonflex-dist/bison
+          &quot;bisonflex-dist/flex.exe&quot; -P%(Flex.Prefix) -o lex.%(Flex.Prefix).c %(Flex.Filename)%(Flex.Extension)
+        "
+        />
+
+      <ItemGroup>
+        <Compile Condition=" '%(Flex.Compile)' == 'true' " Include="$(IntDir)%(Flex.SubDirectory)/lex.%(Flex.Prefix).c" />
+      </ItemGroup>
+
+      <RemoveDir
+        Directories="$(IntDir)%(Flex.SubDirectory)/bisonflex-dist"
+        />
   </Target>
 
   <!-- TARGET: GenerateSymbols -->
