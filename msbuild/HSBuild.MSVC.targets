@@ -278,7 +278,7 @@
 
       <Warning Condition=" '$(Machine)' == '' " Text="PlatformTarget not set" />
 
-      <MakeDir Directories="$(LibraryOutputPath);$(BinaryOutputPath)" />
+      <MakeDir Directories="$(LibraryOutputPath);$(BinaryOutputPath);$(TargetDir)" />
 
       <CallTarget
         Condition=" '$(OutputType)' != 'lib' "
