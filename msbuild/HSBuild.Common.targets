@@ -8,10 +8,13 @@
 
   <!-- Intermediate initialization  - MAY be overridden           -->
   <PropertyGroup>
-      <IntermediatePath   Condition=" '$(IntermediatePath)' == '' "                 >$(Platform)\$(Configuration)\obj\$(MSBuildProjectName)\</IntermediatePath>
-      <IntermediatePath   Condition=" !HasTrailingSlash('$(IntermediatePath)') "    >$(IntermediatePath)\</IntermediatePath>
+      <TopBldDir  Condition=" '$(TopBldDir)'  != '' AND !HasTrailingSlash('$(TopBldDir)') " >$(TopBldDir)/</TopBldDir>
 
-      <IntDir>$(IntermediatePath)</IntDir>
+      <IntDir     Condition=" '$(IntDir)'     == '' AND '$(IntermediateOutputPath)'!=''"    >$(IntermediateOutputPath)</IntDir>
+      <IntDir     Condition=" '$(IntDir)'     == '' AND '$(IntermediateOutputPath)'==''"    >$(TopBldDir)$(Platform)/$(Configuration)/$(MSBuildProjectName)/</IntDir>
+      <IntDir     Condition=" !HasTrailingSlash('$(IntDir)') "                              >$(IntDir)/</IntDir>
+
+      <IntermediateOutputPath Condition=" '$(IntermediateOutputPath)' == '' "               >$(IntDir)</IntermediateOutputPath>
   </PropertyGroup>
 
   <!-- Output initialization        - is set by HSBUILD_PREFIX_PATH environment variable   -->
@@ -79,11 +82,11 @@
 
   <PropertyGroup>
     <BuildGenerateSourcesTargets>
-      $(BuildGenerateSourcesTargets);
       GenerateConfigHeader;
       GenerateIntermediateFiles;
       GenerateBisonFiles;
       GenerateFlexFiles;
+      $(BuildGenerateSourcesTargets);
     </BuildGenerateSourcesTargets>
 
     <BuildLinkTargets>
@@ -126,7 +129,7 @@
     Condition=" '$(DisableConfigHeaderGeneration)' != 'true' "
     >
       <ItemGroup>
-          <AdditionalIncludeDirectories Include="$(IntermediatePath)" />
+          <AdditionalIncludeDirectories Include="$(IntDir)" />
       </ItemGroup>
 
       <PropertyGroup>

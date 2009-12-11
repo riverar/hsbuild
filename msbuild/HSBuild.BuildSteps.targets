@@ -24,8 +24,8 @@
         Text="The OutputPath property must end with a trailing slash."
         />
       <Error
-        Condition=" '$(IntermediatePath)' != '' and !HasTrailingSlash('$(IntermediatePath)') "
-        Text="The IntermediatePath must end with a trailing slash."
+        Condition=" '$(IntDir)' != '' and !HasTrailingSlash('$(IntDir)') "
+        Text="The IntDir/IntermediateOutputPath must end with a trailing slash."
         />
   </Target>
 
