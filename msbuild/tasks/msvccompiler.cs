@@ -368,7 +368,7 @@ namespace Oah.Tasks
       var files = mrdbdir.GetFiles("*.idb");
       if (files.Length == 0)
       {
-        Log.LogWarning("Could find Minimal Rebuild Database in {0}", mrdbdir.FullName);
+        Log.LogMessage(MessageImportance.Normal,"Could not find Minimal Rebuild Database in {0}", mrdbdir.FullName);
         return null;
       }
 
