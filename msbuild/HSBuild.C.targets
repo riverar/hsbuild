@@ -10,10 +10,12 @@
       $(BuildCompileTargets);
       CompileCToObject;
       CompileResourceToObject;
+      BuildLink;
     </BuildCompileTargets>
 
     <BuildLinkTargets>
       $(BuildLinkTargets);
+      GenerateSymbols;
       GenerateNativeAssembly;
     </BuildLinkTargets>
 
@@ -25,6 +27,40 @@
 
   <Import Project="HSBuild.Common.targets" />
   <Import Project="HSBuild.MSVC.targets" />
+
+  <PropertyGroup>
+      <BuildLinkDependsOn>
+          BeforeBuildLink;
+          $(BuildLinkTargets);
+          AfterBuildLink
+      </BuildLinkDependsOn>
+  </PropertyGroup>
+  <Target
+    Name="BuildLink"
+    DependsOnTargets="$(BuildLinkDependsOn)"
+    />
+  <Target Name="BeforeBuildLink" />
+  <Target Name="AfterBuildLink" />
+
+  <!-- TARGET: GenerateSymbols -->
+  <Target
+    Name="GenerateSymbols"
+    Condition=" '@(SymbolFile)' != '' and '$(DefFile)' == '' "
+    >
+      <PropertyGroup>
+          <DefFile>$(IntDir)$(AssemblyName).def</DefFile>
+      </PropertyGroup>
+
+      <ItemGroup>
+          <FileWrites Include="$(DefFile)" />
+      </ItemGroup>
+
+      <Aggregator
+        SourceFiles="@(SymbolFile)"
+        OutputFile="$(DefFile)"
+        HeadLines="EXPORTS"
+        />
+  </Target>
 
   <!-- TARGET: Install C Headers -->
   <Target

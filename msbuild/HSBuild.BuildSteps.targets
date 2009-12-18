@@ -93,7 +93,6 @@
       PrepareForBuild;
       BuildGenerateSources;
       BuildCompile;
-      BuildLink;
       BuildInstall;
     </BuildSteps>
 
@@ -230,18 +229,6 @@
     />
 
   <PropertyGroup>
-      <BuildLinkDependsOn>
-          BeforeBuildLink;
-          $(BuildLinkTargets);
-          AfterBuildLink
-      </BuildLinkDependsOn>
-  </PropertyGroup>
-  <Target
-    Name="BuildLink"
-    DependsOnTargets="$(BuildLinkDependsOn)"
-    />
-
-  <PropertyGroup>
     <BuildInstallDependsOn>
       BeforeBuildInstall;
       $(BuildInstallTargets);
@@ -258,8 +245,6 @@
   <Target Name="AfterBuildGenerateSources" />
   <Target Name="BeforeBuildCompile" />
   <Target Name="AfterBuildCompile" />
-  <Target Name="BeforeBuildLink" />
-  <Target Name="AfterBuildLink" />
   <Target Name="BeforeBuildInstall" />
   <Target Name="AfterBuildInstall" />
 

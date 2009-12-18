@@ -81,11 +81,6 @@
       $(BuildGenerateSourcesTargets);
     </BuildGenerateSourcesTargets>
 
-    <BuildLinkTargets>
-      GenerateSymbols;
-      $(BuildLinkTargets);
-    </BuildLinkTargets>
-
     <BuildInstallTargets>
       $(BuildInstallTargets);
       InstallData;
@@ -257,26 +252,6 @@
 
       <RemoveDir
         Directories="$(IntDir)%(Flex.SubDirectory)/bisonflex-dist"
-        />
-  </Target>
-
-  <!-- TARGET: GenerateSymbols -->
-  <Target
-    Name="GenerateSymbols"
-    Condition=" '@(SymbolFile)' != '' and '$(DefFile)' == '' "
-    >
-      <PropertyGroup>
-          <DefFile>$(IntDir)$(AssemblyName).def</DefFile>
-      </PropertyGroup>
-
-      <ItemGroup>
-          <FileWrites Include="$(DefFile)" />
-      </ItemGroup>
-
-      <Aggregator
-        SourceFiles="@(SymbolFile)"
-        OutputFile="$(DefFile)"
-        HeadLines="EXPORTS"
         />
   </Target>
 
