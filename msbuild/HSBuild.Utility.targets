@@ -2,6 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <DisableConfigHeaderGeneration>true</DisableConfigHeaderGeneration>
+    <OutputType>utility</OutputType>
   </PropertyGroup>
 
   <Import Project="HSBuild.Common.targets" />
