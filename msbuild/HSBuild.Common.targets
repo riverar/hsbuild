@@ -4,6 +4,16 @@
   <PropertyGroup>
       <Configuration      Condition=" '$(Configuration)' == '' "                    >Debug</Configuration>
       <Platform           Condition=" '$(Platform)' == '' "                         >x86</Platform>
+      <OutputType         Condition=" '$(OutputType)' == '' "                       >exe</OutputType>
+      <AssemblyName       Condition=" '$(AssemblyName)'=='' "                       >$(MSBuildProjectName)</AssemblyName>
+      <CleanFile          Condition=" '$(CleanFile)' == '' "                        >$(MSBuildProjectFile).CleanList.txt</CleanFile>
+  </PropertyGroup>
+
+  <!-- Substitute OutputType synonyms to the default value for each OutputType -->
+  <PropertyGroup>
+      <OutputType         Condition=" '$(OutputType)' == 'library' "                >dll</OutputType>
+      <OutputType         Condition=" '$(OutputType)' == 'dynamic-library' "        >dll</OutputType>
+      <OutputType         Condition=" '$(OutputType)' == 'static-library' "         >lib</OutputType>
   </PropertyGroup>
 
   <!-- Intermediate initialization  - MAY be overridden           -->
@@ -17,53 +27,26 @@
       <IntermediateOutputPath Condition=" '$(IntermediateOutputPath)' == '' "               >$(IntDir)</IntermediateOutputPath>
   </PropertyGroup>
 
-  <!-- Output initialization        - is set by HSBUILD_PREFIX_PATH environment variable   -->
-  <PropertyGroup>
-      <OutputPath         Condition=" '$(HSBUILD_PREFIX_PATH)' != '' "              >$(HSBUILD_PREFIX_PATH)</OutputPath>
-      <OutputPath                                                                   >$(OutputPath)$(Platform)\$(Configuration)\</OutputPath>
-
-      <!-- Substitute OutputType synonyms to the default value for each OutputType -->
-      <OutputType         Condition=" '$(OutputType)' == 'library' "                >dll</OutputType>
-      <OutputType         Condition=" '$(OutputType)' == 'dynamic-library' "        >dll</OutputType>
-      <OutputType         Condition=" '$(OutputType)' == 'static-library' "         >lib</OutputType>
-      <OutputType         Condition=" '$(OutputType)' == '' "                       >exe</OutputType>
-
-      <CleanFile          Condition=" '$(CleanFile)' == '' "                        >$(MSBuildProjectFile).CleanList.txt</CleanFile>
-      <BinaryOutputPath>$(OutputPath)bin\</BinaryOutputPath>
-      <LibraryOutputPath>$(OutputPath)lib\</LibraryOutputPath>
-      <IncludeOutputPath>$(OutputPath)include\</IncludeOutputPath>
-      <DataOutputPath>$(OutputPath)share\</DataOutputPath>
-      <PkgConfigOutputPath>$(LibraryOutputPath)pkgconfig\</PkgConfigOutputPath>
-  </PropertyGroup>
-
   <!-- Target initialization        - Can NOT be overridden       -->
-  <PropertyGroup>
-      <AssemblyName       Condition=" '$(AssemblyName)'=='' "                       >$(MSBuildProjectName)</AssemblyName>
-
-      <!-- Suffix based on c-runtime -->
-      <TargetSuffix       Condition=" '$(Configuration)' == 'Debug' "               >-$(CRTSuffix)d</TargetSuffix>
-      <TargetSuffix       Condition=" '$(Configuration)' == 'Release' "             >-$(CRTSuffix)</TargetSuffix>
-  </PropertyGroup>
-
   <PropertyGroup Condition=" '$(OutputType)' == 'exe' or '$(OutputType)' == 'winexe' ">
       <TargetExt>.exe</TargetExt>
-      <TargetName>$(AssemblyName)</TargetName>
-      <TargetFileName>$(TargetName)$(TargetExt)</TargetFileName>
-      <TargetDir>$(BinaryOutputPath)</TargetDir>
-      <TargetPath>$(TargetDir)$(TargetFileName)</TargetPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(OutputType)' == 'dll' ">
       <TargetExt>.dll</TargetExt>
-      <TargetName>$(AssemblyName)$(TargetSuffix)</TargetName>
-      <TargetFileName>$(TargetName)$(TargetExt)</TargetFileName>
-      <TargetDir>$(BinaryOutputPath)</TargetDir>
-      <TargetPath>$(TargetDir)$(TargetFileName)</TargetPath>
+      <TargetSuffix Condition=" '$(Configuration)' == 'Debug' "   >-$(CRTSuffix)d</TargetSuffix>
+      <TargetSuffix Condition=" '$(Configuration)' == 'Release' " >-$(CRTSuffix)</TargetSuffix>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(OutputType)' == 'lib' ">
       <TargetExt>.lib</TargetExt>
-      <TargetName>$(AssemblyName)</TargetName>
+      <TargetSubDir Condition=" '$(TargetSubDir)' == '' ">$(LibraryOutputSubDir)</TargetSubDir>
+  </PropertyGroup>
+
+  <PropertyGroup>
+      <TargetName>$(AssemblyName)$(TargetSuffix)</TargetName>
       <TargetFileName>$(TargetName)$(TargetExt)</TargetFileName>
-      <TargetDir>$(LibraryOutputPath)</TargetDir>
+      <TargetSubDir Condition=" '$(TargetSubDir)' == '' ">$(BinaryOutputSubDir)</TargetSubDir>
+      <TargetSubDir Condition=" !HasTrailingSlash('$(TargetSubDir)') ">$(TargetSubDir)/</TargetSubDir>
+      <TargetDir>$(OutputBasePath)$(TargetSubDir)</TargetDir>
       <TargetPath>$(TargetDir)$(TargetFileName)</TargetPath>
   </PropertyGroup>
 
@@ -78,6 +61,15 @@
 
     <VersionMajorMinor                                                              >$(VersionMajor).$(VersionMinor)</VersionMajorMinor>
     <VersionFull                                                                    >$(VersionMajor).$(VersionMinor).$(VersionMicro).$(VersionNano)</VersionFull>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <BinaryOutputPath>$(OutputBasePath)$(BinaryOuputSubDir)</BinaryOutputPath>
+    <LibraryExecOutputPath>$(OutputBasePath)$(LibraryExecOutputSubDir)</LibraryExecOutputPath>
+    <LibraryOutputPath>$(OutputBasePath)$(LibraryOutputSubDir)</LibraryOutputPath>
+    <PkgConfigOutputPath>$(OutputBasePath)$(PkgConfigOutputSubDir)</PkgConfigOutputPath>
+    <IncludeOutputPath>$(OutputBasePath)$(IncludeOutputSubDir)</IncludeOutputPath>
+    <DataOutputPath>$(OutputBasePath)$(DataOutputSubDir)</DataOutputPath>
   </PropertyGroup>
 
   <PropertyGroup>
