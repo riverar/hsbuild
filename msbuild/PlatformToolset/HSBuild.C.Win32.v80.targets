@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Find visual studio 2005 (8.0) -->
+  <PropertyGroup Condition=" '$(PlatformToolset)' == 'v80' and '$(MSVCToolPath)' == '' " >
+      <_VC80Path>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\8.0\Setup\VC@ProductDir)</_VC80Path>
+      <_VC80ExpressPath>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VCExpress\8.0\Setup\VC@ProductDir)</_VC80ExpressPath>
+      <MSVCToolPath       Condition=" '$(_VC80ExpressPath)' != '' "             >$(_VC80ExpressPath)bin\</MSVCToolPath>
+      <MSVCToolPath       Condition=" '$(_VC80Path)' != '' "                    >$(_VC80Path)bin\</MSVCToolPath>
+  </PropertyGroup>
+
+  <!-- FIXME: HSBuild.MSVC.targets will be removed -->
+  <Import Project="HSBuild.MSVC.targets" />
+
+</Project>

@@ -8,8 +8,8 @@
   <PropertyGroup>
     <BuildCompileTargets>
       $(BuildCompileTargets);
-      CompileCToObject;
-      CompileResourceToObject;
+      CCompile;
+      ResourceCompile;
       BuildLink;
     </BuildCompileTargets>
 
@@ -26,7 +26,7 @@
   </PropertyGroup>
 
   <Import Project="HSBuild.Common.targets" />
-  <Import Project="HSBuild.MSVC.targets" />
+  <Import Project="PlatformToolset/HSBuild.C.$(Platform).$(PlatformToolset).targets" />
 
   <PropertyGroup>
       <BuildLinkDependsOn>
