@@ -456,6 +456,8 @@ namespace Oah.Tasks
 
       switch (InlineFunctionExpansion.ToLower())
       {
+        case "default":
+          return "";
         case "disabled":
           return "/Ob0";
         case "onlyexplicitinline":
