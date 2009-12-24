@@ -1,75 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- Configuration/Platform defaults                            -->
   <PropertyGroup>
-      <Configuration      Condition=" '$(Configuration)' == '' "                    >Debug</Configuration>
-      <Platform           Condition=" '$(Platform)' == '' "                         >x86</Platform>
-      <OutputType         Condition=" '$(OutputType)' == '' "                       >exe</OutputType>
-      <AssemblyName       Condition=" '$(AssemblyName)'=='' "                       >$(MSBuildProjectName)</AssemblyName>
-      <CleanFile          Condition=" '$(CleanFile)' == '' "                        >$(MSBuildProjectFile).CleanList.txt</CleanFile>
-  </PropertyGroup>
-
-  <!-- Substitute OutputType synonyms to the default value for each OutputType -->
-  <PropertyGroup>
-      <OutputType         Condition=" '$(OutputType)' == 'library' "                >dll</OutputType>
-      <OutputType         Condition=" '$(OutputType)' == 'dynamic-library' "        >dll</OutputType>
-      <OutputType         Condition=" '$(OutputType)' == 'static-library' "         >lib</OutputType>
-  </PropertyGroup>
-
-  <!-- Intermediate initialization  - MAY be overridden           -->
-  <PropertyGroup>
-      <TopBldDir  Condition=" '$(TopBldDir)'  != '' AND !HasTrailingSlash('$(TopBldDir)') " >$(TopBldDir)/</TopBldDir>
-
-      <IntDir     Condition=" '$(IntDir)'     == '' AND '$(IntermediateOutputPath)'!=''"    >$(IntermediateOutputPath)</IntDir>
-      <IntDir     Condition=" '$(IntDir)'     == '' AND '$(IntermediateOutputPath)'==''"    >$(TopBldDir)$(Platform)/$(Configuration)/$(MSBuildProjectName)/</IntDir>
-      <IntDir     Condition=" !HasTrailingSlash('$(IntDir)') "                              >$(IntDir)/</IntDir>
-
-      <IntermediateOutputPath Condition=" '$(IntermediateOutputPath)' == '' "               >$(IntDir)</IntermediateOutputPath>
-  </PropertyGroup>
-
-  <!-- Target initialization        - Can NOT be overridden       -->
-  <PropertyGroup Condition=" '$(OutputType)' == 'exe' or '$(OutputType)' == 'winexe' ">
-      <TargetExt>.exe</TargetExt>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(OutputType)' == 'dll' ">
-      <TargetExt>.dll</TargetExt>
-      <TargetSuffix Condition=" '$(Configuration)' == 'Debug' "   >-$(CRTSuffix)d</TargetSuffix>
-      <TargetSuffix Condition=" '$(Configuration)' == 'Release' " >-$(CRTSuffix)</TargetSuffix>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(OutputType)' == 'lib' ">
-      <TargetExt>.lib</TargetExt>
-      <TargetSubDir Condition=" '$(TargetSubDir)' == '' ">$(LibraryOutputSubDir)</TargetSubDir>
+    <OutputFile         Condition=" '$(OutputFile)' == '' "                         >$(TargetPath)</OutputFile>
+    <CleanFile          Condition=" '$(CleanFile)'  == '' "                         >$(MSBuildProjectFile).CleanList.txt</CleanFile>
   </PropertyGroup>
 
   <PropertyGroup>
-      <TargetName>$(AssemblyName)$(TargetSuffix)</TargetName>
-      <TargetFileName>$(TargetName)$(TargetExt)</TargetFileName>
-      <TargetSubDir Condition=" '$(TargetSubDir)' == '' ">$(BinaryOutputSubDir)</TargetSubDir>
-      <TargetSubDir Condition=" !HasTrailingSlash('$(TargetSubDir)') ">$(TargetSubDir)/</TargetSubDir>
-      <TargetDir>$(OutputBasePath)$(TargetSubDir)</TargetDir>
-      <TargetPath>$(TargetDir)$(TargetFileName)</TargetPath>
-  </PropertyGroup>
-
-  <!-- Version properties - Initialize to 1.0.0.0 if not already set -->
-  <PropertyGroup>
-    <VersionMajor         Condition=" '$(VersionMajor)' == '' "                     >1</VersionMajor>
-    <VersionMinor         Condition=" '$(VersionMinor)' == '' "                     >0</VersionMinor>
-    <VersionMicro         Condition=" '$(VersionMicro)' == '' "                     >0</VersionMicro>
-    <VersionNano          Condition=" '$(VersionNano)' == '' "                      >0</VersionNano>
-    <Version              Condition=" '$(Version)' == '' "                          >$(VersionMajor).$(VersionMinor).$(VersionMicro).$(VersionNano)</Version>
-    <VersionApi           Condition=" '$(VersionApi)' == '' "                       >$(VersionMajor).$(VersionMinor)</VersionApi>
-
     <VersionMajorMinor                                                              >$(VersionMajor).$(VersionMinor)</VersionMajorMinor>
     <VersionFull                                                                    >$(VersionMajor).$(VersionMinor).$(VersionMicro).$(VersionNano)</VersionFull>
   </PropertyGroup>
 
+  <!-- FIXME: Obsolete, should be removed -->
   <PropertyGroup>
-    <BinaryOutputPath>$(OutputBasePath)$(BinaryOuputSubDir)</BinaryOutputPath>
-    <LibraryExecOutputPath>$(OutputBasePath)$(LibraryExecOutputSubDir)</LibraryExecOutputPath>
-    <LibraryOutputPath>$(OutputBasePath)$(LibraryOutputSubDir)</LibraryOutputPath>
-    <PkgConfigOutputPath>$(OutputBasePath)$(PkgConfigOutputSubDir)</PkgConfigOutputPath>
-    <IncludeOutputPath>$(OutputBasePath)$(IncludeOutputSubDir)</IncludeOutputPath>
-    <DataOutputPath>$(OutputBasePath)$(DataOutputSubDir)</DataOutputPath>
+    <BinaryOutputPath>$(OutDir)$(BinaryOuputSubDir)</BinaryOutputPath>
+    <LibraryExecOutputPath>$(OutDir)$(LibraryExecOutputSubDir)</LibraryExecOutputPath>
+    <LibraryOutputPath>$(OutDir)$(LibraryOutputSubDir)</LibraryOutputPath>
+    <PkgConfigOutputPath>$(OutDir)$(PkgConfigOutputSubDir)</PkgConfigOutputPath>
+    <IncludeOutputPath>$(OutDir)$(IncludeOutputSubDir)</IncludeOutputPath>
+    <DataOutputPath>$(OutDir)$(DataOutputSubDir)</DataOutputPath>
   </PropertyGroup>
 
   <PropertyGroup>

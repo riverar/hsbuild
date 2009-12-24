@@ -27,12 +27,12 @@
       ToolPath="$(HSBuildToolPath)"
       >
         <Output TaskParameter="CIncludes" ItemName="AdditionalIncludeDirectories" />
-        <Output TaskParameter="LibPaths"  ItemName="AdditionalLibPaths" />
+        <Output TaskParameter="LibPaths"  ItemName="AdditionalLibraryDirectories" />
         <Output TaskParameter="Libs"      ItemName="_PkgConfigLibs" />
     </PkgConfig>
 
     <ItemGroup>
-        <AdditionalLibraries Include="@(_PkgConfigLibs->'%(Identity).lib')" />
+      <AdditionalDependencies Include="@(_PkgConfigLibs->'%(Identity).lib')" />
     </ItemGroup>
   </Target>
 

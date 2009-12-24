@@ -45,21 +45,31 @@
   <!-- TARGET: GenerateSymbols -->
   <Target
     Name="GenerateSymbols"
-    Condition=" '@(SymbolFile)' != '' and '$(DefFile)' == '' "
+    Condition=" '@(SymbolFile)' != '' "
     >
-      <PropertyGroup>
-          <DefFile>$(IntDir)$(AssemblyName).def</DefFile>
+      <ItemGroup>
+        <_SymbolFileMissingOutputFile Include="@(SymbolFile)" Condition=" '%(SymbolFile.OutputFile)' == '' " />
+      </ItemGroup>
+
+      <PropertyGroup Condition=" '@(SymbolFile)' != '' ">
+        <SymbolFileGenModuleDefFile>$(IntDir)$(AssemblyName).def</SymbolFileGenModuleDefFile>
       </PropertyGroup>
 
       <ItemGroup>
-          <FileWrites Include="$(DefFile)" />
+        <SymbolFile>
+          <OutputFile Condition=" '%(SymbolFile.OutputFile)' == '' ">$(SymbolFileGenModuleDefFile)</OutputFile>
+        </SymbolFile>
       </ItemGroup>
 
       <Aggregator
         SourceFiles="@(SymbolFile)"
-        OutputFile="$(DefFile)"
+        OutputFile="%(SymbolFile.OutputFile)"
         HeadLines="EXPORTS"
         />
+
+      <ItemGroup>
+        <FileWrites Include="%(SymbolFile.OutputFile)" />
+      </ItemGroup>
   </Target>
 
   <!-- TARGET: Install C Headers -->

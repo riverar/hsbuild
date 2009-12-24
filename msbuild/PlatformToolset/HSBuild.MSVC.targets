@@ -104,7 +104,7 @@
         />
 
       <ItemGroup>
-          <Link Include="@(ClCompile->'$(IntDir)\%(FileName).obj')" />
+          <Link Include="@(ClCompile->'$(IntDir)%(FileName).obj')" />
           <FileWrites Include="@(Link)" />
       </ItemGroup>
   </Target>
@@ -143,98 +143,218 @@
           <LinkIncremental Condition=" '$(MSBuildProjectDefaultTargets)' == 'Rebuild' ">false</LinkIncremental>
       </PropertyGroup>
 
-      <PropertyGroup Condition="'$(ManifestFile)' == ''">
-          <ManifestFile>$(IntDir)$(TargetFileName).intermediate.manifest</ManifestFile>
-      </PropertyGroup>
-
-      <PropertyGroup Condition=" '$(OutputType)'=='dll' ">
-          <_LinkDLL>true</_LinkDLL>
-          <ExpLibFile Condition=" '$(ImpLibFile)' == '' ">$(LibraryOutputPath)$(AssemblyName).exp</ExpLibFile>
-          <ImpLibFile Condition=" '$(ImpLibFile)' == '' ">$(LibraryOutputPath)$(AssemblyName).lib</ImpLibFile>
-      </PropertyGroup>
-
-      <PropertyGroup>
-          <SubSystem Condition="'$(OutputType)'=='exe'">CONSOLE</SubSystem>
-          <SubSystem Condition="'$(OutputType)'=='dll'">CONSOLE</SubSystem>
-          <SubSystem Condition="'$(OutputType)'=='winexe'">WINDOWS</SubSystem>
-      </PropertyGroup>
-
-      <PropertyGroup>
-          <_ManifestResource>$(IntDir)$(TargetFileName).manifest.res</_ManifestResource>
-      </PropertyGroup>
-
-      <Touch Files="$(IntDir)$(TargetFileName).embed.manifest" AlwaysCreate="true">
+      <Touch Files="%(Link.OutputFile).embed.manifest" AlwaysCreate="true">
           <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
       </Touch>
 
       <MSManifestResource
-        Manifest="$(IntDir)$(TargetFileName).embed.manifest"
-        Dll="$(_LinkDLL)"
-        OutputResource="$(_ManifestResource)"
+        Manifest="%(Link.OutputFile).embed.manifest"
+        Dll="%(Link.LinkDLL)"
+        OutputResource="%(Link.OutputFile).manifest.res"
         />
 
       <ItemGroup>
-          <Link Include="$(_ManifestResource)" />
-          <FileWrites Include="$(_ManifestResource)" />
+          <Link Include="%(Link.OutputFile).manifest.res" />
+          <FileWrites Include="%(Link.OutputFile).manifest.res" />
+      </ItemGroup>
+
+      <ItemGroup>
+        <Link Condition="'%(Link.SubSystem)' == ''">
+          <SubSystem Condition="'$(OutputType)'=='exe'">CONSOLE</SubSystem>
+          <SubSystem Condition="'$(OutputType)'=='dll'">CONSOLE</SubSystem>
+          <SubSystem Condition="'$(OutputType)'=='library'">CONSOLE</SubSystem>
+          <SubSystem Condition="'$(OutputType)'=='winexe'">WINDOWS</SubSystem>
+        </Link>
+        <!-- Add default ModuleDefinitionsFile created from @(SymbolFile) items. -->
+        <Link>
+          <ModuleDefinitionFile Condition=" '%(Link.ModuleDefinitionFile)' == '' ">$(SymbolFileGenModuleDefFile)</ModuleDefinitionFile>
+        </Link>
       </ItemGroup>
 
       <MSVCLinker
-        Sources="@(Link)"
-        AdditionalLibPaths="%(Link.AdditionalLibPaths);@(AdditionalLibPaths)"
-        AdditionalLibraries="%(Link.AdditionalLibraries);@(AdditionalLibraries)"
-        OutputFile="$(TargetPath)"
-        Incremental="$(LinkIncremental)"
-        DefFile="$(DefFile)"
-        ImpLibFile="$(ImpLibFile)"
-        ManifestFile="$(ManifestFile)"
-        Dll="$(_LinkDLL)"
-        SubSystem="$(SubSystem)"
-        Machine="$(Machine)"
-        ErrorReport="$(ErrorReport)"
-        ToolPath="$(MSVCToolPath)"
+        ToolPath                       ="$(MSVCToolPath)"
+
+        Sources                        ="@(Link)"
+
+        AdditionalDependencies         ="%(Link.AdditionalDependencies);@(AdditionalDependencies)"
+        AdditionalLibraryDirectories   ="%(Link.AdditionalLibraryDirectories);@(AdditionalLibraryDirectories)"
+        AdditionalManifestDependencies ="%(Link.AdditionalManifestDependencies);@(AdditionalManifestDependencies)"
+        AdditionalOptions              ="%(Link.AdditionalOptions)"
+        AllowIsolation                 ="%(Link.AllowIsolation)"
+        BaseAddress                    ="%(Link.BaseAddress)"
+        DataExecutionPrevention        ="%(Link.DataExecutionPrevention)"
+        DelayLoadDLLs                  ="%(Link.DelayLoadDLLs)"
+        DelaySign                      ="%(Link.DelaySign)"
+        Driver                         ="%(Link.Driver)"
+        EnableCOMDATFolding            ="%(Link.EnableCOMDATFolding)"
+        EnableUAC                      ="%(Link.EnableUAC)"
+        EntryPointSymbol               ="%(Link.EntryPointSymbol)"
+        LinkErrorReporting             ="%(Link.LinkErrorReporting)"
+        FixedBaseAddress               ="%(Link.FixedBaseAddress)"
+        ForceSymbolReferences          ="%(Link.ForceSymbolReferences)"
+        GenerateDebugInformation       ="%(Link.GenerateDebugInformation)"
+        GenerateManifest               ="%(Link.GenerateManifest)"
+        GenerateMapFile                ="%(Link.GenerateMapFile)"
+        HeapCommitSize                 ="%(Link.HeapCommitSize)"
+        HeapReserveSize                ="%(Link.HeapReserveSize)"
+        IgnoreAllDefaultLibraries      ="%(Link.IgnoreAllDefaultLibraries)"
+        IgnoreEmbeddedIDL              ="%(Link.IgnoreEmbeddedIDL)"
+        IgnoreSpecificDefaultLibraries ="%(Link.IgnoreSpecificDefaultLibraries)"
+        ImageHasSafeExceptionHandlers  ="%(Link.ImageHasSafeExceptionHandlers)"
+        ImportLibrary                  ="%(Link.ImportLibrary)"
+        KeyContainer                   ="%(Link.KeyContainer)"
+        KeyFile                        ="%(Link.KeyFile)"
+        LargeAddressAware              ="%(Link.LargeAddressAware)"
+        LinkDLL                        ="%(Link.LinkDLL)"
+        LinkIncremental                ="$(LinkIncremental)"
+        LinkTimeCodeGeneration         ="%(Link.LinkTimeCodeGeneration)"
+        ManifestFile                   ="%(Link.ManifestFile)"
+        MapExports                     ="%(Link.MapExports)"
+        MapFileName                    ="%(Link.MapFileName)"
+        MergedIDLBaseFileName          ="%(Link.MergedIDLBaseFileName)"
+        MergeSections                  ="%(Link.MergeSections)"
+        MidlCommandFile                ="%(Link.MidlCommandFile)"
+        ModuleDefinitionFile           ="%(Link.ModuleDefinitionFile)"
+        MSDOSStubFileName              ="%(Link.MSDOSStubFileName)"
+        OptimizeReferences             ="%(Link.OptimizeReferences)"
+        OutputFile                     ="%(Link.OutputFile)"
+        PreventDllBinding              ="%(Link.PreventDllBinding)"
+        Profile                        ="%(Link.Profile)"
+        ProfileGuidedDatabase          ="%(Link.ProfileGuidedDatabase)"
+        ProgramDatabaseFile            ="%(Link.ProgramDatabaseFile)"
+        RandomizedBaseAddress          ="%(Link.RandomizedBaseAddress)"
+        NoEntryPoint                   ="%(Link.NoEntryPoint)"
+        SectionAlignment               ="%(Link.SectionAlignment)"
+        SetChecksum                    ="%(Link.SetChecksum)"
+        SpecifySectionAttributes       ="%(Link.SpecifySectionAttributes)"
+        StackCommitSize                ="%(Link.StackCommitSize)"
+        StackReserveSize               ="%(Link.StackReserveSize)"
+        StripPrivateSymbols            ="%(Link.StripPrivateSymbols)"
+        SubSystem                      ="%(Link.SubSystem)"
+        SupportUnloadOfDelayLoadedDLL  ="%(Link.SupportUnloadOfDelayLoadedDLL)"
+        SupportNobindOfDelayLoadedDLL  ="%(Link.SupportNobindOfDelayLoadedDLL)"
+        SuppressStartupBanner          ="%(Link.SuppressStartupBanner)"
+        SwapRunFromCD                  ="%(Link.SwapRunFromCD)"
+        SwapRunFromNET                 ="%(Link.SwapRunFromNET)"
+        TargetMachine                  ="%(Link.TargetMachine)"
+        TerminalServerAware            ="%(Link.TerminalServerAware)"
+        TreatLinkerWarningAsErrors     ="%(Link.TreatLinkerWarningAsErrors)"
+        TypeLibraryFile                ="%(Link.TypeLibraryFile)"
+        TypeLibraryResourceID          ="%(Link.TypeLibraryResourceID)"
+        UACExecutionLevel              ="%(Link.UACExecutionLevel)"
+        UACUIAccess                    ="%(Link.UACUIAccess)"
+        Version                        ="%(Link.Version)"
         />
 
         <ItemGroup>
-            <FileWrites Include="$(ManifestFile)" />
-            <FileWrites Include="$(TargetPath)" />
+            <FileWrites Include="%(Link.OutputFile)" />
+            <FileWrites Include="%(Link.ImportLibrary)" />
+            <FileWrites Include="%(Link.ProgramDatabaseFile)" />
+            <FileWrites Include="%(Link.StripPrivateSymbols)" />
+            <FileWrites Include="%(Link.MapFileName)" />
+            <FileWrites Include="%(Link.ManifestFile)" />
+            <FileWrites Include="%(Link.ProfileGuidedDatabase)" />
             <FileWrites Condition="Exists('$(TargetDir)$(TargetName).ilk')" Include="$(TargetDir)$(TargetName).ilk" />
-            <FileWrites Condition="Exists('$(TargetDir)$(TargetName).pdb')" Include="$(TargetDir)$(TargetName).pdb" />
-            <FileWrites Condition=" '$(ImpLibFile)' != '' " Include="$(ImpLibFile)" />
-            <FileWrites Condition=" '$(ExpLibFile)' != '' " Include="$(ExpLibFile)" />
+            <FileWrites Condition="Exists('$(LibraryOutputPath)$(AssemblyName).exp')" Include="$(LibraryOutputPath)$(AssemblyName).exp" />
         </ItemGroup>
 
       <MSManifest
-        InputManifest="$(ManifestFile)"
-        OutputManifest="$(IntDir)$(TargetFileName).embed.manifest"
+        InputManifest="%(Link.ManifestFile)"
+        OutputManifest="%(Link.OutputFile).embed.manifest"
         />
 
       <MSManifestResource
-        Manifest="$(IntDir)$(TargetFileName).embed.manifest"
-        Dll="$(_LinkDLL)"
-        OutputResource="$(_ManifestResource)"
+        Manifest="%(Link.OutputFile).embed.manifest"
+        Dll="%(Link.LinkDLL)"
+        OutputResource="%(Link.OutputFile).manifest.res"
         />
 
       <!-- Re-link with manifest resource file! -->
       <MSVCLinker
-        Sources="@(Link)"
-        AdditionalLibPaths="%(Link.AdditionalLibPaths);@(AdditionalLibPaths)"
-        AdditionalLibraries="%(Link.AdditionalLibraries);@(AdditionalLibraries)"
-        OutputFile="$(TargetPath)"
-        Incremental="$(LinkIncremental)"
-        DefFile="$(DefFile)"
-        ImpLibFile="$(ImpLibFile)"
-        ManifestFile="$(ManifestFile)"
-        Dll="$(_LinkDLL)"
-        SubSystem="$(SubSystem)"
-        Machine="$(Machine)"
-        ErrorReport="$(ErrorReport)"
-        ToolPath="$(MSVCToolPath)"
+        ToolPath                       ="$(MSVCToolPath)"
+
+        Sources                        ="@(Link)"
+
+        AdditionalDependencies         ="%(Link.AdditionalDependencies);@(AdditionalDependencies)"
+        AdditionalLibraryDirectories   ="%(Link.AdditionalLibraryDirectories);@(AdditionalLibraryDirectories)"
+        AdditionalManifestDependencies ="%(Link.AdditionalManifestDependencies);@(AdditionalManifestDependencies)"
+        AdditionalOptions              ="%(Link.AdditionalOptions)"
+        AllowIsolation                 ="%(Link.AllowIsolation)"
+        BaseAddress                    ="%(Link.BaseAddress)"
+        DataExecutionPrevention        ="%(Link.DataExecutionPrevention)"
+        DelayLoadDLLs                  ="%(Link.DelayLoadDLLs)"
+        DelaySign                      ="%(Link.DelaySign)"
+        Driver                         ="%(Link.Driver)"
+        EnableCOMDATFolding            ="%(Link.EnableCOMDATFolding)"
+        EnableUAC                      ="%(Link.EnableUAC)"
+        EntryPointSymbol               ="%(Link.EntryPointSymbol)"
+        LinkErrorReporting             ="%(Link.LinkErrorReporting)"
+        FixedBaseAddress               ="%(Link.FixedBaseAddress)"
+        ForceSymbolReferences          ="%(Link.ForceSymbolReferences)"
+        GenerateDebugInformation       ="%(Link.GenerateDebugInformation)"
+        GenerateManifest               ="%(Link.GenerateManifest)"
+        GenerateMapFile                ="%(Link.GenerateMapFile)"
+        HeapCommitSize                 ="%(Link.HeapCommitSize)"
+        HeapReserveSize                ="%(Link.HeapReserveSize)"
+        IgnoreAllDefaultLibraries      ="%(Link.IgnoreAllDefaultLibraries)"
+        IgnoreEmbeddedIDL              ="%(Link.IgnoreEmbeddedIDL)"
+        IgnoreSpecificDefaultLibraries ="%(Link.IgnoreSpecificDefaultLibraries)"
+        ImageHasSafeExceptionHandlers  ="%(Link.ImageHasSafeExceptionHandlers)"
+        ImportLibrary                  ="%(Link.ImportLibrary)"
+        KeyContainer                   ="%(Link.KeyContainer)"
+        KeyFile                        ="%(Link.KeyFile)"
+        LargeAddressAware              ="%(Link.LargeAddressAware)"
+        LinkDLL                        ="%(Link.LinkDLL)"
+        LinkIncremental                ="$(LinkIncremental)"
+        LinkTimeCodeGeneration         ="%(Link.LinkTimeCodeGeneration)"
+        ManifestFile                   ="%(Link.ManifestFile)"
+        MapExports                     ="%(Link.MapExports)"
+        MapFileName                    ="%(Link.MapFileName)"
+        MergedIDLBaseFileName          ="%(Link.MergedIDLBaseFileName)"
+        MergeSections                  ="%(Link.MergeSections)"
+        MidlCommandFile                ="%(Link.MidlCommandFile)"
+        ModuleDefinitionFile           ="%(Link.ModuleDefinitionFile)"
+        MSDOSStubFileName              ="%(Link.MSDOSStubFileName)"
+        OptimizeReferences             ="%(Link.OptimizeReferences)"
+        OutputFile                     ="%(Link.OutputFile)"
+        PreventDllBinding              ="%(Link.PreventDllBinding)"
+        Profile                        ="%(Link.Profile)"
+        ProfileGuidedDatabase          ="%(Link.ProfileGuidedDatabase)"
+        ProgramDatabaseFile            ="%(Link.ProgramDatabaseFile)"
+        RandomizedBaseAddress          ="%(Link.RandomizedBaseAddress)"
+        NoEntryPoint                   ="%(Link.NoEntryPoint)"
+        SectionAlignment               ="%(Link.SectionAlignment)"
+        SetChecksum                    ="%(Link.SetChecksum)"
+        SpecifySectionAttributes       ="%(Link.SpecifySectionAttributes)"
+        StackCommitSize                ="%(Link.StackCommitSize)"
+        StackReserveSize               ="%(Link.StackReserveSize)"
+        StripPrivateSymbols            ="%(Link.StripPrivateSymbols)"
+        SubSystem                      ="%(Link.SubSystem)"
+        SupportUnloadOfDelayLoadedDLL  ="%(Link.SupportUnloadOfDelayLoadedDLL)"
+        SupportNobindOfDelayLoadedDLL  ="%(Link.SupportNobindOfDelayLoadedDLL)"
+        SuppressStartupBanner          ="%(Link.SuppressStartupBanner)"
+        SwapRunFromCD                  ="%(Link.SwapRunFromCD)"
+        SwapRunFromNET                 ="%(Link.SwapRunFromNET)"
+        TargetMachine                  ="%(Link.TargetMachine)"
+        TerminalServerAware            ="%(Link.TerminalServerAware)"
+        TreatLinkerWarningAsErrors     ="%(Link.TreatLinkerWarningAsErrors)"
+        TypeLibraryFile                ="%(Link.TypeLibraryFile)"
+        TypeLibraryResourceID          ="%(Link.TypeLibraryResourceID)"
+        UACExecutionLevel              ="%(Link.UACExecutionLevel)"
+        UACUIAccess                    ="%(Link.UACUIAccess)"
+        Version                        ="%(Link.Version)"
         />
   </Target>
 
   <Target
     Name="GenerateNativeStaticLibraryAssembly"
     >
+      <PropertyGroup>
+        <Machine Condition="'$(Platform)'=='x86'">X86</Machine>
+        <Machine Condition="'$(Platform)'=='x64'">X64</Machine>
+        <Machine Condition="'$(Platform)'=='Itanium'">IA64</Machine>
+      </PropertyGroup>
+
       <Error Condition=" '$(OutputType)' != 'lib' " Text="GenerateNativeStaticLibraryAssembly can only be used for static libraries!" />
 
       <MSVCLib
@@ -254,15 +374,9 @@
   <Target
     Name="GenerateNativeAssembly"
     >
-      <PropertyGroup>
-          <Machine Condition="'$(Platform)'=='x86'">X86</Machine>
-          <Machine Condition="'$(Platform)'=='x64'">X64</Machine>
-          <Machine Condition="'$(Platform)'=='Itanium'">IA64</Machine>
-      </PropertyGroup>
-
-      <Warning Condition=" '$(Machine)' == '' " Text="PlatformTarget not set" />
-
-      <MakeDir Directories="$(LibraryOutputPath);$(BinaryOutputPath);$(TargetDir)" />
+      <MakeDir Directories="$(LibraryOutputPath)" />
+      <MakeDir Directories="$(BinaryOutputPath)" />
+      <MakeDir Directories="$(TargetDir)" />
 
       <CallTarget
         Condition=" '$(OutputType)' != 'lib' "

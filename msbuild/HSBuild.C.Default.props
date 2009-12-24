@@ -1,43 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="HSBuild.Common.props" />
+  <PropertyGroup>
+    <AssemblyName       Condition=" '$(AssemblyName)'=='' "                               >$(MSBuildProjectName)</AssemblyName>
+    <OutputType         Condition=" '$(OutputType)' == '' "                               >exe</OutputType>
 
-  <PropertyGroup Condition=" $(PlatformToolset) == '' ">
-    <PlatformToolset>v90</PlatformToolset>
-    <CRTSuffix>vc90</CRTSuffix>
+    <TargetName         Condition=" '$(TargetName)' == '' "                               >$(AssemblyName)</TargetName>
+    <ProjectName        Condition=" '$(ProjectName)' == '' "                              >$(MSBuildProjectName)</ProjectName>
+    <ProjectFileName    Condition=" '$(ProjectFileName)' == '' "                          >$(MSBuildProjectFile)</ProjectFileName>
+    <ProjectExt         Condition=" '$(ProjectExt)' == '' "                               >$(MSBuildProjectExtension)</ProjectExt>
+    <InputName          Condition=" '$(InputName)' == '' "                                >$(MSBuildProjectName)</InputName>
+    <InputFileName      Condition=" '$(InputFileName)' == '' "                            >$(MSBuildProjectFile)</InputFileName>
+    <InputExt           Condition=" '$(InputExt)' == '' "                                 >$(MSBuildProjectExtension)</InputExt>
+    <SafeInputName      Condition=" '$(SafeInputName)' == '' "                            >$(MSBuildProjectName)</SafeInputName>
+    <SafeRootNamespace  Condition=" '$(SafeRootNamespace)' == '' "                        >$(RootNamespace)</SafeRootNamespace>
+
+    <ProjectDir         Condition=" '$(ProjectDir)' == '' "                               >$(MSBuildProjectDirectory)\</ProjectDir>
+    <ProjectPath        Condition=" '$(ProjectPath)' == '' "                              >$(ProjectDir)$(ProjectFileName)</ProjectPath>
+    <PlatformName       Condition=" '$(PlatformName)' == '' "                             >$(Platform)</PlatformName>
+    <InputDir           Condition=" '$(InputDir)' == '' "                                 >$(ProjectDir)</InputDir>
+    <InputPath          Condition=" '$(InputPath)' == '' "                                >$(ProjectPath)</InputPath>
+    <SolutionDir        Condition=" '$(SolutionDir)'=='' "                                >$(ProjectDir)</SolutionDir>
   </PropertyGroup>
 
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <ErrorReport>prompt</ErrorReport>
-      <WarningLevel>Level3</WarningLevel>
-      <ObjectFileName>$(IntDir)</ObjectFileName>
-      <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
-      <PreprocessorDefinitions>
-        %(PreprocessorDefinitions);
-        HAVE_WIN32;
-        WIN32;
-        _CRT_SECURE_NO_WARNINGS
-      </PreprocessorDefinitions>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <ClCompile>
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <MinimalRebuild>true</MinimalRebuild>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition=" '$(Configuration)' == 'Release' ">
-    <ClCompile>
-      <RuntimeLibrary>MultiThreadedDll</RuntimeLibrary>
-      <Optimization>MinSize</Optimization>
-      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <StringPooling>true</StringPooling>
-    </ClCompile>
-  </ItemDefinitionGroup>
+  <Import Project="HSBuild.Default.props" />
+  <Import Project="Platform\HSBuild.C.$(Platform).default.props" />
+
+  <!-- Target initialization        - Can NOT be overridden       -->
+  <PropertyGroup Condition=" '$(OutputType)' == 'exe' or '$(OutputType)' == 'winexe' ">
+      <TargetExt>.exe</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OutputType)' == 'dll' ">
+      <TargetExt>.dll</TargetExt>
+      <TargetSuffix Condition=" '$(Configuration)' == 'Debug' "   >-$(CRTSuffix)d</TargetSuffix>
+      <TargetSuffix Condition=" '$(Configuration)' == 'Release' " >-$(CRTSuffix)</TargetSuffix>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OutputType)' == 'lib' ">
+      <TargetExt>.lib</TargetExt>
+      <TargetSubDir Condition=" '$(TargetSubDir)' == '' ">$(LibraryOutputSubDir)</TargetSubDir>
+  </PropertyGroup>
+
+  <PropertyGroup>
+      <TargetName>$(AssemblyName)$(TargetSuffix)</TargetName>
+      <TargetFileName>$(TargetName)$(TargetExt)</TargetFileName>
+      <TargetSubDir Condition=" '$(TargetSubDir)' == '' ">$(BinaryOutputSubDir)</TargetSubDir>
+      <TargetSubDir Condition=" !HasTrailingSlash('$(TargetSubDir)') ">$(TargetSubDir)/</TargetSubDir>
+      <TargetDir>$(OutDir)$(TargetSubDir)</TargetDir>
+      <TargetPath>$(TargetDir)$(TargetFileName)</TargetPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--
+    <BuildLogFile Condition=" '$(BuildLogFile)' == '' ">$(ProjectDir)\$(MSBuildProjectName).log</BuildLogFile>
+
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildProjectFullPath);$(MSBuildToolsPath)\Microsoft.Common.targets</MSBuildAllProjects>
+    <MSBuildAllProjects Condition="Exists('$(MSBuildProjectFullPath).user')">$(MSBuildAllProjects);$(MSBuildProjectFullPath).user</MSBuildAllProjects>
+    -->
+
+    <WholeProgramOptimization Condition="'$(WholeProgramOptimization)' == ''">false</WholeProgramOptimization>
+    <CLRSupport Condition="'$(CLRSupport)' == ''">false</CLRSupport>
+    <UseOfATL Condition="'$(UseOfATL)' == ''">false</UseOfATL>
+    <UseOfMFC Condition="'$(UseOfMFC)' == ''">false</UseOfMFC>
+    <SQLDebugging Condition="'$(SQLDebugging)' == ''">false</SQLDebugging>
+    <Attach Condition="'$(Attach)' == ''">false</Attach>
+  </PropertyGroup>
 </Project>
