@@ -3,135 +3,220 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Build.Utilities;
-using
- Microsoft.Build.Framework;
+using Microsoft.Build.Framework;
 
 namespace Oah.Tasks
 {
   public sealed class MSVCLinker : ToolTask
   {
     private const string MSVCLinkerToolName = "link.exe";
-
-    private ITaskItem[] sourceFiles;
-    private ITaskItem[] libPaths;
-    private ITaskItem[] libs;
-
-    private string outputFile;
-    private string defFile;
-    private string impFile;
-    private string manifestFile;
-
-    private string machine;
-    private string subSystem;    private string errorReport;
-
-    private bool incremental = false;
-    private bool dll = false;
-    private bool debug = true;
-    private bool pdb = true;
-    private bool map = false;
-    private bool checksum = false;
+    private string ltcg;
 
     #region Tool properties
 
     [Required]
-    public ITaskItem[] Sources
-    {
-      get { return this.sourceFiles; }
-      set { this.sourceFiles = value; }
-    }
-
-    public ITaskItem[] AdditionalLibPaths
-    {
-      get { return this.libPaths; }
-      set { this.libPaths = value; }
-    }
-
-    public ITaskItem[] AdditionalLibraries
-    {
-      get { return this.libs; }
-      set { this.libs = value; }
-    }
+    public ITaskItem[] Sources { get; set; }
 
     [Required]
-    public string OutputFile
+    public string OutputFile { get; set; }
+
+    public string LinkTimeCodeGeneration
     {
-      get { return this.outputFile; }
-      set { this.outputFile = value; }
+      get { return this.ltcg; }
+      set { this.ltcg = value == null ? null : value.ToUpper(); }
     }
 
-    public string DefFile
-    {
-      get { return this.defFile; }
-      set { this.defFile = value; }
-    }
+    public ITaskItem[] AdditionalLibraryDirectories { get; set; }
+    public ITaskItem[] AdditionalDependencies { get; set; }
+    public ITaskItem[] AdditionalManifestDependencies { get; set; }
+    public ITaskItem[] AdditionalOptions { get; set; }
+    public string LinkErrorReporting { get; set; }
+    public string ModuleDefinitionFile { get; set; }
+    public string ImportLibrary { get; set; }
+    public bool GenerateManifest { get; set; }
+    public string ManifestFile { get; set; }
+    public string MSDOSStubFileName { get; set; }
+    public bool GenerateMapFile { get; set; }
+    public string MapFileName { get; set; }
+    public bool MapExports { get; set; }
+    public string ProgramDatabaseFile { get; set; }
+    public string StripPrivateSymbols { get; set; }
+    public string TargetMachine { get; set; }
+    public string SubSystem { get; set; }
+    public bool SuppressStartupBanner { get; set; }
+    public bool TreatLinkerWarningAsErrors { get; set; }
+    public bool ImageHasSafeExceptionHandlers { get; set; }
+    public bool LinkIncremental { get; set; }
+    public bool LinkDll { get; set; }
+    public bool GenerateDebugInformation { get; set; }
+    public bool SetChecksum { get; set; }
+    public bool? OptimizeReferences { get; set; }
+    public bool? EnableCOMDATFolding { get; set; }
+    public bool PreventDllBinding { get; set; }
+    public bool AllowIsolation { get; set; }
+    public bool LargeAddressAware { get; set; }
+    public bool DataExecutionPrevention { get; set; }
+    public string BaseAddress { get; set; }
+    public bool FixedBaseAddress { get; set; }
+    public bool RandomizedBaseAddress { get; set; }
+    public string EntryPointSymbol { get; set; }
+    public bool NoEntryPoint { get; set; }
+    public bool Profile { get; set; }
+    public string ProfileGuidedDatabase { get; set; }
+    public bool SwapRunFromCD { get; set; }
+    public bool SwapRunFromNET { get; set; }
+    public bool TerminalServerAware { get; set; }
+    public bool IgnoreAllDefaultLibraries { get; set; }
+    public ITaskItem[] IgnoreSpecificDefaultLibraries { get; set; }
+    public int HeapReserveSize { get; set; }
+    public int HeapCommitSize { get; set; }
+    public int StackReserveSize { get; set; }
+    public int StackCommitSize { get; set; }
+    public int SectionAlignment { get; set; }
+    public string SpecifySectionAttributes { get; set; }
+    public ITaskItem[] MergeSections { get; set; }
+    public bool EnableUAC { get; set; }
+    public bool UACUIAccess { get; set; }
+    public string UACExecutionLevel { get; set; }
+    public bool SupportUnloadOfDelayLoadedDLL { get; set; }
+    public bool SupportNobindOfDelayLoadedDLL { get; set; }
+    public ITaskItem[] DelayLoadDLLs { get; set; }
+    public bool DelaySign { get; set; }
+    public string KeyContainer { get; set; }
+    public string KeyFile { get; set; }
+    public string Version { get; set; }
+    public string Driver { get; set; }
+    public int TypeLibraryResourceID { get; set; }
+    public string TypeLibraryFile { get; set; }
+    public bool IgnoreEmbeddedIDL { get; set; }
+    public string MergedIDLBaseFileName { get; set; }
+    public string MidlCommandFile { get; set; }
+    public ITaskItem[] ForceSymbolReferences { get; set; }
 
-    public string ImpLibFile
-    {
-      get { return this.impFile; }
-      set { this.impFile = value; }
-    }
+//Skip??:
+//  MinimalRebuildFromTracking
+//  AcceptableNonZeroExitCodes
+//  MinimumRequiredVersion
+//  CreateHotPatchableImage
 
-    public string ManifestFile
-    {
-      get { return this.manifestFile; }
-      set { this.manifestFile = value; }
-    }
+//Missing:
+//  ForceFileOutput
+//  FunctionOrder
+//  LinkStatus
+//  ShowProgress
+//  TurnOffAssemblyGeneration
+//  TrackerLogDirectory
+//
+//  TLogReadFiles
+//  TLogWriteFiles
+//  TrackFileAccess
+//
+//Missing - CLR:
+//  AddModuleNamesToAssembly (/ASSEMBLYMODULE)
+//  AssemblyDebug            (/ASSEMBLYDEBUG)
+//  AssemblyLinkResource     (/ASSEMBLYLINKRESOURCE)
+//  EmbedManagedResourceFile (/ASSEMBLYRESOURCE)
+//  CLRImageType
+//  CLRSupportLastError
+//  CLRThreadAttribute
+//  CLRUnmanagedCodeCheck
 
-    public string Machine
-    {
-      get { return this.machine; }
-      set { this.machine = value; }
-    }
-
-    public string SubSystem
-    {
-      get { return this.subSystem; }
-      set { this.subSystem = value; }
-    }
-
-    public string ErrorReport
-    {
-      get { return this.errorReport; }
-      set { this.errorReport = value == null ? null : value.ToUpper(); }
-    }
-
-    public bool Incremental
-    {
-      get { return this.incremental; }
-      set { this.incremental = value; }
-    }
-
-    public bool Dll
-    {
-      get { return this.dll; }
-      set { this.dll = value; }
-    }
-
-    public bool Debug
-    {
-      get { return this.debug; }
-      set { this.debug = value; }
-    }
-
-    public bool Pdb
-    {
-      get { return this.pdb; }
-      set { this.pdb = value; }
-    }
-
-    public bool Map
-    {
-      get { return this.map; }
-      set { this.map = value; }
-    }
-
-    public bool SetChecksum
-    {
-      get { return this.checksum; }
-      set { this.checksum = value; }
-    }
 
     #endregion
+
+    private string HeapString
+    {
+      get
+      {
+        if (HeapReserveSize <= 0)
+          return null;
+
+        if (HeapCommitSize > 0)
+          return string.Format("{0},{1}", HeapReserveSize, HeapCommitSize);
+        else
+          return string.Format("{0}", HeapReserveSize);
+      }
+    }
+    private string StackString
+    {
+      get
+      {
+        if (StackReserveSize <= 0)
+          return null;
+
+        if (StackCommitSize > 0)
+          return string.Format("{0},{1}", StackReserveSize, StackCommitSize);
+        else
+          return string.Format("{0}", StackReserveSize);
+      }
+    }
+    private string ManifestUACString
+    {
+      get
+      {
+        if (EnableUAC)
+        {
+          string uiaccess = string.Format("uiAccess='{0}'", UACUIAccess);
+
+          if (!string.IsNullOrEmpty(UACExecutionLevel))
+              return string.Format("level='{0}' {1}", UACExecutionLevel, uiaccess);
+
+          return uiaccess;
+        }
+        else
+          return "NO";
+      }
+    }
+
+    private string ParseDriverString()
+    {
+      if (Driver == null)
+        return null;
+
+      string drv = Driver.Trim().ToUpper();
+
+      if (drv.Length == 0)
+        return " ";
+      else if (string.Compare(Driver, "NOTSET", true) == 0)
+        return null;
+
+      if (string.Compare(Driver, "UPONLY", true) != 0 &&
+          string.Compare(Driver, "WDM", true) != 0)
+        Log.LogWarning("/DRIVER must be set to either UPONLY or WDM (but is '{0}')", Driver);
+
+      return string.Format(":{0}", drv);
+    }
+
+    private string ParseTargetMachine()
+    {
+        if (string.IsNullOrEmpty(TargetMachine))
+            return null;
+
+        string m = TargetMachine.ToUpper();
+        if (m.StartsWith("MACHINE"))
+            m = m.Substring("MACHINE".Length);
+
+        return m;
+    }
+
+    private string ParseErrorReporting()
+    {
+        if (string.IsNullOrEmpty(LinkErrorReporting))
+            return null;
+
+        string m = LinkErrorReporting.ToUpper();
+
+        if (m == "NOERRORREPORT")
+          return null;
+        else if (m == "PROMPTIMMEDIATELY")
+          m = "PROMPT";
+        else if (m == "QUEUEFORNEXTLOGIN")
+          m = "QUEUE";
+        else if (m == "SENDERRORREPORT")
+          m = "SEND";
+
+        return m;
+    }
 
     protected override string ToolName
     {
@@ -151,9 +236,10 @@ namespace Oah.Tasks
     protected override string GenerateCommandLineCommands()
     {
       CommandLineBuilder builder = new CommandLineBuilder();
-      builder.AppendSwitch("/NOLOGO");
+      if (SuppressStartupBanner)
+        builder.AppendSwitch("/NOLOGO");
 
-      builder.AppendSwitchIfNotNull("/ERRORREPORT:", ErrorReport);
+      builder.AppendSwitchIfNotNull("/ERRORREPORT:", ParseErrorReporting());
 
       return builder.ToString();
     }
@@ -164,44 +250,134 @@ namespace Oah.Tasks
 
       builder.AppendSwitchIfNotNull("/OUT:", OutputFile);
 
-      string filePathNoExt = OutputFile;
-      if (filePathNoExt.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) ||
-          filePathNoExt.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
-      {
-        filePathNoExt = filePathNoExt.Substring(0, filePathNoExt.Length - 4);
-      }
-
-      if (Incremental)
+      if (TreatLinkerWarningAsErrors)
+        builder.AppendSwitch("/WX");
+      if (LinkIncremental)
         builder.AppendSwitch("/INCREMENTAL");
-      if (Dll)
+      if (LinkDll)
         builder.AppendSwitch("/DLL");
-      if (Debug)
+      if (GenerateDebugInformation)
         builder.AppendSwitch("/DEBUG");
       if (SetChecksum)
         builder.AppendSwitch("/RELEASE");
-      if (Map)
-        builder.AppendSwitchIfNotNull("/MAP /MAPFILE:", filePathNoExt + ".map");
-      if (Pdb)
+      if (PreventDllBinding)
+        builder.AppendSwitch("/ALLOWBIND:NO");
+      if (!AllowIsolation)
+        builder.AppendSwitch("/ALLOWISOLATION:NO");
+      if (GenerateMapFile)
       {
-        if (!Debug)
-          Log.LogWarning("Pdb enabled without required Debug switch.");
-        builder.AppendSwitchIfNotNull("/PDB:", filePathNoExt + ".pdb");
+        builder.AppendSwitch("/MAP");
+        if (MapExports)
+          builder.AppendSwitch("/MAPINFO:EXPORTS");
+        builder.AppendSwitchIfNotNull("/MAPFILE:", MapFileName);
+      }
+      if (GenerateManifest)
+      {
+        builder.AppendSwitch("/MANIFEST");
+        builder.AppendSwitchIfNotNull("/MANIFESTFILE:", ManifestFile);
+        if (AdditionalManifestDependencies != null)
+        {
+          foreach (ITaskItem dep in AdditionalManifestDependencies)
+            builder.AppendSwitchUnquotedIfNotNull("/MANIFESTDEPENDENCY:", dep);
+        }
+      }
+      builder.AppendSwitchIfNotNull("/MANIFESTUAC:", ManifestUACString);
+      builder.AppendSwitchIfNotNull("/PDB:", ProgramDatabaseFile);
+      builder.AppendSwitchIfNotNull("/PDBSTRIPPED:", StripPrivateSymbols);
+      builder.AppendSwitchIfNotNull("/LTCG:", LinkTimeCodeGeneration);
+      builder.AppendSwitchIfNotNull("/DRIVER", ParseDriverString());
+
+      builder.AppendSwitchIfNotNull("/ENTRY:", EntryPointSymbol);
+      if (NoEntryPoint)
+        builder.AppendSwitch("/NOENTRY");
+      builder.AppendSwitchIfNotNull("/BASE:", BaseAddress);
+      if (FixedBaseAddress)
+        builder.AppendSwitch("/FIXED");
+      if (RandomizedBaseAddress)
+        builder.AppendSwitch("/DYNAMICBASE");
+      if (LargeAddressAware)
+        builder.AppendSwitch("/LARGEADDRESSAWARE");
+      if (DataExecutionPrevention)
+        builder.AppendSwitch("/NXCOMPAT:NO");
+      if (Profile)
+        builder.AppendSwitch("/PROFILE");
+      builder.AppendSwitchIfNotNull("/PGD:", ProfileGuidedDatabase);
+      if (SwapRunFromCD)
+        builder.AppendSwitch("/SWAPRUN:CD");
+      if (SwapRunFromNET)
+        builder.AppendSwitch("/SWAPRUN:NET");
+      if (TerminalServerAware)
+        builder.AppendSwitch("/TSAWARE");
+      if (ImageHasSafeExceptionHandlers)
+        builder.AppendSwitch("/SAFESEH");
+      if (OptimizeReferences != null)
+        builder.AppendSwitch("/OPT:" + ((bool)OptimizeReferences ? "NOREF" : "REF"));
+      if (EnableCOMDATFolding != null)
+        builder.AppendSwitch("/OPT:" + ((bool)EnableCOMDATFolding ? "NOICF" : "ICF"));
+
+      if (SectionAlignment > 0)
+        builder.AppendSwitch("/ALIGN:" + SectionAlignment.ToString());
+      builder.AppendSwitchIfNotNull("/SECTION:", SpecifySectionAttributes);
+      if (MergeSections != null)
+      {
+        foreach (ITaskItem secToFrom in MergeSections)
+          builder.AppendSwitchUnquotedIfNotNull("/MERGE:", secToFrom);
       }
 
-      builder.AppendSwitchIfNotNull("/MANIFEST /MANIFESTFILE:", ManifestFile);
-
-      builder.AppendSwitchIfNotNull("/MACHINE:", Machine);
-      builder.AppendSwitchIfNotNull("/SUBSYSTEM:", SubSystem);
-      builder.AppendSwitchIfNotNull("/DEF:", DefFile);
-      builder.AppendSwitchIfNotNull("/IMPLIB:", ImpLibFile);
-
-      if (AdditionalLibPaths != null)
+      if (DelayLoadDLLs != null)
       {
-        foreach (ITaskItem dir in AdditionalLibPaths)
+        foreach (ITaskItem dll in DelayLoadDLLs)
+          builder.AppendSwitchUnquotedIfNotNull("/DELAYLOAD:", dll);
+      }
+      if (SupportUnloadOfDelayLoadedDLL)
+        builder.AppendSwitch("/DELAY:UNLOAD");
+      if (SupportNobindOfDelayLoadedDLL)
+        builder.AppendSwitch("/DELAY:NOBIND");
+      if (DelaySign)
+        builder.AppendSwitch("/DELAYSIGN");
+      builder.AppendSwitchIfNotNull("/KEYFILE:", KeyFile);
+      builder.AppendSwitchIfNotNull("/KEYCONTAINER:", KeyContainer);
+
+      builder.AppendSwitchIfNotNull("/VERSION:", Version);
+      builder.AppendSwitchIfNotNull("/HEAP:", HeapString);
+      builder.AppendSwitchIfNotNull("/STACK:", StackString);
+      builder.AppendSwitchIfNotNull("/MACHINE:", ParseTargetMachine());
+      builder.AppendSwitchIfNotNull("/SUBSYSTEM:", SubSystem);
+      builder.AppendSwitchIfNotNull("/DEF:", ModuleDefinitionFile);
+      builder.AppendSwitchIfNotNull("/IMPLIB:", ImportLibrary);
+      builder.AppendSwitchIfNotNull("/STUB:", MSDOSStubFileName);
+
+      builder.AppendSwitchIfNotNull("/TLBOUT:", TypeLibraryFile);
+      if (TypeLibraryResourceID > 1)
+        builder.AppendSwitch("/TLBID:" + TypeLibraryResourceID.ToString());
+
+      if (IgnoreEmbeddedIDL)
+        builder.AppendSwitch("/IGNOREIDL");
+      builder.AppendSwitchIfNotNull("/IDLOUT:", MergedIDLBaseFileName);
+      builder.AppendSwitchIfNotNull("/MIDL:@", MidlCommandFile);
+
+      if (IgnoreAllDefaultLibraries)
+        builder.AppendSwitch("/NODEFAULTLIB");
+      else if (IgnoreSpecificDefaultLibraries != null)
+      {
+        foreach (ITaskItem lib in IgnoreSpecificDefaultLibraries)
+          builder.AppendSwitchUnquotedIfNotNull("/NODEFAULTLIB:", lib);
+      }
+
+      if (ForceSymbolReferences != null)
+      {
+        foreach (ITaskItem symref in ForceSymbolReferences)
+          builder.AppendSwitchUnquotedIfNotNull("/INCLUDE:", symref);
+      }
+
+      if (AdditionalLibraryDirectories != null)
+      {
+        foreach (ITaskItem dir in AdditionalLibraryDirectories)
           builder.AppendSwitchUnquotedIfNotNull("/LIBPATH:", dir);
       }
 
-      builder.AppendFileNamesIfNotNull(AdditionalLibraries, " ");
+      builder.AppendFileNamesIfNotNull(AdditionalOptions, " ");
+      builder.AppendFileNamesIfNotNull(AdditionalDependencies, " ");
       builder.AppendFileNamesIfNotNull(Sources, " ");
 
       return builder.ToString();
