@@ -11,23 +11,33 @@ namespace Oah.Tasks
   {
     private const string MSManifestToolName = "mt.exe";
 
-    private ITaskItem[] inputManifests;
-    private ITaskItem outputManifest;
-
     #region Tool properties
     [Required]
-    public ITaskItem[] InputManifest
-    {
-      get { return this.inputManifests; }
-      set { this.inputManifests = value; }
-    }
+    public ITaskItem[] Sources { get; set; }
 
     [Required]
-    public ITaskItem OutputManifest
-    {
-      get { return this.outputManifest; }
-      set { this.outputManifest = value; }
-    }
+    public ITaskItem OutputManifestFile { get; set; }
+
+    public ITaskItem[] AdditionalOptions { get; set; }
+    public string AssemblyIdentity { get; set; }
+    public bool GenerateCategoryTags { get; set; }
+    public bool GenerateCatalogFiles { get; set; }
+    public bool SuppressDependencyElement { get; set; }
+    public bool SuppressStartupBanner { get; set; }
+    public bool Verbose { get; set; }
+
+    public bool UpdateFileHashes { get; set; }
+    public ITaskItem UpdateFileHashesSearchPath { get; set; }
+
+    public ITaskItem InputResourceManifests { get; set; }
+    public ITaskItem OutputResourceManifests { get; set; }
+    public ITaskItem ManifestFromManagedAssembly { get; set; }
+
+    public ITaskItem TypeLibraryFile { get; set; }
+    public ITaskItem RegistrarScriptFile { get; set; }
+    public ITaskItem ComponentFileName { get; set; }
+    public ITaskItem ReplacementsFile { get; set; }
+
     #endregion
 
     protected override string ToolName
@@ -48,7 +58,8 @@ namespace Oah.Tasks
     protected override string GenerateCommandLineCommands()
     {
       CommandLineBuilder builder = new CommandLineBuilder();
-      builder.AppendSwitch("/nologo");
+      if (SuppressStartupBanner)
+          builder.AppendSwitch("/nologo");
 
       return builder.ToString();
     }
@@ -57,11 +68,33 @@ namespace Oah.Tasks
     {
       CommandLineBuilder builder = new CommandLineBuilder();
 
-      builder.AppendSwitchIfNotNull("/out:", OutputManifest);
+      builder.AppendSwitchIfNotNull("/out:", OutputManifestFile);
+      if (Verbose)
+        builder.AppendSwitch("verbose");
+      if (SuppressDependencyElement)
+        builder.AppendSwitch("/nodependency");
+      if (GenerateCategoryTags)
+        builder.AppendSwitch("/category");
+      if (GenerateCatalogFiles)
+        builder.AppendSwitch("/makecdfs");
+
+      if (UpdateFileHashes)
+        builder.AppendSwitchIfNotNull("/hashupdate:", UpdateFileHashesSearchPath);
+
+      builder.AppendSwitchIfNotNull("/inputresource:", InputResourceManifests);
+      builder.AppendSwitchIfNotNull("/outputresource:", OutputResourceManifests);
+      builder.AppendSwitchIfNotNull("/managedassemblyname:", ManifestFromManagedAssembly);
+      builder.AppendSwitchIfNotNull("/identity:", AssemblyIdentity);
+      builder.AppendSwitchIfNotNull("/rgs:", RegistrarScriptFile);
+      builder.AppendSwitchIfNotNull("/tlb:", TypeLibraryFile);
+      builder.AppendSwitchIfNotNull("/dll:", ComponentFileName);
+      builder.AppendSwitchIfNotNull("/replacements:", ReplacementsFile);
+
       // Use notify_update and check return value if update needed.
       //builder.AppendSwitch("/notify_update");
-      builder.AppendSwitch("/manifest");
-      builder.AppendFileNamesIfNotNull(InputManifest, " ");
+
+      builder.AppendFileNamesIfNotNull(AdditionalOptions, " ");
+      builder.AppendSwitchIfNotNull("/manifest ", Sources, " ");
 
       return builder.ToString();
     }

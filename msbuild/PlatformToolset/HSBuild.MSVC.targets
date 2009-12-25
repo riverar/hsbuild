@@ -136,6 +136,7 @@
     Name="LinkObjectToNativeAssembly"
     >
       <Error Condition=" '$(OutputType)' == 'lib' " Text="LinkObjectToNativeAssembly can't be used for static link libraries!" />
+      <Error Condition=" '%(Link.OutputFile)' == '' " Text="Link item missing OutputFile metadata." />
 
       <!-- LINK -->
       <PropertyGroup Condition="'$(LinkIncremental)' == ''">
@@ -259,8 +260,8 @@
         </ItemGroup>
 
       <MSManifest
-        InputManifest="%(Link.ManifestFile)"
-        OutputManifest="%(Link.OutputFile).embed.manifest"
+        Sources                        ="%(Link.ManifestFile)"
+        OutputManifestFile             ="%(Link.OutputFile).embed.manifest"
         />
 
       <MSManifestResource
