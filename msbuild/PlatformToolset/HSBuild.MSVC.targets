@@ -349,24 +349,32 @@
   <Target
     Name="GenerateNativeStaticLibraryAssembly"
     >
-      <PropertyGroup>
-        <Machine Condition="'$(Platform)'=='x86'">X86</Machine>
-        <Machine Condition="'$(Platform)'=='x64'">X64</Machine>
-        <Machine Condition="'$(Platform)'=='Itanium'">IA64</Machine>
-      </PropertyGroup>
-
       <Error Condition=" '$(OutputType)' != 'lib' " Text="GenerateNativeStaticLibraryAssembly can only be used for static libraries!" />
 
       <MSVCLib
-        Sources="@(Link)"
-        AdditionalLibPaths="%(Link.AdditionalLibPaths);@(AdditionalLibPaths)"
-        AdditionalLibraries="%(Link.AdditionalLibraries);@(AdditionalLibraries)"
-        OutputFile="$(TargetPath)"
-        DefFile="$(DefFile)"
-        SubSystem="$(SubSystem)"
-        Machine="$(Machine)"
-        ErrorReport="$(ErrorReport)"
-        ToolPath="$(MSVCToolPath)"
+        ToolPath                       ="$(MSVCToolPath)"
+
+        Sources                        ="@(Link)"
+
+        AdditionalDependencies         ="%(Link.AdditionalDependencies);@(AdditionalDependencies)"
+        AdditionalLibraryDirectories   ="%(Link.AdditionalLibraryDirectories);@(AdditionalLibraryDirectories)"
+        AdditionalOptions              ="%(Link.AdditionalOptions)"
+
+        ErrorReporting                 ="%(Link.LinkErrorReporting)"
+
+        ForceSymbolReferences          ="%(Link.ForceSymbolReferences)"
+        IgnoreAllDefaultLibraries      ="%(Link.IgnoreAllDefaultLibraries)"
+        IgnoreSpecificDefaultLibraries ="%(Link.IgnoreSpecificDefaultLibraries)"
+        LinkTimeCodeGeneration         ="%(Link.LinkTimeCodeGeneration)"
+        ModuleDefinitionFile           ="%(Link.ModuleDefinitionFile)"
+        Name                           ="%(Link.Name)"
+        OutputFile                     ="%(Link.OutputFile)"
+
+        SubSystem                      ="%(Link.SubSystem)"
+        SuppressStartupBanner          ="%(Link.SuppressStartupBanner)"
+        TargetMachine                  ="%(Link.TargetMachine)"
+        TreatLibWarningAsErrors        ="%(Link.TreatLinkerWarningAsErrors)"
+        Verbose                        ="%(Link.Verbose)"
         />
   </Target>
 

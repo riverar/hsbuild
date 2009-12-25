@@ -10,71 +10,69 @@ namespace Oah.Tasks
   public sealed class MSVCLib : ToolTask
   {
     private const string MSVCLibToolName = "lib.exe";
-
-    private ITaskItem[] sourceFiles;
-    private ITaskItem[] libPaths;
-    private ITaskItem[] libs;
-
-    private string outputFile;
-    private string defFile;
-
-    private string machine;
-    private string subSystem;
-    private string errorReport;
+    private string ltcg;
 
     #region Tool properties
 
     [Required]
-    public ITaskItem[] Sources
-    {
-      get { return this.sourceFiles; }
-      set { this.sourceFiles = value; }
-    }
-
-    public ITaskItem[] AdditionalLibPaths
-    {
-      get { return this.libPaths; }
-      set { this.libPaths = value; }
-    }
-
-    public ITaskItem[] AdditionalLibraries
-    {
-      get { return this.libs; }
-      set { this.libs = value; }
-    }
-
+    public ITaskItem[] Sources { get; set; }
     [Required]
-    public string OutputFile
+    public string OutputFile { get; set; }
+
+    public string LinkTimeCodeGeneration
     {
-      get { return this.outputFile; }
-      set { this.outputFile = value; }
+        get { return this.ltcg; }
+        set { this.ltcg = value == null ? null : value.ToUpper(); }
     }
 
-    public string DefFile
-    {
-      get { return this.defFile; }
-      set { this.defFile = value; }
-    }
+    public ITaskItem[] AdditionalLibraryDirectories { get; set; }
+    public ITaskItem[] AdditionalDependencies { get; set; }
+    public ITaskItem[] AdditionalOptions { get; set; }
 
-    public string Machine
-    {
-      get { return this.machine; }
-      set { this.machine = value; }
-    }
-
-    public string SubSystem
-    {
-      get { return this.subSystem; }
-      set { this.subSystem = value; }
-    }
-
-    public string ErrorReport
-    {
-      get { return this.errorReport; }
-      set { this.errorReport = value == null ? null : value.ToUpper(); }
-    }
+    public string ErrorReporting { get; set; }
+    public ITaskItem[] ForceSymbolReferences { get; set; }
+    public bool IgnoreAllDefaultLibraries { get; set; }
+    public ITaskItem[] IgnoreSpecificDefaultLibraries { get; set; }
+    public string ModuleDefinitionFile { get; set; }
+    public string Name { get; set; }
+    public string TargetMachine { get; set; }
+    public string SubSystem { get; set; }
+    public bool SuppressStartupBanner { get; set; }
+    public bool TreatLibWarningAsErrors { get; set; }
+    public bool Verbose { get; set; }
 
     #endregion
+
+    private string ParseTargetMachine()
+    {
+      if (string.IsNullOrEmpty(TargetMachine))
+        return null;
+
+      string m = TargetMachine.ToUpper();
+      if (m.StartsWith("MACHINE"))
+        m = m.Substring("MACHINE".Length);
+
+      return m;
+    }
+
+    private string ParseErrorReporting()
+    {
+      if (string.IsNullOrEmpty(ErrorReporting))
+        return null;
+
+      string m = ErrorReporting.ToUpper();
+
+      if (m == "NOERRORREPORT")
+        return null;
+      else if (m == "PROMPTIMMEDIATELY")
+        m = "PROMPT";
+      else if (m == "QUEUEFORNEXTLOGIN")
+        m = "QUEUE";
+      else if (m == "SENDERRORREPORT")
+        m = "SEND";
+
+        return m;
+    }
 
     protected override string ToolName
     {
@@ -94,9 +92,10 @@ namespace Oah.Tasks
     protected override string GenerateCommandLineCommands()
     {
       CommandLineBuilder builder = new CommandLineBuilder();
-      builder.AppendSwitch("/NOLOGO");
+      if (SuppressStartupBanner)
+        builder.AppendSwitch("/NOLOGO");
 
-      builder.AppendSwitchIfNotNull("/ERRORREPORT:", ErrorReport);
+      builder.AppendSwitchIfNotNull("/ERRORREPORT:", ParseErrorReporting());
 
       return builder.ToString();
     }
@@ -106,18 +105,39 @@ namespace Oah.Tasks
       CommandLineBuilder builder = new CommandLineBuilder();
 
       builder.AppendSwitchIfNotNull("/OUT:", OutputFile);
+      builder.AppendSwitchIfNotNull("/NAME:", Name);
 
-      builder.AppendSwitchIfNotNull("/MACHINE:", Machine);
+      if (TreatLibWarningAsErrors)
+          builder.AppendSwitch("/WX");
+      if (Verbose)
+          builder.AppendSwitch("/VERBOSE");
+      builder.AppendSwitchIfNotNull("/MACHINE:", ParseTargetMachine());
       builder.AppendSwitchIfNotNull("/SUBSYSTEM:", SubSystem);
-      builder.AppendSwitchIfNotNull("/DEF:", DefFile);
+      builder.AppendSwitchIfNotNull("/LTCG:", LinkTimeCodeGeneration);
+      builder.AppendSwitchIfNotNull("/DEF:", ModuleDefinitionFile);
 
-      if (AdditionalLibPaths != null)
+      if (IgnoreAllDefaultLibraries)
+        builder.AppendSwitch("/NODEFAULTLIB");
+      else if (IgnoreSpecificDefaultLibraries != null)
       {
-        foreach (ITaskItem dir in AdditionalLibPaths)
+        foreach (ITaskItem lib in IgnoreSpecificDefaultLibraries)
+          builder.AppendSwitchUnquotedIfNotNull("/NODEFAULTLIB:", lib);
+      }
+
+      if (ForceSymbolReferences != null)
+      {
+        foreach (ITaskItem symref in ForceSymbolReferences)
+          builder.AppendSwitchUnquotedIfNotNull("/INCLUDE:", symref);
+      }
+
+      if (AdditionalLibraryDirectories != null)
+      {
+        foreach (ITaskItem dir in AdditionalLibraryDirectories)
           builder.AppendSwitchUnquotedIfNotNull("/LIBPATH:", dir);
       }
 
-      builder.AppendFileNamesIfNotNull(AdditionalLibraries, " ");
+      builder.AppendFileNamesIfNotNull(AdditionalOptions, " ");
+      builder.AppendFileNamesIfNotNull(AdditionalDependencies, " ");
       builder.AppendFileNamesIfNotNull(Sources, " ");
 
       return builder.ToString();
