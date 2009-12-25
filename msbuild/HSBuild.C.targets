@@ -43,9 +43,10 @@
       <TargetName>$(AssemblyName)$(TargetSuffix)</TargetName>
       <TargetFileName>$(TargetName)$(TargetExt)</TargetFileName>
       <TargetSubDir Condition=" '$(TargetSubDir)' == '' ">$(BinaryOutputSubDir)</TargetSubDir>
-      <TargetSubDir Condition=" !HasTrailingSlash('$(TargetSubDir)') ">$(TargetSubDir)/</TargetSubDir>
+      <TargetSubDir Condition=" '$(TargetSubDir)' != '' and !HasTrailingSlash('$(TargetSubDir)') ">$(TargetSubDir)/</TargetSubDir>
       <TargetDir>$(OutDir)$(TargetSubDir)</TargetDir>
       <TargetPath>$(TargetDir)$(TargetFileName)</TargetPath>
+      <OutputFile Condition=" '$(OutputFile)' == '' ">$(TargetPath)</OutputFile>
   </PropertyGroup>
 
   <Import Project="HSBuild.Common.targets" />
