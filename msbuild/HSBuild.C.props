@@ -20,6 +20,18 @@
     </ClCompile>
   </ItemDefinitionGroup>
 
+  <!-- Setup compilation metadata for link/lib tool -->
+  <ItemDefinitionGroup Condition=" '$(OutputType)' == 'exe' OR '$(OutputType)' == 'winexe' OR '$(OutputType)' == 'dll' OR '$(OutputType)' == 'library' ">
+    <Compile>         <LinkCompiled     Condition="'%(Compile.LinkCompiled)'                    == ''">true</LinkCompiled></Compile>
+    <ClCompile>       <LinkCompiled     Condition="'%(ClCompile.LinkCompiled)'                  == ''">true</LinkCompiled></ClCompile>
+    <ResourceCompile> <LinkCompiled     Condition="'%(ResourceCompile.LinkCompiled)'            == ''">true</LinkCompiled></ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition=" '$(OutputType)' == 'lib' OR '$(OutputType)' == 'library' ">
+    <Compile>         <LibCompiled      Condition="'%(Compile.LibCompiled)'                     == ''">true</LibCompiled></Compile>
+    <ClCompile>       <LibCompiled      Condition="'%(ClCompile.LibCompiled)'                   == ''">true</LibCompiled></ClCompile>
+    <ResourceCompile> <LibCompiled      Condition="'%(ResourceCompile.LibCompiled)'             == ''">true</LibCompiled></ResourceCompile>
+  </ItemDefinitionGroup>
+
   <PropertyGroup>
     <EmbedManifest                      Condition="'$(EmbedManifest)'                           == ''">true</EmbedManifest>
   </PropertyGroup>

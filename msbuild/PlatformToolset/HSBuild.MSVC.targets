@@ -104,8 +104,11 @@
         />
 
       <ItemGroup>
-          <Link Include="@(ClCompile->'$(IntDir)%(FileName).obj')" />
-          <FileWrites Include="@(Link)" />
+        <Obj Include="@(ClCompile->'$(IntDir)%(FileName).obj')" Condition="'%(ClCompile.ExcludedFromBuild)'!='true'">
+          <LinkCompiled>%(ClCompile.LinkCompiled)</LinkCompiled>
+          <LibCompiled>%(ClCompile.LibCompiled)</LibCompiled>
+        </Obj>
+        <FileWrites Include="@(ClCompile->'$(IntDir)%(FileName).obj')" Condition="'%(ClCompile.ExcludedFromBuild)'!='true'" />
       </ItemGroup>
   </Target>
 
@@ -116,7 +119,7 @@
     Condition=" '@(ResourceCompile)' != '' "
     >
       <!-- Compile resources -->
-      <MSResourceCompiler
+      <MSResourceCompiler Condition="'%(ResourceCompile.ExcludedFromBuild)'!='true'"
         SourceFile="%(ResourceCompile.Identity)"
         OutputFile="$(IntDir)%(ResourceCompile.FileName).res"
         AdditionalIncludeDirectories="%(ResourceCompile.AdditionalIncludeDirectories)"
@@ -126,17 +129,38 @@
         />
 
       <ItemGroup>
-          <Link Include="@(ResourceCompile->'$(IntDir)%(FileName).res')" />
-          <FileWrites Include="@(Link)" />
+        <Obj Include="@(ResourceCompile->'$(IntDir)%(FileName).res')" Condition="'%(ResourceCompile.ExcludedFromBuild)'!='true'">
+          <LinkCompiled>%(ClCompile.LinkCompiled)</LinkCompiled>
+          <LibCompiled>%(ClCompile.LibCompiled)</LibCompiled>
+        </Obj>
+        <FileWrites Include="@(ResourceCompile->'$(IntDir)%(FileName).res')" Condition="'%(ResourceCompile.ExcludedFromBuild)'!='true'" />
       </ItemGroup>
   </Target>
 
-  <!-- TARGET: LinkObjectToNativeAssembly -->
+  <!-- TARGET: TransformObjOutput -->
   <Target
-    Name="LinkObjectToNativeAssembly"
+    Name="TransformObjOutput"
+    Condition=" '@(Obj)' != '' "
     >
-      <Error Condition=" '$(OutputType)' == 'lib' " Text="LinkObjectToNativeAssembly can't be used for static link libraries!" />
+      <!-- FIXME: We don't support library OutputType yet. -->
+      <Error Condition=" '$(OutputType)' == 'library' " Text="OutputType == library -> Not yet supported." />
+
+      <ItemGroup>
+        <Link Include="@(Obj)" Condition=" '%(Obj.LinkCompiled)' == 'true' " />
+        <Lib Include="@(Obj)" Condition=" '%(Obj.LibCompiled)' == 'true' " />
+      </ItemGroup>
+  </Target>
+
+  <!-- TARGET: Link -->
+  <Target
+    Name="Link"
+    Condition=" '@(Link)' != '' "
+    >
       <Error Condition=" '%(Link.OutputFile)' == '' " Text="Link item missing OutputFile metadata." />
+
+      <MakeDir Directories="$(LibraryOutputPath)" />
+      <MakeDir Directories="$(BinaryOutputPath)" />
+      <MakeDir Directories="$(TargetDir)" />
 
       <!-- LINK -->
       <PropertyGroup Condition="'$(LinkIncremental)' == ''">
@@ -347,54 +371,46 @@
         />
   </Target>
 
+  <!-- TARGET: Lib -->
   <Target
-    Name="GenerateNativeStaticLibraryAssembly"
+    Name="Lib"
+    Condition=" '@(Lib)' != '' "
     >
-      <Error Condition=" '$(OutputType)' != 'lib' " Text="GenerateNativeStaticLibraryAssembly can only be used for static libraries!" />
+      <MakeDir Directories="$(LibraryOutputPath)" />
+      <MakeDir Directories="$(TargetDir)" />
+
+      <ItemGroup>
+        <!-- Add default ModuleDefinitionsFile created from @(SymbolFile) items. -->
+        <Lib>
+          <ModuleDefinitionFile Condition=" '%(Lib.ModuleDefinitionFile)' == '' ">$(SymbolFileGenModuleDefFile)</ModuleDefinitionFile>
+          <SubSystem Condition="'%(Lib.SubSystem)' == ''">CONSOLE</SubSystem>
+        </Lib>
+      </ItemGroup>
 
       <MSVCLib
         ToolPath                       ="$(MSVCToolPath)"
 
-        Sources                        ="@(Link)"
+        Sources                        ="@(Lib)"
 
-        AdditionalDependencies         ="%(Link.AdditionalDependencies);@(AdditionalDependencies)"
-        AdditionalLibraryDirectories   ="%(Link.AdditionalLibraryDirectories);@(AdditionalLibraryDirectories)"
-        AdditionalOptions              ="%(Link.AdditionalOptions)"
+        AdditionalDependencies         ="%(Lib.AdditionalDependencies);@(AdditionalDependencies)"
+        AdditionalLibraryDirectories   ="%(Lib.AdditionalLibraryDirectories);@(AdditionalLibraryDirectories)"
+        AdditionalOptions              ="%(Lib.AdditionalOptions)"
 
-        ErrorReporting                 ="%(Link.LinkErrorReporting)"
+        ErrorReporting                 ="%(Lib.LinkErrorReporting)"
 
-        ForceSymbolReferences          ="%(Link.ForceSymbolReferences)"
-        IgnoreAllDefaultLibraries      ="%(Link.IgnoreAllDefaultLibraries)"
-        IgnoreSpecificDefaultLibraries ="%(Link.IgnoreSpecificDefaultLibraries)"
-        LinkTimeCodeGeneration         ="%(Link.LinkTimeCodeGeneration)"
-        ModuleDefinitionFile           ="%(Link.ModuleDefinitionFile)"
-        Name                           ="%(Link.Name)"
-        OutputFile                     ="%(Link.OutputFile)"
+        ForceSymbolReferences          ="%(Lib.ForceSymbolReferences)"
+        IgnoreAllDefaultLibraries      ="%(Lib.IgnoreAllDefaultLibraries)"
+        IgnoreSpecificDefaultLibraries ="%(Lib.IgnoreSpecificDefaultLibraries)"
+        LinkTimeCodeGeneration         ="%(Lib.LinkTimeCodeGeneration)"
+        ModuleDefinitionFile           ="%(Lib.ModuleDefinitionFile)"
+        Name                           ="%(Lib.Name)"
+        OutputFile                     ="%(Lib.OutputFile)"
 
-        SubSystem                      ="%(Link.SubSystem)"
-        SuppressStartupBanner          ="%(Link.SuppressStartupBanner)"
-        TargetMachine                  ="%(Link.TargetMachine)"
-        TreatLibWarningAsErrors        ="%(Link.TreatLinkerWarningAsErrors)"
-        Verbose                        ="%(Link.Verbose)"
-        />
-  </Target>
-
-  <!-- TARGET: GenerateNativeAssembly -->
-  <Target
-    Name="GenerateNativeAssembly"
-    >
-      <MakeDir Directories="$(LibraryOutputPath)" />
-      <MakeDir Directories="$(BinaryOutputPath)" />
-      <MakeDir Directories="$(TargetDir)" />
-
-      <CallTarget
-        Condition=" '$(OutputType)' != 'lib' "
-        Targets="LinkObjectToNativeAssembly"
-        />
-
-      <CallTarget
-        Condition=" '$(OutputType)' == 'lib' "
-        Targets="GenerateNativeStaticLibraryAssembly"
+        SubSystem                      ="%(Lib.SubSystem)"
+        SuppressStartupBanner          ="%(Lib.SuppressStartupBanner)"
+        TargetMachine                  ="%(Lib.TargetMachine)"
+        TreatLibWarningAsErrors        ="%(Lib.TreatLinkerWarningAsErrors)"
+        Verbose                        ="%(Lib.Verbose)"
         />
   </Target>
 

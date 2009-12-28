@@ -16,7 +16,9 @@
     <BuildLinkTargets>
       $(BuildLinkTargets);
       GenerateSymbols;
-      GenerateNativeAssembly;
+      TransformObjOutput;
+      Lib;
+      Link;
     </BuildLinkTargets>
 
     <BuildInstallTargets>
