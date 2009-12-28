@@ -15,7 +15,6 @@ namespace Oah.Tasks
     [Required]
     public ITaskItem[] Sources { get; set; }
 
-    [Required]
     public ITaskItem OutputManifestFile { get; set; }
 
     public ITaskItem[] AdditionalOptions { get; set; }
