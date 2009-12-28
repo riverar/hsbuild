@@ -24,7 +24,6 @@ namespace Oah.Tasks
     public bool GenerateCatalogFiles { get; set; }
     public bool SuppressDependencyElement { get; set; }
     public bool SuppressStartupBanner { get; set; }
-    public bool Verbose { get; set; }
 
     public bool UpdateFileHashes { get; set; }
     public ITaskItem UpdateFileHashesSearchPath { get; set; }
@@ -69,8 +68,6 @@ namespace Oah.Tasks
       CommandLineBuilder builder = new CommandLineBuilder();
 
       builder.AppendSwitchIfNotNull("/out:", OutputManifestFile);
-      if (Verbose)
-        builder.AppendSwitch("verbose");
       if (SuppressDependencyElement)
         builder.AppendSwitch("/nodependency");
       if (GenerateCategoryTags)
