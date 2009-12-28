@@ -35,6 +35,13 @@
   <PropertyGroup>
     <EmbedManifest                      Condition="'$(EmbedManifest)'                           == ''">true</EmbedManifest>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(EmbedManifest)' == 'true' AND '$(OutputType)' != 'lib' ">
+    <EmbedManifestBy                                                                                  >LINK</EmbedManifestBy>
+    <!--
+    <EmbedManifestBy                    Condition="'$(LinkIncremental)'                         == 'true'">LINK</EmbedManifestBy>
+    <EmbedManifestBy                    Condition="'$(LinkIncremental)'                         != 'true'">MT</EmbedManifestBy>
+    -->
+  </PropertyGroup>
 
   <ItemDefinitionGroup>
     <!-- ClCompile -->
@@ -184,10 +191,6 @@
       <VerboseOutput                Condition="'%(Manifest.VerboseOutput)'                  == ''">true</VerboseOutput>
       <GenerateCatalogFiles         Condition="'%(Manifest.GenerateCatalogFiles)'           == ''">false</GenerateCatalogFiles>
       <UpdateFileHashes             Condition="'%(Manifest.UpdateFileHashes)'               == ''">false</UpdateFileHashes>
-      <OutputManifestFile           Condition="'$(EmbedManifest)'                           == 'false'" >$(TargetPath).manifest</OutputManifestFile>
-      <OutputManifestFile           Condition="'$(EmbedManifest)'                           == 'true' AND '$(EmbedManifestBy)'=='LINK'">$(IntDir)$(TargetName)$(TargetExt).embed.manifest</OutputManifestFile>
-      <OutputResourceManifests      Condition="'$(EmbedManifest)'                           == 'true' AND '$(EmbedManifestBy)'=='MT' AND '$(ConfigurationType)'=='Application'" >$(OutputFile);#1</OutputResourceManifests>
-      <OutputResourceManifests      Condition="'$(EmbedManifest)'                           == 'true' AND '$(EmbedManifestBy)'=='MT' AND '$(ConfigurationType)'=='DynamicLibrary'" >$(OutputFile);#2</OutputResourceManifests>
     </Manifest>
   </ItemDefinitionGroup>
 </Project>

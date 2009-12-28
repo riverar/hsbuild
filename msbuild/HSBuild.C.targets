@@ -10,15 +10,18 @@
       $(BuildCompileTargets);
       CCompile;
       ResourceCompile;
+      TransformObjOutput;
+      ManifestResourceCompile;
       BuildLink;
     </BuildCompileTargets>
 
     <BuildLinkTargets>
       $(BuildLinkTargets);
       GenerateSymbols;
-      TransformObjOutput;
       Lib;
       Link;
+      Manifest;
+      LinkEmbedManifest;
     </BuildLinkTargets>
 
     <BuildInstallTargets>

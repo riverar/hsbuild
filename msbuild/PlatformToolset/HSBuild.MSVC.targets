@@ -148,6 +148,62 @@
       <ItemGroup>
         <Link Include="@(Obj)" Condition=" '%(Obj.LinkCompiled)' == 'true' " />
         <Lib Include="@(Obj)" Condition=" '%(Obj.LibCompiled)' == 'true' " />
+
+        <_LinkOutputFile Include="%(Link.OutputFile)" Condition=" '%(Link.OutputFile)' != '' AND '%(Link.ManifestFile)' != '' ">
+          <Dll>%(Link.LinkDLL)</Dll>
+          <ManifestFile>%(Link.ManifestFile)</ManifestFile>
+        </_LinkOutputFile>
+      </ItemGroup>
+
+      <ItemGroup Condition=" '$(OutputType)' != 'lib' AND '$(EmbedManifest)' != 'true' ">
+        <Manifest Include="%(_LinkOutputFile.ManifestFile)">
+          <OutputManifestFile>%(_LinkOutputFile.Identity).manifest</OutputManifestFile>
+        </Manifest>
+      </ItemGroup>
+      <ItemGroup Condition=" '$(OutputType)' != 'lib' AND '$(EmbedManifest)' == 'true' AND '$(EmbedManifestBy)' == 'LINK' ">
+        <Manifest Include="%(_LinkOutputFile.ManifestFile)">
+          <OutputManifestFile>$(IntDir)%(_LinkOutputFile.FileName).embed.manifest</OutputManifestFile>
+        </Manifest>
+        <ManifestResourceCompile Include="$(IntDir)%(_LinkOutputFile.FileName).embed.manifest">
+          <Dll>%(_LinkOutputFile.Dll)</Dll>
+          <OutputResourceFile>$(IntDir)%(_LinkOutputFile.FileName).res</OutputResourceFile>
+        </ManifestResourceCompile>
+      </ItemGroup>
+      <ItemGroup Condition=" ('$(OutputType)'=='exe' OR '$(OutputType)'=='winexe') AND '$(EmbedManifest)' == 'true' AND '$(EmbedManifestBy)' == 'MT' ">
+        <Manifest Include="%(_LinkOutputFile.ManifestFile)">
+          <OutputResourceManifests>%(_LinkOutputFile.Identity);#1</OutputResourceManifests>
+        </Manifest>
+      </ItemGroup>
+      <ItemGroup Condition=" ('$(OutputType)'=='dll' OR '$(OutputType)'=='library') AND '$(EmbedManifest)' == 'true' AND '$(EmbedManifestBy)' == 'MT' ">
+        <Manifest Include="%(_LinkOutputFile.ManifestFile)">
+          <OutputResourceManifests>%(_LinkOutputFile.Identity);#2</OutputResourceManifests>
+        </Manifest>
+      </ItemGroup>
+  </Target>
+
+  <!-- TARGET: ManifestResourceCompile -->
+  <Target
+    Name="ManifestResourceCompile"
+    Condition=" '@(ManifestResourceCompile)' != '' "
+    >
+      <Touch
+        Files                           ="@(ManifestResourceCompile)"
+        Condition                       =" !Exists('%(ManifestResourceCompile.Identity)') "
+        AlwaysCreate                    ="true"
+        >
+          <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+      </Touch>
+
+      <MSManifestResource
+        Condition                       ="'$(EmbedManifestby)'=='LINK'"
+        Manifest                        ="@(ManifestResourceCompile)"
+        Dll                             ="%(ManifestResourceCompile.Dll)"
+        OutputResource                  ="%(ManifestResourceCompile.OutputResourceFile)"
+        />
+
+      <ItemGroup>
+        <Link Include="%(ManifestResourceCompile.OutputResourceFile)" />
+        <FileWrites Include="%(ManifestResourceCompile.OutputResourceFile)" />
       </ItemGroup>
   </Target>
 
@@ -167,21 +223,6 @@
           <LinkIncremental>true</LinkIncremental>
           <LinkIncremental Condition=" '$(MSBuildProjectDefaultTargets)' == 'Rebuild' ">false</LinkIncremental>
       </PropertyGroup>
-
-      <Touch Files="%(Link.OutputFile).embed.manifest" AlwaysCreate="true">
-          <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
-      </Touch>
-
-      <MSManifestResource
-        Manifest="%(Link.OutputFile).embed.manifest"
-        Dll="%(Link.LinkDLL)"
-        OutputResource="%(Link.OutputFile).manifest.res"
-        />
-
-      <ItemGroup>
-          <Link Include="%(Link.OutputFile).manifest.res" />
-          <FileWrites Include="%(Link.OutputFile).manifest.res" />
-      </ItemGroup>
 
       <ItemGroup>
         <Link Condition="'%(Link.SubSystem)' == ''">
@@ -282,18 +323,45 @@
             <FileWrites Condition="Exists('$(TargetDir)$(TargetName).ilk')" Include="$(TargetDir)$(TargetName).ilk" />
             <FileWrites Condition="Exists('$(LibraryOutputPath)$(AssemblyName).exp')" Include="$(LibraryOutputPath)$(AssemblyName).exp" />
         </ItemGroup>
+  </Target>
 
+  <Target
+    Name="Manifest"
+    Condition=" '@(Manifest)' != '' "
+    >
       <MSManifest
-        Sources                        ="%(Link.ManifestFile)"
-        OutputManifestFile             ="%(Link.OutputFile).embed.manifest"
+        Sources                     ="@(Manifest)"
+        AdditionalOptions           ="%(Manifest.AdditionalOptions)"
+        AssemblyIdentity            ="%(Manifest.AssemblyIdentity)"
+        ComponentFileName           ="%(Manifest.ComponentFileName)"
+        GenerateCatalogFiles        ="%(Manifest.GenerateCatalogFiles)"
+        GenerateCategoryTags        ="%(Manifest.GenerateCategoryTags)"
+        InputResourceManifests      ="%(Manifest.InputResourceManifests)"
+        OutputResourceManifests     ="%(Manifest.OutputResourceManifests)"
+        ManifestFromManagedAssembly ="%(Manifest.ManifestFromManagedAssembly)"
+        OutputManifestFile          ="%(Manifest.OutputManifestFile)"
+        RegistrarScriptFile         ="%(Manifest.RegistrarScriptFile)"
+        ReplacementsFile            ="%(Manifest.ReplacementsFile)"
+        SuppressDependencyElement   ="%(Manifest.SuppressDependencyElement)"
+        SuppressStartupBanner       ="%(Manifest.SuppressStartupBanner)"
+        TypeLibraryFile             ="%(Manifest.TypeLibraryFile)"
+        UpdateFileHashes            ="%(Manifest.UpdateFileHashes)"
+        UpdateFileHashesSearchPath  ="%(Manifest.UpdateFileHashesSearchPath)"
         />
 
+      <!-- Re-compile manifest resource files! -->
       <MSManifestResource
-        Manifest="%(Link.OutputFile).embed.manifest"
-        Dll="%(Link.LinkDLL)"
-        OutputResource="%(Link.OutputFile).manifest.res"
+        Condition                       ="'$(EmbedManifestby)'=='LINK'"
+        Manifest                        ="@(ManifestResourceCompile)"
+        Dll                             ="%(ManifestResourceCompile.Dll)"
+        OutputResource                  ="%(ManifestResourceCompile.OutputResourceFile)"
         />
+  </Target>
 
+  <Target
+    Name="LinkEmbedManifest"
+    Condition=" '@(Link)' != '' "
+    >
       <!-- Re-link with manifest resource file! -->
       <MSVCLinker
         ToolPath                       ="$(MSVCToolPath)"
