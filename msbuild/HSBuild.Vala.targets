@@ -53,7 +53,7 @@
         >
           <Output TaskParameter="DestinationFiles" ItemName="ClCompile"/>
           <Output TaskParameter="HeaderFile" ItemName="InstallInclude"/>
-          <Output TaskParameter="VapiFile" ItemName="DataFile"/>
+          <Output TaskParameter="VapiFile" ItemName="InstallData"/>
           <Output TaskParameter="SymbolsFile" ItemName="SymbolFile"/>
 
           <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>

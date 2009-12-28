@@ -209,14 +209,14 @@
   <!-- TARGET: Install Data Files -->
   <Target
     Name="InstallData"
-    Condition=" '@(DataFile)' != '' "
+    Condition=" '@(InstallData)' != '' "
     >
       <MakeDir Directories="$(DataOutputPath)" />
 
       <!-- Copy all installable data files. -->
       <Copy
-        SourceFiles="@(DataFile)"
-        DestinationFolder="$(DataOutputPath)%(DataFile.SubDirectory)"
+        SourceFiles="@(InstallData)"
+        DestinationFolder="$(DataOutputPath)%(InstallData.SubDirectory)"
         SkipUnchangedFiles="true"
         OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)">
           <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
