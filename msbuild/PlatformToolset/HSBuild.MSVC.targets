@@ -42,11 +42,11 @@
         Expressions="%(ResourceCompile.SubstitutionExpressions)"
         OutputDirectory="$(IntDir)"
         >
-          <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
+          <Output TaskParameter="WrittenFiles" ItemName="FileWrites" />
+          <Output TaskParameter="DestinationFiles" ItemName="ResourceCompile" />
       </Substitute>
 
       <ItemGroup>
-          <ResourceCompile Include="@(ResourceCompile->'$(IntDir)\%(FileName)')" Condition="'%(Extension)'=='.in'" />
           <ResourceCompile Remove="@(ResourceCompile)" Condition="'%(Extension)'=='.in'" />
       </ItemGroup>
   </Target>

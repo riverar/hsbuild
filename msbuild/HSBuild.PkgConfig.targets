@@ -77,7 +77,7 @@
         Expressions="%(InstallPkgConfig.SubstitutionExpressions);@(_SubstExpr)"
         OutputDirectory="$(IntDir)"
         >
-          <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
+          <Output TaskParameter="WrittenFiles" ItemName="FileWrites" />
           <Output TaskParameter="DestinationFiles" ItemName="InstallPkgConfig" />
       </Substitute>
 
