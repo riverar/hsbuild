@@ -12,6 +12,7 @@ namespace Oah.Tasks
     private ITaskItem[] sourceFiles;
     private ITaskItem[] expressions;
     private List<ITaskItem> outputFiles;
+    private List<ITaskItem> writtenFiles;
     private string outdir;
     private string outfile;
 
@@ -36,6 +37,12 @@ namespace Oah.Tasks
       get { return this.outputFiles.ToArray(); }
     }
 
+    [Output]
+    public ITaskItem[] WrittenFiles
+    {
+      get { return this.writtenFiles.ToArray(); }
+    }
+
     public string OutputDirectory
     {
       get { return this.outdir; }
@@ -55,6 +62,7 @@ namespace Oah.Tasks
       bool ret = true;
 
       outputFiles = new List<ITaskItem>(sourceFiles.Length);
+      writtenFiles = new List<ITaskItem>(sourceFiles.Length);
 
       if (sourceFiles.Length > 1 && !string.IsNullOrEmpty(OutputFileName))
       {
@@ -66,6 +74,8 @@ namespace Oah.Tasks
         string outName = GetOutputFile(file.ItemSpec);
         if (string.IsNullOrEmpty(outName))
           continue;
+
+        outputFiles.Add(new TaskItem(outName, file.CloneCustomMetadata()));
 
         DateTime lastWrite = File.GetLastAccessTimeUtc(file.ItemSpec);
         FileInfo tmpFile = SubstituteFile(file.ItemSpec);
@@ -86,7 +96,7 @@ namespace Oah.Tasks
         File.SetLastWriteTimeUtc(outName, lastWrite);
 
         Log.LogMessage(MessageImportance.Normal, "Substitute {0} -> {1}", file.ItemSpec, outName);
-        outputFiles.Add(new TaskItem(outName, file.CloneCustomMetadata()));
+        writtenFiles.Add(new TaskItem(outName, file.CloneCustomMetadata()));
       }
 
       return ret;
