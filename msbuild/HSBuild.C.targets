@@ -55,7 +55,7 @@
   </PropertyGroup>
 
   <Import Project="HSBuild.Common.targets" />
-  <Import Project="PlatformToolset/HSBuild.C.$(Platform).$(PlatformToolset).targets" />
+  <Import Project="Platform/Toolset/HSBuild.C.$(Platform).$(PlatformToolset).targets" />
 
   <PropertyGroup>
       <BuildLinkDependsOn>
