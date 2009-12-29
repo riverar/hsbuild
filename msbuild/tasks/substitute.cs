@@ -85,7 +85,7 @@ namespace Oah.Tasks
         {
           if (outFile.Length == tmpFile.Length && outFile.LastWriteTimeUtc == lastWrite)
           {
-            Log.LogMessage(MessageImportance.Normal, "Skip Substitute {0} -> {1}", file.ItemSpec, outName);
+            Log.LogMessage(MessageImportance.Low, "Skip Substitute {0} -> {1}", file.ItemSpec, outName);
             continue;
           }
 
@@ -95,7 +95,7 @@ namespace Oah.Tasks
         tmpFile.MoveTo(outName);
         File.SetLastWriteTimeUtc(outName, lastWrite);
 
-        Log.LogMessage(MessageImportance.Normal, "Substitute {0} -> {1}", file.ItemSpec, outName);
+        Log.LogMessage(MessageImportance.Low, "Substitute {0} -> {1}", file.ItemSpec, outName);
         writtenFiles.Add(new TaskItem(outName, file.CloneCustomMetadata()));
       }
 
