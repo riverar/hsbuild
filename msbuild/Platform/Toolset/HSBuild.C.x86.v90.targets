@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <!-- Find visual studio 2008 (9.0) -->
-  <PropertyGroup Condition=" '$(PlatformToolset)' == 'v90' and '$(MSVCToolPath)' == '' " >
-      <_VC90Path>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\9.0\Setup\VC@ProductDir)</_VC90Path>
-      <_VC90ExpressPath>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VCExpress\9.0\Setup\VC@ProductDir)</_VC90ExpressPath>
-      <MSVCToolPath       Condition=" '$(_VC90ExpressPath)' != '' "             >$(_VC90ExpressPath)bin\</MSVCToolPath>
-      <MSVCToolPath       Condition=" '$(_VC90Path)' != '' "                    >$(_VC90Path)bin\</MSVCToolPath>
-  </PropertyGroup>
-
   <!-- FIXME: HSBuild.MSVC.targets will be removed -->
   <Import Project="HSBuild.MSVC.targets" />
 

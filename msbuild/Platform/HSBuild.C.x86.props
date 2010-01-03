@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="Toolset/HSBuild.C.$(Platform).$(PlatformToolset).props" />
+
   <PropertyGroup>
     <DebuggerFlavor Condition="'$(DebuggerFlavor)'==''">WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
@@ -13,7 +16,6 @@
       <TargetMachine Condition="'%(Link.TargetMachine)' == ''">MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
-
 
   <!-- Core Windows Libraries -->
   <!-- <Import Condition="'$(NonCoreWin)' != 'true' and ( '$(UseOfMFC)' == 'false' OR '$(UseOfMFC)' == '')" Project="$(VCTargetsPath)\microsoft.Cpp.CoreWin.props"/> -->
