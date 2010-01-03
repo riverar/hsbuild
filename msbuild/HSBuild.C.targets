@@ -56,6 +56,7 @@
 
   <Import Project="HSBuild.Common.targets" />
   <Import Project="Platform/Toolset/HSBuild.C.$(Platform).$(PlatformToolset).targets" />
+  <UsingTask  TaskName="SetEnv"                     AssemblyFile="$(HSBuildTasksPath)" />
 
   <PropertyGroup>
       <BuildLinkDependsOn>
@@ -70,6 +71,39 @@
     />
   <Target Name="BeforeBuildLink" />
   <Target Name="AfterBuildLink" />
+
+  <!-- TARGET: SetBuildDefaultEnvironmentVariables -->
+  <Target
+    Name="SetBuildDefaultEnvironmentVariables"
+    >
+      <SetEnv
+        Name   ="PATH"
+        Value  ="$(ExecutablePath)"
+        >
+          <Output TaskParameter="OutputEnvironmentVariable" PropertyName="Path"/>
+      </SetEnv>
+
+      <SetEnv
+        Name   ="LIB"
+        Value  ="$(LibraryPath)"
+        >
+          <Output TaskParameter="OutputEnvironmentVariable" PropertyName="LIB"/>
+      </SetEnv>
+
+      <SetEnv
+        Name   ="LIBPATH"
+        Value  ="$(ReferencePath)"
+        >
+          <Output TaskParameter="OutputEnvironmentVariable" PropertyName="LIBPATH"/>
+      </SetEnv>
+
+      <SetEnv
+        Name   ="INCLUDE"
+        Value  ="$(IncludePath)"
+        >
+          <Output TaskParameter="OutputEnvironmentVariable" PropertyName="INCLUDE"/>
+      </SetEnv>
+  </Target>
 
   <!-- TARGET: GenerateSymbols -->
   <Target
