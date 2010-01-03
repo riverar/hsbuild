@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="environment.cs" />
     <Compile Include="msmanifest.cs" />
     <Compile Include="msmanifestresource.cs" />
     <Compile Include="msvclib.cs" />
