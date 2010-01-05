@@ -5,3 +5,6 @@
 @xcopy /I /Y /E "%~dp0\msbuild\Platform" "%ProgramFiles%\MSBuild\HSBuild\Platform"
 @xcopy /I /Y /E "%~dp0\msbuild\templates" "%ProgramFiles%\MSBuild\HSBuild\templates"
 @if exist "%ProgramFiles% (x86)" mklink /D "%ProgramFiles% (x86)\MSBuild\HSBuild" "%ProgramFiles%\MSBuild\HSBuild"
+
+@mkdir "%ProgramFiles%\HSBuild"
+@xcopy /I /Y /E "%~dp0\tools" "%ProgramFiles%\HSBuild\tools"
