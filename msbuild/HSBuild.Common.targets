@@ -44,7 +44,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(HSBuildToolPath)' == '' ">
-      <HSBuildToolPath        Condition=" '$(HSBUILD_INSTALLED_PATH)' != '' "       >$(HSBUILD_INSTALLED_PATH)bin\</HSBuildToolPath>
+      <HSBuildToolPath        Condition=" '$(HSBUILD_INSTALLED_PATH)' != '' "       >$(HSBUILD_INSTALLED_PATH)tools\bin\</HSBuildToolPath>
   </PropertyGroup>
 
   <Import     Project="$(MSBuildToolsPath)\Microsoft.Common.Tasks" />
