@@ -18,6 +18,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using Microsoft.Win32;
 
 namespace HSBuild.Core
 {
@@ -161,6 +162,17 @@ namespace HSBuild.Core
             }
 
             Environment.SetEnvironmentVariable("HSBUILD_PREFIX_PATH", prx);
+
+            // MSBuild in PATH
+            var keyMSBuild = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\MSBuild\ToolsVersions\3.5");
+            if (keyMSBuild != null)
+            {
+                string frmwkdir = keyMSBuild.GetValue("MSBuildToolsPath").ToString();
+
+                List<string> path = new List<string>(Environment.GetEnvironmentVariable("PATH").Split(Path.PathSeparator));
+                path.Insert(0, frmwkdir);
+                Environment.SetEnvironmentVariable("PATH", string.Join(Path.PathSeparator.ToString(), path.ToArray()));
+            }
         }
     }
 }
