@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hsbuild.core", "hsbuild.core\hsbuild.core.csproj", "{4CDA414F-4C98-40BE-A2E5-B2CDF87FDCB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hsbuild.core.tests", "hsbuild.core\tests\hsbuild.core.tests.csproj", "{671F8554-A0C1-490C-89D1-CE4410D0FB53}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hsbuild.console", "hsbuild.console\hsbuild.console.csproj", "{0DD2B875-7CF1-4B77-89A2-95919AFD0719}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4CDA414F-4C98-40BE-A2E5-B2CDF87FDCB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CDA414F-4C98-40BE-A2E5-B2CDF87FDCB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CDA414F-4C98-40BE-A2E5-B2CDF87FDCB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CDA414F-4C98-40BE-A2E5-B2CDF87FDCB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{671F8554-A0C1-490C-89D1-CE4410D0FB53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{671F8554-A0C1-490C-89D1-CE4410D0FB53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{671F8554-A0C1-490C-89D1-CE4410D0FB53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{671F8554-A0C1-490C-89D1-CE4410D0FB53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DD2B875-7CF1-4B77-89A2-95919AFD0719}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DD2B875-7CF1-4B77-89A2-95919AFD0719}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DD2B875-7CF1-4B77-89A2-95919AFD0719}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DD2B875-7CF1-4B77-89A2-95919AFD0719}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
