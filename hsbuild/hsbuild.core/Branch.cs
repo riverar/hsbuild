@@ -31,9 +31,7 @@ namespace HSBuild.Core
 
         public void SyncBranch(ITaskQueue taskQueue, Patch patchQueue, IOutputEngine output)
         {
-            DirectoryInfo info = new DirectoryInfo(Path.Combine(m_checkoutRoot, m_module));
-
-            if (info.Exists && this.Exists(false))
+            if (this.Exists(false))
                 this.Update(taskQueue);
             else
                 this.Checkout(taskQueue);
