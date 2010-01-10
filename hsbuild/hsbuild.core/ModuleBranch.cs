@@ -35,10 +35,12 @@ namespace HSBuild.Core
 
             XmlAttribute module = branch.Attributes["module"];
             XmlAttribute revision = branch.Attributes["revision"];
+            XmlAttribute version = branch.Attributes["version"];
             XmlNodeList patches = branch.SelectNodes("patches/patch");
             return new ModuleBranch(repo.Value,
                 module == null ? moduleFallback : module.Value,
                 revision == null ? null : revision.Value,
+                version == null ? null : version.Value,
                 ParsePatches(patches));
         }
 
@@ -74,17 +76,19 @@ namespace HSBuild.Core
             return ret;
         }
 
-        public ModuleBranch(string repo, string module, string revision, Patch patchQueue)
+        public ModuleBranch(string repo, string module, string revision, string version, Patch patchQueue)
         {
             m_repo = repo;
             m_module = module;
             m_revision = revision;
+            m_version = version;
             m_patch = patchQueue;
         }
 
         private string m_repo;
         private string m_module;
         private string m_revision;
+        private string m_version;
         private Patch m_patch;
 
         public string Repository
@@ -108,6 +112,14 @@ namespace HSBuild.Core
             get
             {
                 return m_revision;
+            }
+        }
+
+        public string Version
+        {
+            get
+            {
+                return m_version;
             }
         }
 
