@@ -37,9 +37,9 @@ namespace HSBuild.VCS
             }
         }
 
-        internal override Branch FindBranch(ModuleBranch branch, string checkoutroot)
+        internal override Branch FindBranch(ModuleBranch branch, string modName, string checkoutroot)
         {
-            throw new NotImplementedException();
+            return new TarballBranch(this, branch.Module, modName, branch.Version, checkoutroot);
         }
     }
 

@@ -38,7 +38,7 @@ namespace HSBuild.VCS
             }
         }
 
-        internal override Branch FindBranch(ModuleBranch branch, string checkoutroot)
+        internal override Branch FindBranch(ModuleBranch branch, string modName, string checkoutroot)
         {
             return new GitBranch(this, branch.Module, branch.Revision, checkoutroot);
         }

@@ -51,7 +51,7 @@ namespace HSBuild.Core
             return null;
         }
 
-        internal abstract Branch FindBranch(ModuleBranch branch, string checkoutroot);
+        internal abstract Branch FindBranch(ModuleBranch branch, string modName, string checkoutroot);
 
         protected Repository(string name)
         {
