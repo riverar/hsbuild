@@ -67,6 +67,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository.cs" />
     <Compile Include="tasks\ArchiveTask.cs" />
+    <Compile Include="tasks\HttpTask.cs" />
     <Compile Include="vcs\Bzr.cs" />
     <Compile Include="vcs\Git.cs" />
     <Compile Include="vcs\Tarball.cs" />

@@ -17,7 +17,6 @@
 //
 using System;
 using System.IO;
-using System.Net;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -74,67 +73,5 @@ namespace HSBuild.Core
         #endregion
 
         private ProcessStartInfo m_info;
-    }
-
-    public class HttpTask : ITask
-    {
-        public HttpTask(Uri uri)
-        {
-            m_uri = uri;
-            m_local = Path.Combine(Path.GetTempPath(), m_uri.Segments[m_uri.Segments.Length - 1]);
-        }
-
-        public HttpTask(Uri uri, string local)
-        {
-            m_uri = uri;
-            if (string.IsNullOrEmpty(local))
-                local = Path.Combine(Path.GetTempPath(), m_uri.Segments[m_uri.Segments.Length - 1]);
-
-            m_local = local;
-        }
-
-        #region ITask Members
-
-        public int Execute(IOutputEngine output)
-        {
-            WebClient client = new WebClient();
-            Stream stream_in = client.OpenRead(m_uri);
-            Stream stream_out = File.Create(m_local);
-
-            byte[] buffer = new byte[1024];
-            int len;
-
-            while ((len = stream_in.Read(buffer, 0, buffer.Length)) != 0)
-                stream_out.Write(buffer, 0, len);
-
-            stream_in.Close();
-            stream_out.Close();
-            return len;
-        }
-
-        #endregion
-
-        #region Properties
-
-        public Uri Uri
-        {
-            get
-            {
-                return m_uri;
-            }
-        }
-
-        public string LocalFile
-        {
-            get
-            {
-                return m_local;
-            }
-        }
-
-        #endregion
-
-        private Uri m_uri;
-        private string m_local;
     }
 }

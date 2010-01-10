@@ -20,6 +20,7 @@ using System.IO;
 using System.Collections.Generic;
 using HSBuild.Core;
 using HSBuild.Commands;
+using HSBuild.Tasks;
 using NUnit.Framework;
 
 namespace HSBuild.Core.Tests
