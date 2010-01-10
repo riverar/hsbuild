@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using HSBuild.Core;
+using HSBuild.Tasks;
 
 namespace HSBuild.Commands
 {

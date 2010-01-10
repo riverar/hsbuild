@@ -18,6 +18,7 @@
 using System;
 using System.IO;
 using HSBuild.Core;
+using HSBuild.Tasks;
 
 namespace HSBuild.VCS
 {

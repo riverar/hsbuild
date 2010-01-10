@@ -21,6 +21,7 @@ using System.IO;
 using System.Collections.Generic;
 using Microsoft.Win32;
 using HSBuild.Core;
+using HSBuild.Tasks;
 
 namespace HSBuild.Modules
 {

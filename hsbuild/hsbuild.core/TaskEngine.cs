@@ -16,8 +16,6 @@
 // along with HSBuild.  If not, see <http://www.gnu.org/licenses/>.
 //
 using System;
-using System.IO;
-using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace HSBuild.Core
@@ -36,42 +34,5 @@ namespace HSBuild.Core
     public interface ITaskEngine
     {
         bool ExecuteTaskQueue(ITask[] queue, IOutputEngine output);
-    }
-
-    public class ConsoleTask : ITask
-    {
-        public ConsoleTask(string command, string[] arguments, string cwd)
-        {
-            m_info = new ProcessStartInfo(command);
-            m_info.WorkingDirectory = cwd;
-            m_info.Arguments = arguments == null ? null : string.Join(" ", arguments);
-            m_info.UseShellExecute = false;
-        }
-
-        #region ITask Members
-
-        public int Execute(IOutputEngine output)
-        {
-            Process p = Process.Start(m_info);
-            p.WaitForExit();
-
-            return p.ExitCode;
-        }
-
-        #endregion
-
-        #region Properties
-
-        public ProcessStartInfo StartInfo
-        {
-            get
-            {
-                return m_info;
-            }
-        }
-
-        #endregion
-
-        private ProcessStartInfo m_info;
     }
 }
