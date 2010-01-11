@@ -91,8 +91,27 @@ namespace HSBuild.Console
 
         public void WriteOutput(OutputType type, string line)
         {
-            if (type >= OutputType.Heading)
-                System.Console.WriteLine(line);
+            ConsoleColor clrBgr = System.Console.BackgroundColor;
+            ConsoleColor clrFgr = System.Console.ForegroundColor;
+            try
+            {
+                if (type >= OutputType.Info)
+                {
+                    if (type == OutputType.Heading)
+                        System.Console.ForegroundColor = ConsoleColor.Cyan;
+                    else if (type == OutputType.Info)
+                        System.Console.ForegroundColor = ConsoleColor.DarkGray;
+                    else if (type == OutputType.Error)
+                        System.Console.ForegroundColor = ConsoleColor.Red;
+
+                    System.Console.WriteLine(line);
+                }
+            }
+            finally
+            {
+                System.Console.ForegroundColor = clrFgr;
+                System.Console.BackgroundColor = clrBgr;
+            }
         }
 
         #endregion
