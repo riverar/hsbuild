@@ -43,19 +43,63 @@ namespace HSBuild.Tasks
 
         public int Execute(IOutputEngine output)
         {
+            output.WriteOutput(OutputType.Heading, "Download: " + m_uri.ToString());
+
             WebClient client = new WebClient();
             Stream stream_in = client.OpenRead(m_uri);
+            if (!stream_in.CanRead)
+                return 1;
+
+            long lenStream = -1;
+            string lenContent = client.ResponseHeaders.Get("Content-Length");
+            if (!string.IsNullOrEmpty(lenContent))
+            {
+                output.WriteOutput(OutputType.Info, string.Format("Size: {0} bytes", lenContent));
+                lenStream = long.Parse(lenContent);
+            }
+
             Stream stream_out = File.Create(m_local);
+            int lenDownloaded = 0;
 
-            byte[] buffer = new byte[1024];
-            int len;
+            try
+            {
+                byte[] buffer = new byte[1024];
+                int len;
 
-            while ((len = stream_in.Read(buffer, 0, buffer.Length)) != 0)
-                stream_out.Write(buffer, 0, len);
+                if (lenStream > 0)
+                {
+                    float lastoutput = 0;
 
-            stream_in.Close();
-            stream_out.Close();
-            return len;
+                    while ((len = stream_in.Read(buffer, 0, buffer.Length)) != 0)
+                    {
+                        lenDownloaded += len;
+                        stream_out.Write(buffer, 0, len);
+
+                        float per = (float)lenDownloaded / (float)lenStream;
+                        if (per > lastoutput + 0.1 || per >= 1)
+                        {
+                            lastoutput = per;
+                            output.WriteOutput(OutputType.Info, string.Format("Downloaded: {0} bytes ({1})", lenDownloaded, per.ToString("P0")));
+                        }
+                    }
+                }
+                else
+                {
+                    while ((len = stream_in.Read(buffer, 0, buffer.Length)) != 0)
+                    {
+                        lenDownloaded += len;
+                        stream_out.Write(buffer, 0, len);
+                        output.WriteOutput(OutputType.Debug, string.Format("Downloaded: {0} bytes", lenDownloaded));
+                    }
+                }
+            }
+            finally
+            {
+                stream_in.Close();
+                stream_out.Close();
+            }
+
+            return lenDownloaded == 0 ? -1 : 0;
         }
 
         #endregion
