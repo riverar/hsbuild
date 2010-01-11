@@ -24,7 +24,7 @@ namespace HSBuild.Core
 {
     public abstract class Module
     {
-        public abstract void Build(ITaskQueue taskQueue, IOutputEngine output, Branch branch, string platform, string configuration);
+        public abstract void Build(ITaskQueue taskQueue, IOutputEngine output, Branch branch, Dictionary<string, object> args, Config cfg);
         internal static Module ParseModule(XmlElement module)
         {
             XmlAttribute id = module.Attributes["id"];

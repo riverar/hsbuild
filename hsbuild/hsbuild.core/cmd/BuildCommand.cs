@@ -45,10 +45,7 @@ namespace HSBuild.Commands
                 return;
 
             LinkedListNode<Module> node = m_modulesList.First;
-
-            object platform, conf;
-            base.Arguments.TryGetValue("Platform", out platform);
-            base.Arguments.TryGetValue("Configuration", out conf);
+            Dictionary<string, object> buildArgs = Arguments;
 
             while (node != null)
             {
@@ -59,9 +56,7 @@ namespace HSBuild.Commands
                 else if (!b.Exists(false))
                     b.SyncBranch(taskqueue, m.Branch.PatchQueue, output);
 
-                m.Build(taskqueue, output, b,
-                    platform == null ? null : platform.ToString(),
-                    conf == null ? null : conf.ToString());
+                m.Build(taskqueue, output, b, buildArgs, Config);
 
                 node = node.Next;
             }

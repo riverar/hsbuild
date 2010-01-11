@@ -52,15 +52,18 @@ namespace HSBuild.Modules
             get { return m_proj; }
         }
 
-        public override void Build(ITaskQueue taskQueue, IOutputEngine output, Branch branch, string platform, string configuration)
+        public override void Build(ITaskQueue taskQueue, IOutputEngine output, Branch branch, Dictionary<string, object> buildArgs, Config cfg)
         {
             List<string> args = new List<string>();
-            args.Add("/v:d");
 
-            if (!string.IsNullOrEmpty(platform))
-                args.Add("/p:Platform="+platform);
-            if (!string.IsNullOrEmpty(configuration))
-                args.Add("/p:Configuration=" + configuration);
+            object platform, conf;
+            buildArgs.TryGetValue("Platform", out platform);
+            buildArgs.TryGetValue("Configuration", out conf);
+
+            if (platform != null && !string.IsNullOrEmpty(platform.ToString()))
+                args.Add("/p:Platform=" + platform.ToString());
+            if (conf != null && !string.IsNullOrEmpty(conf.ToString()))
+                args.Add("/p:Configuration=" + conf);
             // FIXME: add opt more switches...
 
             if (string.IsNullOrEmpty(Projects))
