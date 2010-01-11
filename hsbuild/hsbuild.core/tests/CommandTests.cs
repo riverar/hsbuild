@@ -297,12 +297,12 @@ namespace HSBuild.Core.Tests
 
             task = tasks[1] as ConsoleTask;
             StringAssert.Contains("git", task.StartInfo.FileName);
-            Assert.AreEqual("apply -p1 \"" + Path.Combine(Environment.CurrentDirectory, "fix1.patch") + "\"", task.StartInfo.Arguments);
+            Assert.AreEqual("apply --whitespace=nowarn -p1 \"" + Path.Combine(Environment.CurrentDirectory, "fix1.patch") + "\"", task.StartInfo.Arguments);
             Assert.AreEqual(Path.Combine(Environment.CurrentDirectory, "pixman"), task.StartInfo.WorkingDirectory);
 
             task = tasks[3] as ConsoleTask;
             StringAssert.Contains("git", task.StartInfo.FileName);
-            Assert.AreEqual("apply -p1 \"" + Path.Combine(Path.GetTempPath(), "fix2.patch") + "\"", task.StartInfo.Arguments);
+            Assert.AreEqual("apply --whitespace=nowarn -p1 \"" + Path.Combine(Path.GetTempPath(), "fix2.patch") + "\"", task.StartInfo.Arguments);
             Assert.AreEqual(Path.Combine(Environment.CurrentDirectory, "pixman"), task.StartInfo.WorkingDirectory);
         }
     }

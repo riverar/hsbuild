@@ -77,7 +77,7 @@ namespace HSBuild.VCS
 
         protected override void ApplyPatch(ITaskQueue taskQueue, Patch patch, string local_patch)
         {
-            taskQueue.QueueTask(new ConsoleTask(m_gitEXE, new string[] { "apply", "-p" + patch.Strip.ToString(), "\"" + local_patch + "\""}, BranchRoot));
+            taskQueue.QueueTask(new ConsoleTask(m_gitEXE, new string[] { "apply", "--whitespace=nowarn -p" + patch.Strip.ToString(), "\"" + local_patch + "\"" }, BranchRoot));
         }
 
         private GitRepository m_repo;

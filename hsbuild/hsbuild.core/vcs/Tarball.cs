@@ -102,7 +102,7 @@ namespace HSBuild.VCS
         {
             // FIXME: change Tarball::ApplyPatch to NOT use git apply!
             string gitEXE = Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles"), "Git\\bin\\git.exe");
-            taskQueue.QueueTask(new ConsoleTask(gitEXE, new string[] { "apply", "-p" + patch.Strip.ToString(), "\"" + local_patch + "\"" }, BranchRoot));
+            taskQueue.QueueTask(new ConsoleTask(gitEXE, new string[] { "apply", "--whitespace=nowarn -p" + patch.Strip.ToString(), "\"" + local_patch + "\"" }, BranchRoot));
         }
 
         private TarballRepository m_repo;
