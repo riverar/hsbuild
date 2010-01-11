@@ -71,6 +71,8 @@ namespace HSBuild.Tasks
 
         public int Execute(IOutputEngine output)
         {
+            output.WriteOutput(OutputType.Heading, "Extracting archive: " + m_tarball);
+
             if (m_compression == Compression.Zip)
             {
                 FastZip zip = new FastZip();
@@ -83,12 +85,16 @@ namespace HSBuild.Tasks
                 {
                     Stream s = OpenCompressedStream(m_compression, m_tarball);
                     archive = TarArchive.CreateInputTarArchive(s);
+                    m_output = output;
+                    archive.ProgressMessageEvent += new ProgressMessageHandler(archive_ProgressMessageEvent);
                     archive.ExtractContents(m_targetDir);
                 }
                 finally
                 {
                     if (archive != null)
                         archive.Close();
+
+                    m_output = null;
                 }
             }
 
@@ -97,6 +103,12 @@ namespace HSBuild.Tasks
 
         #endregion
 
+        private void archive_ProgressMessageEvent(TarArchive archive, TarEntry entry, string message)
+        {
+            m_output.WriteOutput(OutputType.Info, entry.Name);
+        }
+
+        private IOutputEngine m_output;
         private string m_tarball;
         private string m_targetDir;
         private Compression m_compression;
