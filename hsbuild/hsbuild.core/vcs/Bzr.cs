@@ -74,7 +74,7 @@ namespace HSBuild.VCS
 
         protected override void ApplyPatch(ITaskQueue taskQueue, Patch patch, string local_patch)
         {
-            taskQueue.QueueTask(new ConsoleTask("bzr", new string[] { "patch", "--strip=" + patch.Strip.ToString(), local_patch }, BranchRoot));
+            taskQueue.QueueTask(new ConsoleTask("bzr", new string[] { "patch", "--strip=" + patch.Strip.ToString(), "\"" + local_patch + "\"" }, BranchRoot));
         }
 
         private BzrRepository m_repo;
