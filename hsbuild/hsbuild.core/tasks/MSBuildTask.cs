@@ -28,6 +28,7 @@ namespace HSBuild.Tasks
         public MSBuildTask(Dictionary<string, object> buildArgs, Config cfg, string project, string cwd)
             : base(m_MSBuildEXE, GenerateArguments(buildArgs, cfg, project), cwd)
         {
+            m_project = project;
         }
 
         static string[] GenerateArguments(Dictionary<string, object> buildArgs, Config cfg, string project)
@@ -51,6 +52,14 @@ namespace HSBuild.Tasks
             return args.ToArray();
         }
 
+        protected override string GetOutputHeader()
+        {
+            if (string.IsNullOrEmpty(m_project))
+                return "Build using MSBuild";
+            else
+                return string.Format("Build {0} using MSBuild", m_project);
+        }
+
         static MSBuildTask()
         {
             string path;
@@ -68,5 +77,6 @@ namespace HSBuild.Tasks
         }
 
         private static string m_MSBuildEXE;
+        private string m_project;
     }
 }

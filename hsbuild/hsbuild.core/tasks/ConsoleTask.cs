@@ -32,10 +32,17 @@ namespace HSBuild.Tasks
             m_info.UseShellExecute = false;
         }
 
+        protected virtual string GetOutputHeader()
+        {
+            return string.Format("Running: {0} {1}", m_info.FileName, m_info.Arguments);
+        }
+
         #region ITask Members
 
         public int Execute(IOutputEngine output)
         {
+            output.WriteOutput(OutputType.Heading, GetOutputHeader());
+
             Process p = Process.Start(m_info);
             p.WaitForExit();
 
