@@ -69,6 +69,7 @@
     <Compile Include="tasks\ArchiveTask.cs" />
     <Compile Include="tasks\ConsoleTask.cs" />
     <Compile Include="tasks\HttpTask.cs" />
+    <Compile Include="tasks\MSBuildTask.cs" />
     <Compile Include="vcs\Bzr.cs" />
     <Compile Include="vcs\Git.cs" />
     <Compile Include="vcs\Tarball.cs" />

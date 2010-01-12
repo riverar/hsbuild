@@ -1,0 +1,72 @@
+﻿// HSBuild.Tasks - MSBuildTask
+//
+// Copyright (C) 2010 Haakon Sporsheim <haakon.sporsheim@gmail.com>
+//
+// HSBuild is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// HSBuild is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with HSBuild.  If not, see <http://www.gnu.org/licenses/>.
+//
+using System;
+using System.IO;
+using System.Collections.Generic;
+using Microsoft.Win32;
+using HSBuild.Core;
+
+namespace HSBuild.Tasks
+{
+    public class MSBuildTask : ConsoleTask
+    {
+        public MSBuildTask(Dictionary<string, object> buildArgs, Config cfg, string project, string cwd)
+            : base(m_MSBuildEXE, GenerateArguments(buildArgs, cfg, project), cwd)
+        {
+        }
+
+        static string[] GenerateArguments(Dictionary<string, object> buildArgs, Config cfg, string project)
+        {
+            List<string> args = new List<string>();
+
+            object platform, conf;
+            buildArgs.TryGetValue("Platform", out platform);
+            buildArgs.TryGetValue("Configuration", out conf);
+
+            if (platform != null && !string.IsNullOrEmpty(platform.ToString()))
+                args.Add("/p:Platform=" + platform.ToString());
+            if (conf != null && !string.IsNullOrEmpty(conf.ToString()))
+                args.Add("/p:Configuration=" + conf);
+
+            // FIXME: add opt more switches...
+
+            if (string.IsNullOrEmpty(project))
+                args.Add(project);
+
+            return args.ToArray();
+        }
+
+        static MSBuildTask()
+        {
+            string path;
+            try
+            {
+                RegistryKey msbuildKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\MSBuild\ToolsVersions\3.5");
+                path = msbuildKey.GetValue("MSBuildToolsPath").ToString();
+            }
+            catch
+            {
+                path = "";
+            }
+
+            m_MSBuildEXE = Path.Combine(path, "msbuild.exe");
+        }
+
+        private static string m_MSBuildEXE;
+    }
+}
