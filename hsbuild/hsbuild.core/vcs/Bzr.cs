@@ -41,14 +41,14 @@ namespace HSBuild.VCS
 
         internal override Branch FindBranch(ModuleBranch branch, string modName, string checkoutroot)
         {
-            return new BzrBranch(this, branch.Module, branch.Revision, checkoutroot);
+            return new BzrBranch(this, branch.Module, branch.Revision, checkoutroot, branch.CheckoutDir);
         }
     }
 
     public class BzrBranch : Branch
     {
-        public BzrBranch(BzrRepository repo, string mod, string rev, string root)
-            : base(mod, rev, root)
+        public BzrBranch(BzrRepository repo, string mod, string rev, string root, string dir)
+            : base(mod, rev, root, dir)
         {
             m_repo = repo;
         }

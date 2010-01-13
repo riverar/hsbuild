@@ -48,7 +48,7 @@ namespace HSBuild.VCS
     public class TarballBranch : Branch
     {
         public TarballBranch(TarballRepository repo, string mod, string id, string ver, string root)
-            : base(GetTarballName(id, ver), null, root)
+            : base(GetTarballName(id, ver), null, root, null)
         {
             if (mod == null)
                 throw new ArgumentNullException("mod");

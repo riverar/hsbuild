@@ -34,11 +34,13 @@ namespace HSBuild.Core
                 throw new NotImplementedException("TODO: Error.. branch must have repo attribute!");
 
             XmlAttribute module = branch.Attributes["module"];
+            XmlAttribute checkoutdir = branch.Attributes["checkoutdir"];
             XmlAttribute revision = branch.Attributes["revision"];
             XmlAttribute version = branch.Attributes["version"];
             XmlNodeList patches = branch.SelectNodes("patches/patch");
             return new ModuleBranch(repo.Value,
                 module == null ? moduleFallback : module.Value,
+                checkoutdir == null ? null : checkoutdir.Value,
                 revision == null ? null : revision.Value,
                 version == null ? null : version.Value,
                 ParsePatches(patches));
@@ -76,10 +78,11 @@ namespace HSBuild.Core
             return ret;
         }
 
-        public ModuleBranch(string repo, string module, string revision, string version, Patch patchQueue)
+        public ModuleBranch(string repo, string module, string checkoutdir, string revision, string version, Patch patchQueue)
         {
             m_repo = repo;
             m_module = module;
+            m_checkoutDir = checkoutdir;
             m_revision = revision;
             m_version = version;
             m_patch = patchQueue;
@@ -87,6 +90,7 @@ namespace HSBuild.Core
 
         private string m_repo;
         private string m_module;
+        private string m_checkoutDir;
         private string m_revision;
         private string m_version;
         private Patch m_patch;
@@ -104,6 +108,14 @@ namespace HSBuild.Core
             get
             {
                 return m_module;
+            }
+        }
+
+        public string CheckoutDir
+        {
+            get
+            {
+                return m_checkoutDir;
             }
         }
 

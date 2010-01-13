@@ -41,14 +41,14 @@ namespace HSBuild.VCS
 
         internal override Branch FindBranch(ModuleBranch branch, string modName, string checkoutroot)
         {
-            return new GitBranch(this, branch.Module, branch.Revision, checkoutroot);
+            return new GitBranch(this, branch.Module, branch.Revision, checkoutroot, branch.CheckoutDir);
         }
     }
 
     public class GitBranch : Branch
     {
-        public GitBranch(GitRepository repo, string mod, string rev, string root)
-            : base(mod, rev, root)
+        public GitBranch(GitRepository repo, string mod, string rev, string root, string dir)
+            : base(mod, rev, root, dir)
         {
             m_repo = repo;
 
@@ -66,7 +66,7 @@ namespace HSBuild.VCS
         protected override void Checkout(ITaskQueue taskQueue)
         {
             Uri uri = new Uri(new Uri(m_repo.HRef), m_module);
-            taskQueue.QueueTask(new ConsoleTask(m_gitEXE, new string[] { "clone", uri.AbsoluteUri }, m_checkoutRoot));
+            taskQueue.QueueTask(new ConsoleTask(m_gitEXE, new string[] { "clone", uri.AbsoluteUri, m_checkoutDir }, m_checkoutRoot));
         }
 
         protected override void Update(ITaskQueue taskQueue)

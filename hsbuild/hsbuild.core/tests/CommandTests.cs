@@ -270,7 +270,7 @@ namespace HSBuild.Core.Tests
             ConsoleTask task = tasks[0] as ConsoleTask;
 
             StringAssert.Contains("git", task.StartInfo.FileName);
-            Assert.AreEqual("clone git://git.gnome.org/glib", task.StartInfo.Arguments);
+            Assert.AreEqual("clone git://git.gnome.org/glib glib", task.StartInfo.Arguments);
             Assert.AreEqual(Environment.CurrentDirectory, task.StartInfo.WorkingDirectory);
         }
 
@@ -292,7 +292,7 @@ namespace HSBuild.Core.Tests
             ConsoleTask task = tasks[0] as ConsoleTask;
 
             StringAssert.Contains("git", task.StartInfo.FileName);
-            Assert.AreEqual("clone git://anongit.freedesktop.org/pixman", task.StartInfo.Arguments);
+            Assert.AreEqual("clone git://anongit.freedesktop.org/pixman pixman", task.StartInfo.Arguments);
             Assert.AreEqual(Environment.CurrentDirectory, task.StartInfo.WorkingDirectory);
 
             task = tasks[1] as ConsoleTask;

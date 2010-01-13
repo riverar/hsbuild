@@ -98,6 +98,36 @@ namespace HSBuild.Core.Tests
             Assert.IsNotNull(mod.Branch);
             Assert.AreEqual("glib", mod.Branch.Module);
             Assert.AreEqual("git.test.tpl", mod.Branch.Repository);
+            Assert.IsNullOrEmpty(mod.Branch.CheckoutDir);
+            Assert.IsNullOrEmpty(mod.Branch.Revision);
+
+            Assert.AreEqual(0, mod.Dependencies.Length);
+        }
+
+        [Test]
+        public void ParseSimpleHSBuildModuleWithCheckoutDir()
+        {
+            StringReader reader = new StringReader("<?xml version=\"1.0\"?>" +
+                "<moduleset>" +
+                    "<repository type=\"git\" name=\"git.test.tpl\" href=\"git://annongit.test.tpl/git\" />" +
+                    "<hsbuildmodule id=\"gstreamer\">" +
+                        "<branch repo=\"git.test.tpl\" module=\"gstreamer/gstreamer\" checkoutdir=\"gstreamer\" />" +
+                    "</hsbuildmodule>" +
+                "</moduleset>");
+
+            ModuleSet set = new ModuleSet(reader);
+
+            Assert.AreEqual(1, set.Modules.Count);
+
+            Module mod = set.Modules["gstreamer"];
+
+            Assert.IsNotNull(mod);
+            Assert.IsInstanceOf(typeof(HSBuildModule), mod);
+
+            Assert.IsNotNull(mod.Branch);
+            Assert.AreEqual("gstreamer/gstreamer", mod.Branch.Module);
+            Assert.AreEqual("git.test.tpl", mod.Branch.Repository);
+            Assert.AreEqual("gstreamer", mod.Branch.CheckoutDir);
             Assert.IsNullOrEmpty(mod.Branch.Revision);
 
             Assert.AreEqual(0, mod.Dependencies.Length);
