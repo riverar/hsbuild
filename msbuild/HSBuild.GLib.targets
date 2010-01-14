@@ -110,21 +110,18 @@
         Overwrite="true"
        />
 
-      <!-- Use standard gmarshal.h include! -->
-      <Exec
-        Condition=" '%(GLibGenmarshal.NoStdInc)' != 'true' "
-        Command="
-          &quot;$(GLibGenmarshalExecPath)&quot; --header --skip-source --prefix=%(GLibGenmarshal.Prefix) %(GLibGenmarshal.Identity) &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h&quot;
-          &quot;$(GLibGenmarshalExecPath)&quot; --body --skip-source --prefix=%(GLibGenmarshal.Prefix) %(GLibGenmarshal.Identity) &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c&quot;
-          "
-        />
+      <ItemGroup>
+        <GlibGenmarshal>
+          <Switches Condition=" '%(GLibGenmarshal.SkipSource)' == 'true' ">%(GLibGenmarshal.Switches) --skip--source</Switches>
+          <Switches Condition=" '%(GLibGenmarshal.StdInc)' == 'true' ">%(GLibGenmarshal.Switches) --stdinc</Switches>
+          <Switches Condition=" '%(GLibGenmarshal.NoStdInc)' == 'true' ">%(GLibGenmarshal.Switches) --nostdinc</Switches>
+        </GlibGenmarshal>
+      </ItemGroup>
 
-      <!-- Do NOT use standard gmarshal.h include! -->
       <Exec
-        Condition=" '%(GLibGenmarshal.NoStdInc)' == 'true' "
         Command="
-          &quot;$(GLibGenmarshalExecPath)&quot; --header --nostdinc --skip-source --prefix=%(GLibGenmarshal.Prefix) %(GLibGenmarshal.Identity) &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h&quot;
-          &quot;$(GLibGenmarshalExecPath)&quot; --body --nostdinc --skip-source --prefix=%(GLibGenmarshal.Prefix) %(GLibGenmarshal.Identity) &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c&quot;
+          &quot;$(GLibGenmarshalExecPath)&quot; --header%(GLibGenmarshal.Switches) --prefix=%(GLibGenmarshal.Prefix) %(GLibGenmarshal.Identity) &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h&quot;
+          &quot;$(GLibGenmarshalExecPath)&quot; --body%(GLibGenmarshal.Switches) --prefix=%(GLibGenmarshal.Prefix) %(GLibGenmarshal.Identity) &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c&quot;
           "
         />
 
