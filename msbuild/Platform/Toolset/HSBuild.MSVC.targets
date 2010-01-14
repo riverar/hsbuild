@@ -11,6 +11,20 @@
   <PropertyGroup Condition=" '$(MSVCToolPath)' != '' " >
       <CC                 Condition=" '$(CC)' == '' "                           >$(MSVCToolPath)cl.exe</CC>
   </PropertyGroup>
+  <PropertyGroup>
+    <CCompileTargets>
+      $(CCompileTargets);
+      _EnsureClCompile;
+      _PreprocessCCompile;
+      _CCompile;
+    </CCompileTargets>
+    <ResourceCompileTargets>
+      $(ResourceCompileTargets);
+      _EnsureResourceCompile;
+      _PreprocessResourceCompile;
+      _ResourceCompile;
+    </ResourceCompileTargets>
+  </PropertyGroup>
 
   <Target
     Name="_EnsureClCompile"
@@ -50,11 +64,39 @@
           <ResourceCompile Remove="@(ResourceCompile)" Condition="'%(Extension)'=='.in'" />
       </ItemGroup>
   </Target>
+  <Target
+    Name="_PreprocessCCompile"
+    Condition=" '@(ClCompile)' != '' "
+    >
+      <Substitute
+        SourceFiles="@(ClCompile)"
+        Condition=" '%(ClCompile.Extension)' == '.in' "
+        Expressions="%(ClCompile.SubstitutionExpressions)"
+        OutputDirectory="$(IntDir)"
+        >
+          <Output TaskParameter="WrittenFiles" ItemName="FileWrites" />
+          <Output TaskParameter="DestinationFiles" ItemName="ClCompile" />
+      </Substitute>
+
+      <ItemGroup>
+          <ClCompile Remove="@(ClCompile)" Condition="'%(Extension)'=='.in'" />
+      </ItemGroup>
+  </Target>
+
+  <Target
+    Name="CCompile"
+    DependsOnTargets="$(CCompileTargets)"
+    />
+  <Target
+    Name="ResourceCompile"
+    DependsOnTargets="$(ResourceCompileTargets)"
+    />
+
 
   <!-- TARGET: Compile C To Object -->
   <Target
-    Name="CCompile"
-    DependsOnTargets="_EnsureClCompile"
+    Name="_CCompile"
+    Condition=" '@(ClCompile)' != '' "
     >
       <ItemGroup>
         <ClCompile>
@@ -114,8 +156,7 @@
 
   <!-- TARGET: Compile resource files (.rc) To Object -->
   <Target
-    Name="ResourceCompile"
-    DependsOnTargets="_PreprocessResourceCompile;_EnsureResourceCompile"
+    Name="_ResourceCompile"
     Condition=" '@(ResourceCompile)' != '' "
     >
       <!-- Compile resources -->
