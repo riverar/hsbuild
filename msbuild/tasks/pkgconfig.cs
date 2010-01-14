@@ -207,6 +207,12 @@ namespace HSBuild.Tasks
 
     private void AddLibrary(string lib)
     {
+      if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+      {
+        if (lib.Trim() == "m")
+          return;
+      }
+
       this.libs.Add(new TaskItem(lib));
     }
 
