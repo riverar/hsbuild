@@ -149,11 +149,11 @@ namespace HSBuild.Tasks
         foreach (string arg in SplitPkgConfigOutput(outputFlags))
         {
           if (arg.StartsWith("-I"))
-            this.cIncludes.Add(new TaskItem(arg.Substring(2)));
-          else if (arg.StartsWith("-l"))
-            this.libs.Add(new TaskItem(arg.Substring(2)));
+            AddIncludePath(arg.Substring(2));
           else if (arg.StartsWith("-L"))
-            this.libPaths.Add(new TaskItem(arg.Substring(2)));
+            AddLibraryPath(arg.Substring(2));
+          else if (arg.StartsWith("-l"))
+            AddLibrary(arg.Substring(2));
         }
       }
 
@@ -193,6 +193,21 @@ namespace HSBuild.Tasks
       }
 
       return lst;
+    }
+
+    private void AddIncludePath(string path)
+    {
+      this.cIncludes.Add(new TaskItem(path));
+    }
+
+    private void AddLibraryPath(string path)
+    {
+      this.libPaths.Add(new TaskItem(path));
+    }
+
+    private void AddLibrary(string lib)
+    {
+      this.libs.Add(new TaskItem(lib));
     }
 
     protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
