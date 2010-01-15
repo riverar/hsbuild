@@ -46,7 +46,7 @@ namespace HSBuild.Tasks
 
             // FIXME: add opt more switches...
 
-            if (string.IsNullOrEmpty(project))
+            if (!string.IsNullOrEmpty(project))
                 args.Add(project);
 
             return args.ToArray();
