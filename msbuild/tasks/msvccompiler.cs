@@ -36,6 +36,7 @@ namespace HSBuild.Tasks
     private ITaskItem[] forceUsing;
     private ITaskItem objectFileName;
     private ITaskItem programDataBaseFileName;
+    private ITaskItem precompiledHeaderFile;
     private ITaskItem precompiledHeaderOutputFile;
     private ITaskItem assemblerListingLocation;
     private string[] options;
@@ -46,6 +47,7 @@ namespace HSBuild.Tasks
     private string optimization;
     private string favorSizeOrSpeed;
     private string inlineFunctionExpansion;
+    private bool functionLevelLinking = true;
     private bool intrinsicFunctions = false;
     private bool minimalRebuild = false;
     private string debugInformationFormat;
@@ -58,7 +60,7 @@ namespace HSBuild.Tasks
 
     #region Tool properties
     [Required]
-    public ITaskItem[] SourceFiles
+    public ITaskItem[] Sources
     {
       get { return this.sourceFiles; }
       set { this.sourceFiles = value; }
@@ -100,10 +102,17 @@ namespace HSBuild.Tasks
       set { this.programDataBaseFileName = value; }
     }
 
+    public string PrecompiledHeader { get; set; }
+    public ITaskItem PrecompiledHeaderFile
+    {
+        get { return this.precompiledHeaderFile; }
+        set { this.precompiledHeaderFile = value; }
+    }
+
     public ITaskItem PrecompiledHeaderOutputFile
     {
-      get { return this.precompiledHeaderOutputFile; }
-      set { this.precompiledHeaderOutputFile = value; }
+        get { return this.precompiledHeaderOutputFile; }
+        set { this.precompiledHeaderOutputFile = value; }
     }
 
     public ITaskItem AssemblerListingLocation
@@ -154,6 +163,12 @@ namespace HSBuild.Tasks
       set { this.favorSizeOrSpeed = value; }
     }
 
+    public bool FunctionLevelLinking
+    {
+        get { return this.functionLevelLinking; }
+        set { this.functionLevelLinking = value; }
+    }
+
     public string InlineFunctionExpansion
     {
       get { return this.inlineFunctionExpansion; }
@@ -184,6 +199,7 @@ namespace HSBuild.Tasks
       set { this.basicRuntimeChecks = value; }
     }
 
+    public bool SuppressStartupBanner { get; set; }
     public bool SmallerTypeCheck
     {
       get { return this.smallerTypeCheck; }
@@ -253,7 +269,8 @@ namespace HSBuild.Tasks
     protected override string GenerateCommandLineCommands()
     {
       CommandLineBuilder builder = new CommandLineBuilder();
-      builder.AppendSwitch("/nologo");
+      if (SuppressStartupBanner)
+        builder.AppendSwitch("/nologo");
       builder.AppendSwitch("/c");
       builder.AppendSwitchIfNotNull("/errorReport:", ErrorReport);
 
@@ -291,18 +308,26 @@ namespace HSBuild.Tasks
       if (!BufferSecurityCheck)
         builder.AppendSwitch("/GS-");
 
+      if (FunctionLevelLinking)
+          builder.AppendSwitch("/Gy");
+      else
+          builder.AppendSwitch("/Gy-");
+
       if (!RuntimeTypeInfo)
         builder.AppendSwitch("/GR-");
 
       if (SmallerTypeCheck)
         builder.AppendSwitch("/RTCc");
+
+      builder.AppendSwitch(GetPrecompiledHeaderSwitch());
+      builder.AppendSwitchIfNotNull("/Fp", PrecompiledHeaderOutputFile);
+
       builder.AppendSwitch(GetBasicRuntimeChecksSwitch());
       builder.AppendSwitch(GetDebugInformationFormatSwitch());
       builder.AppendSwitchIfNotNull("", AdditionalOptions, " ");
 
       builder.AppendSwitchIfNotNull("/Fo", ObjectFileName);
       builder.AppendSwitchIfNotNull("/Fd", ProgramDataBaseFileName);
-      builder.AppendSwitchIfNotNull("/Fp", PrecompiledHeaderOutputFile);
       builder.AppendSwitchIfNotNull("/Fa", AssemblerListingLocation);
 
       if (ForceIncludes != null)
@@ -330,7 +355,7 @@ namespace HSBuild.Tasks
 
     private ITaskItem[] GetFilteredSourceFiles()
     {
-      if (MinimalRebuildFromTracking)
+      if (MinimalRebuildFromTracking && sourceFiles != null)
       {
         List<ITaskItem> ret = new List<ITaskItem>();
         HSBuild.MSF.MR.Engine engine;
@@ -553,6 +578,27 @@ namespace HSBuild.Tasks
           return "/ZI";
         default:
           Log.LogError("DebugInformationFormat not recognized: {0}", DebugInformationFormat);
+          break;
+      }
+
+      return "";
+    }
+
+    private string GetPrecompiledHeaderSwitch()
+    {
+      if (string.IsNullOrEmpty(PrecompiledHeader))
+        return "";
+
+      switch (PrecompiledHeader.ToLower())
+      {
+        case "create":
+          return string.Format("/Yc\"{0}\"", PrecompiledHeaderFile);
+        case "use":
+          return string.Format("/Yu\"{0}\"", PrecompiledHeaderFile);
+        case "notusing":
+          break;
+        default:
+          Log.LogError("PrecompiledHeader not recognized: {0}", PrecompiledHeader);
           break;
       }
 

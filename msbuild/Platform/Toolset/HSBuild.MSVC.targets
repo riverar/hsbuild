@@ -111,38 +111,79 @@
 
       <!-- Compile C sources -->
       <MSVCCompiler Condition="'%(ClCompile.ExcludedFromBuild)'!='true'"
-        ToolPath="$(MSVCToolPath)"
+        Sources                            ="@(ClCompile)"
 
-        SourceFiles="@(ClCompile)"
-        AdditionalIncludeDirectories="%(ClCompile.AdditionalIncludeDirectories);@(AdditionalIncludeDirectories)"
-        PreprocessorDefinitions="%(ClCompile.PreprocessorDefinitions)"
-        ForceIncludes="%(ClCompile.ForceIncludes)"
-        ForceUsing="%(ClCompile.ForceUsing)"
-        ObjectFileName="%(ClCompile.ObjectFileName)"
-        ProgramDataBaseFileName="%(ClCompile.ProgramDataBaseFileName)"
-        PrecompiledHeaderOutputFile="%(ClCompile.PrecompiledHeaderOutputFile)"
-        AssemblerListingLocation="%(ClCompile.AssemblerListingLocation)"
+        AdditionalIncludeDirectories       ="%(ClCompile.AdditionalIncludeDirectories);@(AdditionalIncludeDirectories)"
+        AdditionalOptions                  ="%(ClCompile.AdditionalOptions)"
 
-        ErrorReport="%(ClCompile.ErrorReport)"
-        WarningLevel="%(ClCompile.WarningLevel)"
-        TreatWarningAsError="%(ClCompile.TreatWarningAsError)"
+        AssemblerListingLocation           ="%(ClCompile.AssemblerListingLocation)"
 
-        RuntimeLibrary="%(ClCompile.RuntimeLibrary)"
-        Optimization="%(ClCompile.Optimization)"
-        FavorSizeOrSpeed="%(ClCompile.FavorSizeOrSpeed)"
-        MinimalRebuild="%(ClCompile.MinimalRebuild)"
-        InlineFunctionExpansion="%(ClCompile.InlineFunctionExpansion)"
-        IntrinsicFunctions="%(ClCompile.IntrinsicFunctions)"
-        DebugInformationFormat="%(ClCompile.DebugInformationFormat)"
-        BasicRuntimeChecks="%(ClCompile.BasicRuntimeChecks)"
-        SmallerTypeCheck="%(ClCompile.SmallerTypeCheck)"
-        BufferSecurityCheck="%(ClCompile.BufferSecurityCheck)"
-        RuntimeTypeInfo="%(ClCompile.RuntimeTypeInfo)"
-        StringPooling="%(ClCompile.StringPooling)"
+        BasicRuntimeChecks                 ="%(ClCompile.BasicRuntimeChecks)"
 
-        AdditionalOptions="%(ClCompile.AdditionalOptions)"
 
-        MinimalRebuildFromTracking="%(ClCompile.MinimalRebuildFromTracking)"
+        BufferSecurityCheck                ="%(ClCompile.BufferSecurityCheck)"
+
+
+
+        DebugInformationFormat             ="%(ClCompile.DebugInformationFormat)"
+
+
+
+
+
+        ErrorReport                        ="%(ClCompile.ErrorReport)"
+
+
+
+        FavorSizeOrSpeed                   ="%(ClCompile.FavorSizeOrSpeed)"
+
+
+
+        ForceIncludes                      ="%(ClCompile.ForceIncludes)"
+        ForceUsing                         ="%(ClCompile.ForceUsing)"
+        FunctionLevelLinking               ="%(ClCompile.FunctionLevelLinking)"
+
+
+        InlineFunctionExpansion            ="%(ClCompile.InlineFunctionExpansion)"
+        IntrinsicFunctions                 ="%(ClCompile.IntrinsicFunctions)"
+        MinimalRebuild                     ="%(ClCompile.MinimalRebuild)"
+
+        ObjectFileName                     ="%(ClCompile.ObjectFileName)"
+
+
+
+        Optimization                       ="%(ClCompile.Optimization)"
+        PrecompiledHeader                  ="%(ClCompile.PrecompiledHeader)"
+        PrecompiledHeaderFile              ="%(ClCompile.PrecompiledHeaderFile)"
+        PrecompiledHeaderOutputFile        ="%(ClCompile.PrecompiledHeaderOutputFile)"
+
+        PreprocessorDefinitions            ="%(ClCompile.PreprocessorDefinitions)"
+
+
+
+        ProgramDataBaseFileName            ="%(ClCompile.ProgramDataBaseFileName)"
+        RuntimeLibrary                     ="%(ClCompile.RuntimeLibrary)"
+        RuntimeTypeInfo                    ="%(ClCompile.RuntimeTypeInfo)"
+
+        SmallerTypeCheck                   ="%(ClCompile.SmallerTypeCheck)"
+        StringPooling                      ="%(ClCompile.StringPooling)"
+
+        SuppressStartupBanner              ="%(ClCompile.SuppressStartupBanner)"
+
+        TreatWarningAsError                ="%(ClCompile.TreatWarningAsError)"
+
+
+
+
+
+        WarningLevel                       ="%(ClCompile.WarningLevel)"
+
+
+
+
+
+        ToolPath                           ="$(MSVCToolPath)"
+        MinimalRebuildFromTracking         ="%(ClCompile.MinimalRebuildFromTracking)"
         />
 
       <ItemGroup>
