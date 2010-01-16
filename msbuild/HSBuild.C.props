@@ -10,6 +10,9 @@
       <Optimization                     Condition="'%(ClCompile.Optimization)'                  == ''">Disabled</Optimization>
       <MinimalRebuild                   Condition="'%(ClCompile.MinimalRebuild)'                == ''">true</MinimalRebuild>
     </ClCompile>
+    <Link>
+      <GenerateDebugInformation         Condition="'%(ClCompile.GenerateDebugInformation)'      == ''">true</GenerateDebugInformation>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition=" '$(Configuration)' == 'Release' ">
     <ClCompile>
