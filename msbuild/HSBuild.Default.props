@@ -31,6 +31,7 @@
   <!-- Output sub directory initialization                        -->
   <PropertyGroup>
     <BinaryOutputSubDir>bin/</BinaryOutputSubDir>
+    <PDBOutputSubDir>pdb/</PDBOutputSubDir>
     <LibraryExecOutputSubDir>libexec/</LibraryExecOutputSubDir>
     <LibraryOutputSubDir>lib/</LibraryOutputSubDir>
     <PkgConfigOutputSubDir>$(LibraryOutputSubDir)pkgconfig/</PkgConfigOutputSubDir>

@@ -298,6 +298,7 @@
 
       <MakeDir Directories="$(LibraryOutputPath)" />
       <MakeDir Directories="$(BinaryOutputPath)" />
+      <MakeDir Directories="$(OutDir)$(PDBOutputSubDir)" />
       <MakeDir Directories="$(TargetDir)" />
 
       <!-- LINK -->

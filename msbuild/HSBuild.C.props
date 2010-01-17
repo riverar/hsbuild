@@ -138,7 +138,7 @@
                                               '%(Link.LinkDll)'                     == 'true'">$(LibraryOutputPath)$(AssemblyName).lib</ImportLibrary>
       <OutputFile                  Condition="'%(Link.OutputFile)'                  == ''">$(OutputFile)</OutputFile>
       <ManifestFile                Condition="'%(Link.ManifestFile)'                == ''">$(IntDir)$(TargetFileName).intermediate.manifest</ManifestFile>
-      <ProgramDatabaseFile         Condition="'%(Link.ProgramDatabaseFile)'         == ''">$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile         Condition="'%(Link.ProgramDatabaseFile)'         == ''">$(OutDir)$(PDBOutputSubDir)$(TargetName).pdb</ProgramDatabaseFile>
       <Profile                     Condition="'%(Link.Profile)'                     == ''">false</Profile>
       <ProfileGuidedDatabase       Condition="'%(Link.ProfileGuidedDatabase)'       == '' and
                                              ('%(Link.LinkTimeCodeGeneration)'      == 'PGOptimization' or
