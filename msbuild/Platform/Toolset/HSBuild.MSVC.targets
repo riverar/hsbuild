@@ -296,7 +296,7 @@
     >
       <Error Condition=" '%(Link.OutputFile)' == '' " Text="Link item missing OutputFile metadata." />
 
-      <MakeDir Directories="$(LibraryOutputPath)" />
+      <MakeDir Directories="$(OutDir)$(LibraryOutputSubDir)" />
       <MakeDir Directories="$(BinaryOutputPath)" />
       <MakeDir Directories="$(OutDir)$(PDBOutputSubDir)" />
       <MakeDir Directories="$(TargetDir)" />
@@ -404,7 +404,7 @@
             <FileWrites Include="%(Link.ManifestFile)" />
             <FileWrites Include="%(Link.ProfileGuidedDatabase)" />
             <FileWrites Condition="Exists('$(TargetDir)$(TargetName).ilk')" Include="$(TargetDir)$(TargetName).ilk" />
-            <FileWrites Condition="Exists('$(LibraryOutputPath)$(AssemblyName).exp')" Include="$(LibraryOutputPath)$(AssemblyName).exp" />
+            <FileWrites Condition="Exists('$(OutDir)$(LibraryOutputSubDir)$(AssemblyName).exp')" Include="$(OutDir)$(LibraryOutputSubDir)$(AssemblyName).exp" />
         </ItemGroup>
   </Target>
 
@@ -527,7 +527,7 @@
     Name="Lib"
     Condition=" '@(Lib)' != '' "
     >
-      <MakeDir Directories="$(LibraryOutputPath)" />
+      <MakeDir Directories="$(OutDir)$(LibraryOutputSubDir)" />
       <MakeDir Directories="$(TargetDir)" />
 
       <ItemGroup>

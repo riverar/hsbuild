@@ -12,8 +12,6 @@
   <!-- FIXME: Obsolete, should be removed -->
   <PropertyGroup>
     <BinaryOutputPath>$(OutDir)$(BinaryOuputSubDir)</BinaryOutputPath>
-    <LibraryExecOutputPath>$(OutDir)$(LibraryExecOutputSubDir)</LibraryExecOutputPath>
-    <LibraryOutputPath>$(OutDir)$(LibraryOutputSubDir)</LibraryOutputPath>
     <PkgConfigOutputPath>$(OutDir)$(PkgConfigOutputSubDir)</PkgConfigOutputPath>
     <IncludeOutputPath>$(OutDir)$(IncludeOutputSubDir)</IncludeOutputPath>
     <DataOutputPath>$(OutDir)$(DataOutputSubDir)</DataOutputPath>
