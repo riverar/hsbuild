@@ -152,12 +152,12 @@
     Condition=" '@(InstallInclude)' != '' "
     DependsOnTargets="_CheckClIncludeForInstall"
     >
-      <MakeDir Directories="$(IncludeOutputPath)" />
+      <MakeDir Directories="$(OutDir)$(IncludeOutputSubDir)" />
 
       <!-- Copy all installable header files. -->
       <Copy
         SourceFiles="@(InstallInclude)"
-        DestinationFolder="$(IncludeOutputPath)%(InstallInclude.SubDirectory)"
+        DestinationFolder="$(OutDir)$(IncludeOutputSubDir)%(InstallInclude.SubDirectory)"
         SkipUnchangedFiles="true"
         OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)">
           <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>

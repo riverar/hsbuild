@@ -13,7 +13,6 @@
   <PropertyGroup>
     <BinaryOutputPath>$(OutDir)$(BinaryOuputSubDir)</BinaryOutputPath>
     <PkgConfigOutputPath>$(OutDir)$(PkgConfigOutputSubDir)</PkgConfigOutputPath>
-    <IncludeOutputPath>$(OutDir)$(IncludeOutputSubDir)</IncludeOutputPath>
   </PropertyGroup>
 
   <PropertyGroup>
