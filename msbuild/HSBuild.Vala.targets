@@ -40,7 +40,7 @@
       <Vala
         Sources="@(ValaCompile)"
         Packages="@(Package);@(ValaPackage)"
-        PkgConfigPaths="$(PkgConfigOutputPath);$(HSBuildInstalledPkgConfigPath)"
+        PkgConfigPaths="$(OutDir)$(PkgConfigOutputSubDir);$(HSBuildInstalledPkgConfigPath)"
         BaseDirectory="%(ValaCompile.BaseDirectory)"
         OutputDirectory="$(IntDir)"
         VapiDirectories="%(ValaCompile.VapiDirectory)"

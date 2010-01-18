@@ -9,11 +9,6 @@
     <VersionFull                                                                    >$(VersionMajor).$(VersionMinor).$(VersionMicro).$(VersionNano)</VersionFull>
   </PropertyGroup>
 
-  <!-- FIXME: Obsolete, should be removed -->
-  <PropertyGroup>
-    <PkgConfigOutputPath>$(OutDir)$(PkgConfigOutputSubDir)</PkgConfigOutputPath>
-  </PropertyGroup>
-
   <PropertyGroup>
     <BuildGenerateSourcesTargets>
       GenerateConfigHeader;

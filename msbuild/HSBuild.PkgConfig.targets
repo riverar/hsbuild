@@ -23,7 +23,7 @@
     >
     <PkgConfig
       Packages="@(Package)"
-      PkgConfigPaths="$(PkgConfigOutputPath)"
+      PkgConfigPaths="$(OutDir)$(PkgConfigOutputSubDir)"
       ToolPath="$(HSBuildToolPath)"
       >
         <Output TaskParameter="CIncludes" ItemName="AdditionalIncludeDirectories" />
@@ -91,7 +91,7 @@
     Condition=" '@(InstallPkgConfig)' != '' "
     DependsOnTargets="_GeneratePkgConfigFiles"
     >
-      <MakeDir Directories="$(PkgConfigOutputPath)" />
+      <MakeDir Directories="$(OutDir)$(PkgConfigOutputSubDir)" />
 
       <ItemGroup>
           <InstallPkgConfig Condition=" '%(InstallPkgConfig.OutputFileName)' == '' ">
@@ -102,7 +102,7 @@
       <!-- Copy all PkgConfig files. -->
       <Copy
         SourceFiles="@(InstallPkgConfig)"
-        DestinationFiles="$(PkgConfigOutputPath)%(InstallPkgConfig.OutputFileName)"
+        DestinationFiles="$(OutDir)$(PkgConfigOutputSubDir)%(InstallPkgConfig.OutputFileName)"
         SkipUnchangedFiles="true"
         OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)">
           <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>

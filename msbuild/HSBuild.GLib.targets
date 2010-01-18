@@ -18,7 +18,7 @@
     >
       <PkgConfigQueryVariable
         Packages="glib-$(GLibVersionApi)"
-        PkgConfigPaths="$(PkgConfigOutputPath);$(HSBuildInstalledPkgConfigPath)"
+        PkgConfigPaths="$(OutDir)$(PkgConfigOutputSubDir);$(HSBuildInstalledPkgConfigPath)"
         ToolPath="$(HSBuildToolPath)"
         Key="exec_prefix"
         >
@@ -38,7 +38,7 @@
     >
       <PkgConfigQueryVariable
         Packages="glib-$(GLibVersionApi)"
-        PkgConfigPaths="$(PkgConfigOutputPath);$(HSBuildInstalledPkgConfigPath)"
+        PkgConfigPaths="$(OutDir)$(PkgConfigOutputSubDir);$(HSBuildInstalledPkgConfigPath)"
         ToolPath="$(HSBuildToolPath)"
         Key="glib_genmarshal"
         >
@@ -62,7 +62,7 @@
     >
       <PkgConfigQueryVariable
         Packages="glib-$(GLibVersionApi)"
-        PkgConfigPaths="$(PkgConfigOutputPath);$(HSBuildInstalledPkgConfigPath)"
+        PkgConfigPaths="$(OutDir)$(PkgConfigOutputSubDir);$(HSBuildInstalledPkgConfigPath)"
         ToolPath="$(HSBuildToolPath)"
         Key="glib_mkenums"
         >
