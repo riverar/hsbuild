@@ -14,7 +14,6 @@
     <BinaryOutputPath>$(OutDir)$(BinaryOuputSubDir)</BinaryOutputPath>
     <PkgConfigOutputPath>$(OutDir)$(PkgConfigOutputSubDir)</PkgConfigOutputPath>
     <IncludeOutputPath>$(OutDir)$(IncludeOutputSubDir)</IncludeOutputPath>
-    <DataOutputPath>$(OutDir)$(DataOutputSubDir)</DataOutputPath>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -209,12 +208,12 @@
     Name="InstallData"
     Condition=" '@(InstallData)' != '' "
     >
-      <MakeDir Directories="$(DataOutputPath)" />
+      <MakeDir Directories="$(OutDir)$(DataOutputSubDir)" />
 
       <!-- Copy all installable data files. -->
       <Copy
         SourceFiles="@(InstallData)"
-        DestinationFolder="$(DataOutputPath)%(InstallData.SubDirectory)"
+        DestinationFolder="$(OutDir)$(DataOutputSubDir)%(InstallData.SubDirectory)"
         SkipUnchangedFiles="true"
         OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)">
           <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
