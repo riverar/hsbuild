@@ -37,6 +37,7 @@
     <PkgConfigOutputSubDir>$(LibraryOutputSubDir)pkgconfig/</PkgConfigOutputSubDir>
     <IncludeOutputSubDir>include/</IncludeOutputSubDir>
     <DataOutputSubDir>share/</DataOutputSubDir>
+    <SysconfOutputSubDir>etc/</SysconfOutputSubDir>
   </PropertyGroup>
 
   <!-- Substitute OutputType synonyms to the default value for each OutputType -->
