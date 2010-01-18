@@ -297,7 +297,7 @@
       <Error Condition=" '%(Link.OutputFile)' == '' " Text="Link item missing OutputFile metadata." />
 
       <MakeDir Directories="$(OutDir)$(LibraryOutputSubDir)" />
-      <MakeDir Directories="$(BinaryOutputPath)" />
+      <MakeDir Directories="$(OutDir)$(BinaryOuputSubDir)" />
       <MakeDir Directories="$(OutDir)$(PDBOutputSubDir)" />
       <MakeDir Directories="$(TargetDir)" />
 
