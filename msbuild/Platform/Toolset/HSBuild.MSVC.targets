@@ -190,6 +190,7 @@
         <Obj Include="@(ClCompile->'$(IntDir)%(FileName).obj')" Condition="'%(ClCompile.ExcludedFromBuild)'!='true'">
           <LinkCompiled>%(ClCompile.LinkCompiled)</LinkCompiled>
           <LibCompiled>%(ClCompile.LibCompiled)</LibCompiled>
+          <GenerateSymbols>%(ClCompile.GenerateSymbols)</GenerateSymbols>
         </Obj>
         <FileWrites Include="@(ClCompile->'$(IntDir)%(FileName).obj')" Condition="'%(ClCompile.ExcludedFromBuild)'!='true'" />
       </ItemGroup>
@@ -230,6 +231,7 @@
       <ItemGroup>
         <Link Include="@(Obj)" Condition=" '%(Obj.LinkCompiled)' == 'true' " />
         <Lib Include="@(Obj)" Condition=" '%(Obj.LibCompiled)' == 'true' " />
+        <DumpSymbols Include="@(Obj)" Condition=" '%(Obj.GenerateSymbols)' == 'true' " />
 
         <_LinkOutputFile Include="%(Link.OutputFile)" Condition=" '%(Link.OutputFile)' != '' AND '%(Link.ManifestFile)' != '' ">
           <Dll>%(Link.LinkDLL)</Dll>

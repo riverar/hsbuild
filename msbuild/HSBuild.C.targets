@@ -17,6 +17,7 @@
 
     <BuildLinkTargets>
       $(BuildLinkTargets);
+      DumpSymbols;
       GenerateSymbols;
       Lib;
       Link;
@@ -57,6 +58,7 @@
   <Import Project="HSBuild.Common.targets" />
   <Import Project="Platform/Toolset/HSBuild.C.$(Platform).$(PlatformToolset).targets" />
   <UsingTask  TaskName="SetEnv"                     AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="DumpSymbols"                AssemblyFile="$(HSBuildTasksPath)" />
 
   <PropertyGroup>
       <BuildLinkDependsOn>
@@ -103,6 +105,29 @@
         >
           <Output TaskParameter="OutputEnvironmentVariable" PropertyName="INCLUDE"/>
       </SetEnv>
+  </Target>
+
+  <!-- TARGET: DumpSymbols -->
+  <Target
+    Name="DumpSymbols"
+    Condition=" '@(DumpSymbols)' != '' "
+    >
+      <ItemGroup>
+        <DumpSymbols>
+          <SymbolsFile Condition=" '%(DumpSymbols.SymbolsFile)' == '' ">%(DumpSymbols.Identity).symbols</SymbolsFile>
+        </DumpSymbols>
+      </ItemGroup>
+
+      <DumpSymbols
+        Sources="@(DumpSymbols)"
+        SymbolsFile="%(DumpSymbols.SymbolsFile)"
+        MatchAllFilterExpressions="%(DumpSymbols.MatchAllFilterExpressions)"
+        FilterExpressions="%(DumpSymbols.FilterExpressions)"
+        />
+
+      <ItemGroup>
+        <SymbolFile Include="%(DumpSymbols.SymbolsFile)" />
+      </ItemGroup>
   </Target>
 
   <!-- TARGET: GenerateSymbols -->
