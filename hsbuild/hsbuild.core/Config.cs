@@ -24,14 +24,14 @@ namespace HSBuild.Core
 {
     public class Config
     {
-        public static Config LoadFromFile(string filename, string prefix)
+        public static Config LoadFromFile(string filename)
         {
-            return LoadFromTextReader(new StreamReader(filename), prefix);
+            return LoadFromTextReader(new StreamReader(filename));
         }
 
         public static Config LoadFromDirectory(string directory)
         {
-            return LoadFromFile(Config.FindConfigFile(directory), directory);
+            return LoadFromFile(Config.FindConfigFile(directory));
         }
 
         public static Config LoadFromCurrentDirectory()
@@ -39,12 +39,11 @@ namespace HSBuild.Core
             return LoadFromDirectory(Environment.CurrentDirectory);
         }
 
-        public static Config LoadFromTextReader(TextReader reader, string prefix)
+        public static Config LoadFromTextReader(TextReader reader)
         {
             try
             {
                 Config ret = new Config();
-                ret.m_prefix = prefix;
 
                 string line;
                 while ((line = reader.ReadLine()) != null)
@@ -63,31 +62,34 @@ namespace HSBuild.Core
 
         internal static Config CreateConfig(Dictionary<OptionEntrySpec, object> options)
         {
+            Config ret = null;
             string cfgFile = GetOptionEntryDictionaryValue(options, "file");
-            List<string> configPossibilities = new List<string>(3);
 
             if (!string.IsNullOrEmpty(cfgFile))
             {
                 if (File.Exists(cfgFile))
                 {
-                    configPossibilities.Add(cfgFile);
+                    ret = Config.LoadFromFile(cfgFile);
                 }
                 else
                 {
                     // TODO: error/warning?
                 }
             }
-
-            configPossibilities.Add(System.IO.Path.Combine(Environment.CurrentDirectory, Config.DefaultConfigFileName));
-            configPossibilities.Add(Config.GetDefaultConfigFile());
-
-            Config ret = null;
-            foreach (string cfg in configPossibilities)
+            else
             {
-                if (File.Exists(cfg))
+                List<string> configPossibilities = new List<string>(3);
+
+                configPossibilities.Add(System.IO.Path.Combine(Environment.CurrentDirectory, Config.DefaultConfigFileName));
+                configPossibilities.Add(Config.GetDefaultConfigFile());
+
+                foreach (string cfg in configPossibilities)
                 {
-                    ret = Config.LoadFromFile(cfg, Path.GetDirectoryName(cfg));
-                    break;
+                    if (File.Exists(cfg))
+                    {
+                        ret = Config.LoadFromFile(cfg);
+                        break;
+                    }
                 }
             }
 
