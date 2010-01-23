@@ -47,7 +47,7 @@ namespace HSBuild.Core
 
         public static Config LoadFromDirectory(string directory)
         {
-            return LoadFromFile(Config.FindConfigFile(directory));
+            return LoadFromFile(Path.Combine(directory, Config.DefaultConfigFileName));
         }
 
         public static Config LoadFromCurrentDirectory()
@@ -96,8 +96,8 @@ namespace HSBuild.Core
             {
                 List<string> configPossibilities = new List<string>(3);
 
-                configPossibilities.Add(System.IO.Path.Combine(Environment.CurrentDirectory, Config.DefaultConfigFileName));
-                configPossibilities.Add(Config.GetDefaultConfigFile());
+                configPossibilities.Add(Path.Combine(Environment.CurrentDirectory, Config.DefaultConfigFileName));
+                configPossibilities.Add(Path.Combine(GetHomePath(), Config.DefaultConfigFileName));
 
                 foreach (string cfg in configPossibilities)
                 {
@@ -198,10 +198,6 @@ namespace HSBuild.Core
         public const string ModuleSetFileExt = ".modules";
         public const string DefaultModuleSetFileName = "hsbuild" + ModuleSetFileExt;
         public const string DefaultConfigFileName = ".hsbuildconf";
-        public static string GetDefaultConfigFile()
-        {
-            return System.IO.Path.Combine(GetHomePath(), DefaultConfigFileName);
-        }
 
         public static string GetHomePath()
         {
@@ -209,11 +205,6 @@ namespace HSBuild.Core
                 return Environment.GetEnvironmentVariable("HOME");
             else
                 return Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
-        }
-
-        private static string FindConfigFile(string directory)
-        {
-            return Path.Combine(directory, DefaultConfigFileName);
         }
 
         public void SetupEnvironment()
