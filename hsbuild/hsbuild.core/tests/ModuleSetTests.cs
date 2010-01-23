@@ -93,13 +93,15 @@ namespace HSBuild.Core.Tests
 
             Assert.IsNotNull(mod);
             Assert.IsInstanceOf(typeof(HSBuildModule), mod);
-            Assert.AreEqual("glib.sln", ((HSBuildModule)mod).Projects);
 
-            Assert.IsNotNull(mod.Branch);
-            Assert.AreEqual("glib", mod.Branch.Module);
-            Assert.AreEqual("git.test.tpl", mod.Branch.Repository);
-            Assert.IsNullOrEmpty(mod.Branch.CheckoutDir);
-            Assert.IsNullOrEmpty(mod.Branch.Revision);
+            HSBuildModule hsmod = mod as HSBuildModule;
+            Assert.AreEqual("glib.sln", hsmod.Projects);
+
+            Assert.IsNotNull(hsmod.Branch);
+            Assert.AreEqual("glib", hsmod.Branch.Module);
+            Assert.AreEqual("git.test.tpl", hsmod.Branch.Repository);
+            Assert.IsNullOrEmpty(hsmod.Branch.CheckoutDir);
+            Assert.IsNullOrEmpty(hsmod.Branch.Revision);
 
             Assert.AreEqual(0, mod.Dependencies.Length);
         }
@@ -124,11 +126,12 @@ namespace HSBuild.Core.Tests
             Assert.IsNotNull(mod);
             Assert.IsInstanceOf(typeof(HSBuildModule), mod);
 
-            Assert.IsNotNull(mod.Branch);
-            Assert.AreEqual("gstreamer/gstreamer", mod.Branch.Module);
-            Assert.AreEqual("git.test.tpl", mod.Branch.Repository);
-            Assert.AreEqual("gstreamer", mod.Branch.CheckoutDir);
-            Assert.IsNullOrEmpty(mod.Branch.Revision);
+            HSBuildModule hsmod = mod as HSBuildModule;
+            Assert.IsNotNull(hsmod.Branch);
+            Assert.AreEqual("gstreamer/gstreamer", hsmod.Branch.Module);
+            Assert.AreEqual("git.test.tpl", hsmod.Branch.Repository);
+            Assert.AreEqual("gstreamer", hsmod.Branch.CheckoutDir);
+            Assert.IsNullOrEmpty(hsmod.Branch.Revision);
 
             Assert.AreEqual(0, mod.Dependencies.Length);
         }
@@ -183,8 +186,9 @@ namespace HSBuild.Core.Tests
 
             Assert.IsNotNull(mod);
             Assert.IsInstanceOf(typeof(HSBuildModule), mod);
+            HSBuildModule hsmod = mod as HSBuildModule;
 
-            Patch patch = mod.Branch.PatchQueue;
+            Patch patch = hsmod.Branch.PatchQueue;
             Assert.IsNotNull(patch);
             Assert.IsTrue(patch.Uri.IsFile);
             Assert.AreEqual(Path.Combine(Environment.CurrentDirectory, "fix1.patch"), patch.Uri.LocalPath);

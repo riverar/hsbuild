@@ -25,12 +25,67 @@ namespace HSBuild.Modules
 {
     public class HSBuildModule : Module
     {
-        internal HSBuildModule(string id, ModuleBranch branch, string[] deps, XmlAttributeCollection attribs)
-            : base(id, branch, deps)
+        internal static HSBuildModule ParseModule(string id, string[] deps, XmlElement xmlModule)
         {
-            XmlAttribute proj = attribs["projects"];
+            XmlNodeList branchList = xmlModule.GetElementsByTagName("branch");
+
+            if (branchList == null || branchList.Count < 1)
+                throw new NotImplementedException("TODO: Error.. missing branch tag in module.");
+            else if (branchList.Count > 1)
+                throw new NotImplementedException("TODO: Error.. only one branch is allowed for each module.");
+
+            return new HSBuildModule(id, deps, xmlModule, ModuleBranch.ParseBranch(branchList[0] as XmlElement, id));
+        }
+
+        private HSBuildModule(string id, string[] deps, XmlElement xmlModule, ModuleBranch branch)
+            : base(id, deps)
+        {
+            XmlAttribute proj = xmlModule.Attributes["projects"];
             if (proj != null)
                 m_proj = proj.Value;
+
+            m_branch = branch;
+        }
+
+        internal override bool BindRepository(Dictionary<string, Repository> repos)
+        {
+            return repos.TryGetValue(m_branch.Repository, out m_repository);
+        }
+
+        public override void Update(ITaskQueue taskQueue, IOutputEngine output, Config config, bool onlyFirstTime)
+        {
+            Branch branch = Repository.FindBranch(Branch, Id, config.CheckoutRoot);
+            if (branch == null)
+                throw new NullReferenceException();
+
+            if (!onlyFirstTime || !branch.Exists(false))
+                branch.SyncBranch(taskQueue, Branch.PatchQueue, output);
+        }
+
+        public override void Build(ITaskQueue taskQueue, IOutputEngine output, Config config, Dictionary<string, object> buildArgs)
+        {
+            Branch branch = Repository.FindBranch(Branch, Id, config.CheckoutRoot);
+            if (string.IsNullOrEmpty(Projects))
+                taskQueue.QueueTask(new MSBuildTask(buildArgs, config, null, branch.BranchRoot));
+            else
+                foreach (string proj in Projects.Split(';'))
+                    taskQueue.QueueTask(new MSBuildTask(buildArgs, config, proj, branch.BranchRoot));
+        }
+
+        public Repository Repository
+        {
+            get
+            {
+                return m_repository;
+            }
+        }
+
+        public ModuleBranch Branch
+        {
+            get
+            {
+                return m_branch;
+            }
         }
 
         public string Projects
@@ -38,15 +93,8 @@ namespace HSBuild.Modules
             get { return m_proj; }
         }
 
-        public override void Build(ITaskQueue taskQueue, IOutputEngine output, Branch branch, Dictionary<string, object> buildArgs, Config cfg)
-        {
-            if (string.IsNullOrEmpty(Projects))
-                taskQueue.QueueTask(new MSBuildTask(buildArgs, cfg, null, branch.BranchRoot));
-            else
-                foreach (string proj in Projects.Split(';'))
-                    taskQueue.QueueTask(new MSBuildTask(buildArgs, cfg, proj, branch.BranchRoot));
-        }
-
+        protected Repository m_repository;
+        protected ModuleBranch m_branch;
         private string m_proj = null;
     }
 }

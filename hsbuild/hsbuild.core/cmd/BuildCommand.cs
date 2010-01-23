@@ -49,15 +49,8 @@ namespace HSBuild.Commands
 
             while (node != null)
             {
-                Module m = node.Value;
-                Branch b = m.Repository.FindBranch(m.Branch, m.Id, Config.CheckoutRoot);
-                if (b == null)
-                    throw new NullReferenceException();
-                else if (!b.Exists(false))
-                    b.SyncBranch(taskqueue, m.Branch.PatchQueue, output);
-
-                m.Build(taskqueue, output, b, buildArgs, Config);
-
+                node.Value.Update(taskqueue, output, Config, true);
+                node.Value.Build(taskqueue, output, Config, buildArgs);
                 node = node.Next;
             }
         }

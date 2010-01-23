@@ -61,6 +61,13 @@ namespace HSBuild.Core
             XmlDocument doc = new XmlDocument();
             doc.Load(reader);
             AddModuleSetXmlDocument(doc, basedir);
+
+            // Bind repository for each module, if needed
+            foreach (Module m in modules.Values)
+            {
+                if (!m.BindRepository(repos))
+                    throw new Exception(string.Format("Unable to bind repository for module {0}.", m.Id));
+            }
         }
 
         private List<XmlElement> GetModuleElements(XmlDocument doc)

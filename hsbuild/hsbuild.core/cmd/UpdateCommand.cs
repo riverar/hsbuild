@@ -42,11 +42,7 @@ namespace HSBuild.Commands
 
             while (node != null)
             {
-                Module m = node.Value;
-                Branch b = m.Repository.FindBranch(m.Branch, m.Id, Config.CheckoutRoot);
-                if (b == null)
-                    throw new NullReferenceException();
-                b.SyncBranch(taskQueue, m.Branch.PatchQueue, output);
+                node.Value.Update(taskQueue, output, Config, false);
                 node = node.Next;
             }
         }

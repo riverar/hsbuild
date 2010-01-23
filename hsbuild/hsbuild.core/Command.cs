@@ -161,7 +161,6 @@ namespace HSBuild.Core
                     if (m.Dependencies != null && m.Dependencies.Length > 0)
                         FilterModuleList(m.Dependencies, moduleSet, ref modulesList);
 
-                    m.SetRepository(moduleSet.Repositories[m.Branch.Repository]);
                     modulesList.AddLast(m);
                 }
             }

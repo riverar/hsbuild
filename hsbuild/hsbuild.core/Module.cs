@@ -24,25 +24,22 @@ namespace HSBuild.Core
 {
     public abstract class Module
     {
-        public abstract void Build(ITaskQueue taskQueue, IOutputEngine output, Branch branch, Dictionary<string, object> args, Config cfg);
+        internal abstract bool BindRepository(Dictionary<string, Repository> repos);
+        public abstract void Update(ITaskQueue taskQueue, IOutputEngine output, Config Config, bool p);
+        public abstract void Build(ITaskQueue taskQueue, IOutputEngine output, Config config, Dictionary<string, object> args);
+
         internal static Module ParseModule(XmlElement module)
         {
             XmlAttribute id = module.Attributes["id"];
-            XmlNodeList branchList = module.GetElementsByTagName("branch");
-
-            if (id == null)
+            if (id == null || string.IsNullOrEmpty(id.Value))
                 throw new NotImplementedException("TODO: Error.. missing id attribute in module element");
-            if (branchList == null || branchList.Count < 1)
-                throw new NotImplementedException("TODO: Error.. missing branch tag in module.");
-            else if (branchList.Count > 1)
-                throw new NotImplementedException("TODO: Error.. only one branch is allowed for each module.");
 
             string[] deps = ParseDependencies(module.SelectNodes("dependencies/dep"));
-            ModuleBranch branch = ModuleBranch.ParseBranch(branchList[0] as XmlElement, id.Value);
+
             switch (module.Name.ToLower())
             {
                 case "hsbuildmodule":
-                    return new HSBuildModule(id.Value, branch, deps, module.Attributes);
+                    return HSBuildModule.ParseModule(id.Value, deps, module);
                 default:
                     break;
             }
@@ -50,16 +47,10 @@ namespace HSBuild.Core
             return null;
         }
 
-        internal Module(string id, ModuleBranch branch, string[] deps)
+        internal Module(string id, string[] deps)
         {
             m_id = id;
-            m_branch = branch;
             m_deps = deps != null ? new List<string>(deps) : new List<string>();
-        }
-
-        internal void SetRepository(Repository repo)
-        {
-            m_repository = repo;
         }
 
         #region Properties
@@ -69,22 +60,6 @@ namespace HSBuild.Core
             get
             {
                 return m_id;
-            }
-        }
-
-        public Repository Repository
-        {
-            get
-            {
-                return m_repository;
-            }
-        }
-
-        public ModuleBranch Branch
-        {
-            get
-            {
-                return m_branch;
             }
         }
 
@@ -99,8 +74,6 @@ namespace HSBuild.Core
         #endregion
 
         protected string m_id;
-        protected Repository m_repository;
-        protected ModuleBranch m_branch;
         protected List<string> m_deps;
 
         private static string[] ParseDependencies(XmlNodeList deps)
