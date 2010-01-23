@@ -42,12 +42,18 @@ namespace HSBuild.Commands
 
             output.WriteOutput(OutputType.Normal, "HSBuild " + Assembly.GetExecutingAssembly().GetName().Version.ToString());
             output.WriteOutput(OutputType.Info, "  by Haakon Sporsheim <haakon.sporsheim@gmail.com>");
-            output.WriteOutput(OutputType.Normal, "\nCommands:");
-            output.WriteOutput(OutputType.Normal, "\tupdate");
-            output.WriteOutput(OutputType.Normal, "\tlist");
-            output.WriteOutput(OutputType.Normal, "\tbuild");
-            output.WriteOutput(OutputType.Normal, "\thelp");
-            output.WriteOutput(OutputType.Normal, "\tshell:");
+            output.WriteOutput(OutputType.Heading, "\nCommands:");
+            output.WriteOutput(OutputType.Heading, "\tupdate");
+            output.WriteOutput(OutputType.Normal, "\t\tUpdates specified branches and dependencies.");
+            output.WriteOutput(OutputType.Heading, "\tlist");
+            output.WriteOutput(OutputType.Normal, "\t\tLists modules found in module set file.");
+            output.WriteOutput(OutputType.Heading, "\tbuild");
+            output.WriteOutput(OutputType.Normal, "\t\tBuilds specified branches and dependencies.");
+            output.WriteOutput(OutputType.Normal, "\t\tModules will also be fetched if they are nowhere to be found.");
+            output.WriteOutput(OutputType.Heading, "\thelp");
+            output.WriteOutput(OutputType.Normal, "\t\tPrints this help information.");
+            output.WriteOutput(OutputType.Heading, "\tshell");
+            output.WriteOutput(OutputType.Normal, "\t\tStarts a shell with environment configured by configuration used.");
 
             //output.WriteOutput(OutputType.Normal, "\tclean:");
             //output.WriteOutput(OutputType.Normal, "\tinfo:");
