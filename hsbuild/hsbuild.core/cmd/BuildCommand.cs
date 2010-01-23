@@ -49,8 +49,13 @@ namespace HSBuild.Commands
 
             while (node != null)
             {
-                node.Value.Update(taskqueue, output, Config, true);
-                node.Value.Build(taskqueue, output, Config, buildArgs);
+                if (node.Value is IBuildableModule)
+                {
+                    IBuildableModule bm = node.Value as IBuildableModule;
+                    bm.Update(taskqueue, output, Config, true);
+                    bm.Build(taskqueue, output, Config, buildArgs);
+                }
+
                 node = node.Next;
             }
         }

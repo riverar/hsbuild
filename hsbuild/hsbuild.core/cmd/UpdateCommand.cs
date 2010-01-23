@@ -42,7 +42,9 @@ namespace HSBuild.Commands
 
             while (node != null)
             {
-                node.Value.Update(taskQueue, output, Config, false);
+                if (node.Value is IUpdatableModule)
+                    (node.Value as IUpdatableModule).Update(taskQueue, output, Config, false);
+
                 node = node.Next;
             }
         }

@@ -23,7 +23,7 @@ using HSBuild.Tasks;
 
 namespace HSBuild.Modules
 {
-    public class HSBuildModule : Module
+    public class HSBuildModule : Module, IBuildableModule
     {
         internal static HSBuildModule ParseModule(string id, string[] deps, XmlElement xmlModule)
         {
@@ -52,7 +52,7 @@ namespace HSBuild.Modules
             return repos.TryGetValue(m_branch.Repository, out m_repository);
         }
 
-        public override void Update(ITaskQueue taskQueue, IOutputEngine output, Config config, bool onlyFirstTime)
+        public void Update(ITaskQueue taskQueue, IOutputEngine output, Config config, bool onlyFirstTime)
         {
             Branch branch = Repository.FindBranch(Branch, Id, config.CheckoutRoot);
             if (branch == null)
@@ -62,7 +62,7 @@ namespace HSBuild.Modules
                 branch.SyncBranch(taskQueue, Branch.PatchQueue, output);
         }
 
-        public override void Build(ITaskQueue taskQueue, IOutputEngine output, Config config, Dictionary<string, object> buildArgs)
+        public void Build(ITaskQueue taskQueue, IOutputEngine output, Config config, Dictionary<string, object> buildArgs)
         {
             Branch branch = Repository.FindBranch(Branch, Id, config.CheckoutRoot);
             if (string.IsNullOrEmpty(Projects))

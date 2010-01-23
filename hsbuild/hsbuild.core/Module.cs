@@ -22,11 +22,19 @@ using HSBuild.Modules;
 
 namespace HSBuild.Core
 {
+    public interface IUpdatableModule
+    {
+        void Update(ITaskQueue taskQueue, IOutputEngine output, Config config, bool onlyFirstTime);
+    }
+
+    public interface IBuildableModule : IUpdatableModule
+    {
+        void Build(ITaskQueue taskQueue, IOutputEngine output, Config config, Dictionary<string, object> args);
+    }
+
     public abstract class Module
     {
         internal abstract bool BindRepository(Dictionary<string, Repository> repos);
-        public abstract void Update(ITaskQueue taskQueue, IOutputEngine output, Config Config, bool p);
-        public abstract void Build(ITaskQueue taskQueue, IOutputEngine output, Config config, Dictionary<string, object> args);
 
         internal static Module ParseModule(XmlElement module)
         {
