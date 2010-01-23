@@ -98,6 +98,8 @@ namespace HSBuild.Console
                         System.Console.ForegroundColor = ConsoleColor.DarkGray;
                     else if (type == OutputType.Error)
                         System.Console.ForegroundColor = ConsoleColor.Red;
+                    else if (type == OutputType.Warning)
+                        System.Console.ForegroundColor = ConsoleColor.Yellow;
 
                     System.Console.WriteLine(line);
                 }
