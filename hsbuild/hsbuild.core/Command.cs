@@ -86,6 +86,16 @@ namespace HSBuild.Core
         protected abstract void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output);
         public void ExecuteCommand(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output)
         {
+            if (m_config != null)
+            {
+                if (string.IsNullOrEmpty(m_config.Filename))
+                    output.WriteOutput(OutputType.Info, "Config file not found, using default configuration.");
+                else
+                    output.WriteOutput(OutputType.Info, string.Format("Using config file: {0}", m_config.Filename));
+
+                output.WriteOutput(OutputType.Info, string.Format("Using module set file: {0}", m_config.ModuleSet));
+            }
+
             Execute(taskQueue, loader, output);
         }
 
