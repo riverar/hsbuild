@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <ItemDefinitionGroup>
+    <OrcCompile>
+      <Compile        Condition=" '%(OrcCompile.Compile)'      == '' ">true</Compile>
+      <Install        Condition=" '%(OrcCompile.Install)'      == '' ">false</Install>
+      <OutputName     Condition=" '%(OrcCompile.OutputName)'   == '' ">%(OrcCompile.Filename)</OutputName>
+    </OrcCompile>
+  </ItemDefinitionGroup>
+
+</Project>

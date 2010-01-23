@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <OrcVersionApi Condition=" '$(OrcVersionApi)' == '' ">0.4</OrcVersionApi>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <BuildGenerateSourcesTargets>
+      $(BuildGenerateSourcesTargets);
+      OrcCompile;
+    </BuildGenerateSourcesTargets>
+  </PropertyGroup>
+
+  <Target
+    Name="OrccPath"
+    Condition=" '$(OrccToolPath)' == '' "
+    >
+      <PkgConfigQueryVariable
+        Packages="orc-$(OrcVersionApi)"
+        PkgConfigPaths="$(OutDir)$(PkgConfigOutputSubDir);$(HSBuildInstalledPkgConfigPath)"
+        ToolPath="$(HSBuildToolPath)"
+        Key="orcc"
+        >
+          <Output TaskParameter="Value" PropertyName="OrccToolPath" />
+      </PkgConfigQueryVariable>
+
+      <Error
+        Condition=" '$(OrccToolPath)' == '' "
+        Text="orcc variable was not found in orc-$(OrcVersionApi).pc"
+        />
+  </Target>
+
+  <!-- TARGET: GLibMkenums -->
+  <Target
+    Name="OrcCompile"
+    Condition=" '@(OrcCompile)' != '' "
+    DependsOnTargets="OrccPath"
+    >
+      <MakeDir
+        Directories="$(IntDir)%(OrcCompile.SubDirectory)"
+        Condition=" '%(OrcCompile.SubDirectory)' != '' "
+        />
+
+      <ItemGroup>
+        <OrcCompile>
+          <OutputName Condition=" '%(OrcCompile.OutputName)' == '' ">%(OrcCompile.Filename)</OutputName>
+
+          <Switches Condition=" '%(OrcCompile.Include)' != '' ">%(OrcCompile.Switches) --include %(OrcCompile.Include)</Switches>
+        </OrcCompile>
+      </ItemGroup>
+
+      <Exec
+        Command="
+          &quot;$(OrccToolPath)&quot; --implementation%(OrcCompile.Switches) -o &quot;$(IntDir)%(OrcCompile.SubDirectory)%(OrcCompile.OutputName).c&quot; &quot;%(OrcCompile.Identity)&quot;
+          &quot;$(OrccToolPath)&quot; --header%(OrcCompile.Switches) -o &quot;$(IntDir)%(OrcCompile.SubDirectory)%(OrcCompile.OutputName).h&quot; &quot;%(OrcCompile.Identity)&quot;
+          "
+        />
+
+      <ItemGroup>
+        <Compile        Include="@(OrcCompile->'$(IntDir)%(SubDirectory)%(OutputName).c')" Condition=" '%(OrcCompile.Compile)'  == 'true' " />
+        <InstallInclude Include="@(OrcCompile->'$(IntDir)%(SubDirectory)%(OutputName).h')" Condition=" '%(OrcCompile.Include)' == 'true' " />
+      </ItemGroup>
+  </Target>
+</Project>
+
