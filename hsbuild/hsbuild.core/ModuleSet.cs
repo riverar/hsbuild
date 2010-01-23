@@ -33,15 +33,34 @@ namespace HSBuild.Core
 
     public class ModuleSet
     {
+        public ModuleSet(string filename)
+            : this()
+        {
+            if (!Path.IsPathRooted(filename))
+                filename = Path.Combine(Environment.CurrentDirectory, filename);
+
+            included.Add(new Uri(filename));
+            ReadModuleSet(new StreamReader(filename), Path.GetDirectoryName(filename));
+        }
+
         public ModuleSet(TextReader reader)
+            : this()
+        {
+            ReadModuleSet(reader, Environment.CurrentDirectory);
+        }
+
+        protected ModuleSet()
+        {
+            repos = new Dictionary<string, Repository>();
+            included = new List<Uri>();
+            modules = new Dictionary<string, Module>();
+        }
+
+        protected void ReadModuleSet(TextReader reader, string basedir)
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(reader);
-
-            repos = ParseRepositories(doc.GetElementsByTagName("repository"));
-            modules = ParseModules(GetModuleElements(doc));
-
-            ParseIncludes(doc.GetElementsByTagName("include"));
+            AddModuleSetXmlDocument(doc, basedir);
         }
 
         private List<XmlElement> GetModuleElements(XmlDocument doc)
@@ -99,9 +118,114 @@ namespace HSBuild.Core
             return ret;
         }
 
-        private void ParseIncludes(XmlNodeList xmlNodeList)
+        private void ParseInclude(XmlNode include, string basedir)
         {
-            //throw new NotImplementedException("TODO: Parse <include />");
+            XmlAttribute href = include.Attributes["href"];
+            if (href == null || string.IsNullOrEmpty(href.Value))
+            {
+                // TODO: implement ModuleSetIncludeException
+                throw new Exception("Include missing href attribute.");
+            }
+
+            Uri incUri;
+            try
+            {
+                incUri = new Uri(href.Value);
+            }
+            catch
+            {
+                incUri = new Uri(Path.Combine(basedir, href.Value));
+            }
+
+            if (!incUri.IsFile)
+            {
+                throw new NotImplementedException("Support for System.Net.WebXXX not implemented yet.");
+            }
+            else if (!incUri.IsAbsoluteUri)
+            {
+                // TODO: implement ModuleSetIncludeException
+                throw new Exception(string.Format("Non absolute Uri {0} not supported.", incUri.AbsolutePath));
+            }
+
+            // Detect loop
+            if (included.Contains(incUri))
+            {
+                // TODO: Error/Warning
+                return;
+            }
+
+            Stream stream;
+            try
+            {
+                stream = new FileStream(incUri.LocalPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            }
+            catch
+            {
+                // TODO: Error/Warning
+                return;
+            }
+
+            included.Add(incUri);
+
+            XmlDocument doc = new XmlDocument();
+            try
+            {
+                doc.Load(stream);
+            }
+            finally
+            {
+                stream.Close();
+            }
+
+            AddModuleSetXmlDocument(doc, basedir);
+        }
+
+        private void AddModuleSetXmlDocument(XmlDocument doc, string basedir)
+        {
+            Dictionary<string, Repository> incRepos;
+            Dictionary<string, Module> incModules;
+            XmlNodeList incIncludes;
+
+            try
+            {
+                incRepos = ParseRepositories(doc.GetElementsByTagName("repository"));
+                incModules = ParseModules(GetModuleElements(doc));
+                incIncludes = doc.GetElementsByTagName("include");
+            }
+            catch
+            {
+                // TODO: Error/warning
+                return;
+            }
+
+            // Module set loaded, add it to repo and module lists
+            //
+            foreach (var r in incRepos)
+            {
+                if (!repos.ContainsKey(r.Key))
+                    repos.Add(r.Key, r.Value);
+                else
+                {
+                    // TODO: implement check whether or not they are equal. They should be!
+                    //       If not, there will be a problem.
+                }
+            }
+
+            if (incIncludes != null)
+            {
+                foreach (XmlNode inc in incIncludes)
+                    ParseInclude(inc, basedir);
+            }
+
+            foreach (var m in incModules)
+            {
+                if (!modules.ContainsKey(m.Key))
+                    modules.Add(m.Key, m.Value);
+                else
+                {
+                    // TODO: Error!
+                }
+            }
         }
 
         #region Properties
@@ -125,5 +249,7 @@ namespace HSBuild.Core
         }
 
         #endregion
+
+        private List<Uri> included;
     }
 }

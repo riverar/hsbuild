@@ -17,7 +17,7 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
 using HSBuild.Core;
 
@@ -69,17 +69,12 @@ namespace HSBuild.Console
 
         public ModuleSet LoadModuleSet(Config config)
         {
-            System.IO.StreamReader sr;
-            try
-            {
-                sr = new System.IO.StreamReader(config.ModuleSet);
-            }
-            catch
-            {
+            if (string.IsNullOrEmpty(config.ModuleSet))
                 return null;
-            }
+            if (!File.Exists(config.ModuleSet))
+                return null;
 
-            return new ModuleSet(sr);
+            return new ModuleSet(config.ModuleSet);
         }
 
         #endregion
