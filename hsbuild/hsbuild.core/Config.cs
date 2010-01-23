@@ -24,6 +24,19 @@ namespace HSBuild.Core
 {
     public class Config
     {
+        public enum Variable
+        {
+            PREFIX,
+            CHECKOUT_ROOT,
+            MODULESET,
+            MODULES,
+        }
+
+        public static Config CreateDefaultConfig()
+        {
+            return new Config();
+        }
+
         public static Config LoadFromFile(string filename)
         {
             return LoadFromTextReader(new StreamReader(filename));
@@ -101,7 +114,7 @@ namespace HSBuild.Core
 
             string moduleset = GetOptionEntryDictionaryValue(options, "moduleset");
             if (!string.IsNullOrEmpty(moduleset))
-                ret.m_moduleSet = moduleset;
+                ret.m_bag[Variable.MODULESET] = moduleset;
 
             return ret;
         }
@@ -119,23 +132,27 @@ namespace HSBuild.Core
 
         public void OverrideModules(string[] modules)
         {
-            m_modules = new List<string>(modules);
+            m_bag[Variable.MODULES] = string.Join(" ", modules);
         }
+
+        #region Constructor
+        private Config()
+        {
+            m_bag = new Dictionary<Variable, string>();
+            m_bag.Add(Variable.PREFIX, "__build__");
+            m_bag.Add(Variable.CHECKOUT_ROOT, Environment.CurrentDirectory);
+            m_bag.Add(Variable.MODULESET, Path.Combine(Environment.CurrentDirectory, DefaultModuleSetFileName));
+            m_bag.Add(Variable.MODULES, "");
+        }
+
+        #endregion
 
         #region Properties
-        public string ModuleSet
-        {
-            get
-            {
-                return m_moduleSet;
-            }
-        }
-
         public string[] Modules
         {
             get
             {
-                return m_modules.ToArray();
+                return m_bag[Variable.MODULES].Split(new char[] { ' ', ',', ';', '\t' }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
 
@@ -143,7 +160,7 @@ namespace HSBuild.Core
         {
             get
             {
-                return m_prefix;
+                return m_bag[Variable.PREFIX];
             }
         }
 
@@ -151,14 +168,19 @@ namespace HSBuild.Core
         {
             get
             {
-                return m_checkoutRoot;
+                return m_bag[Variable.CHECKOUT_ROOT];
             }
         }
 
-        private string m_moduleSet;
-        private List<string> m_modules;
-        private string m_checkoutRoot;
-        private string m_prefix = "__build__";
+        public string ModuleSet
+        {
+            get
+            {
+                return m_bag[Variable.MODULESET];
+            }
+        }
+
+        private Dictionary<Variable, string> m_bag;
         #endregion
 
         public const string ModuleSetFileExt = ".modules";
@@ -175,16 +197,6 @@ namespace HSBuild.Core
                 return Environment.GetEnvironmentVariable("HOME");
             else
                 return Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
-        }
-
-        public static Config CreateDefaultConfig()
-        {
-            Config ret = new Config();
-            ret.m_checkoutRoot = Environment.CurrentDirectory;
-            ret.m_moduleSet = System.IO.Path.Combine(Environment.CurrentDirectory, DefaultModuleSetFileName);
-            ret.m_modules = new List<string>();
-
-            return ret;
         }
 
         private static string FindConfigFile(string directory)
