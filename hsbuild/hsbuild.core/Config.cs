@@ -32,9 +32,9 @@ namespace HSBuild.Core
             MODULES,
         }
 
-        public static Config CreateDefaultConfig()
+        public static Config CreateDefaultConfig(string[] modules)
         {
-            return new Config();
+            return new Config(modules);
         }
 
         public static Config LoadFromFile(string filename)
@@ -59,7 +59,7 @@ namespace HSBuild.Core
         {
             try
             {
-                Config ret = new Config();
+                Config ret = new Config(null);
 
                 string line;
                 while ((line = reader.ReadLine()) != null)
@@ -112,7 +112,7 @@ namespace HSBuild.Core
             if (ret == null)
             {
                 // TODO: warning?
-                ret = Config.CreateDefaultConfig();
+                ret = Config.CreateDefaultConfig(null);
             }
 
             string moduleset = GetOptionEntryDictionaryValue(options, "moduleset");
@@ -149,19 +149,19 @@ namespace HSBuild.Core
             return files[0].FullName;
         }
 
-        public void OverrideModules(string[] modules)
+        internal void OverrideModules(string[] modules)
         {
             m_bag[Variable.MODULES] = string.Join(" ", modules);
         }
 
         #region Constructor
-        private Config()
+        private Config(string[] modules)
         {
             m_bag = new Dictionary<Variable, string>();
             m_bag.Add(Variable.PREFIX, "__build__");
             m_bag.Add(Variable.CHECKOUT_ROOT, Environment.CurrentDirectory);
             m_bag.Add(Variable.MODULESET, "");
-            m_bag.Add(Variable.MODULES, "");
+            m_bag.Add(Variable.MODULES, modules == null ? "" : string.Join(" ", modules));
         }
 
         #endregion

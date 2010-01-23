@@ -29,7 +29,7 @@ namespace HSBuild.Core.Tests
     {
         private ModuleSet m_moduleset;
         public TestCommand(ModuleSet moduleset)
-            : base(Config.CreateDefaultConfig())
+            : base(Config.CreateDefaultConfig(null))
         {
             m_moduleset = moduleset;
         }
@@ -39,11 +39,11 @@ namespace HSBuild.Core.Tests
             throw new NotImplementedException();
         }
 
-        public LinkedList<Module> LoadModulesStack()
+        public LinkedList<Module> LoadModulesStack(string[] modules)
         {
-            LinkedList<Module> modules = new LinkedList<Module>();
-            FilterModuleList(Config.Modules, m_moduleset, ref modules);
-            return modules;
+            LinkedList<Module> ret = new LinkedList<Module>();
+            FilterModuleList(modules, m_moduleset, ref ret);
+            return ret;
         }
     }
 
@@ -121,8 +121,7 @@ namespace HSBuild.Core.Tests
         [Test]
         public void LoadModulesStackAll()
         {
-            m_cmd.Config.OverrideModules(new string[] { "gtk+" });
-            LinkedList<Module> list = m_cmd.LoadModulesStack();
+            LinkedList<Module> list = m_cmd.LoadModulesStack(new string[] { "gtk+" });
 
             Assert.AreEqual(6, list.Count);
 
@@ -134,8 +133,7 @@ namespace HSBuild.Core.Tests
         [Test]
         public void LoadModulesStackPartial()
         {
-            m_cmd.Config.OverrideModules(new string[] { "atk" });
-            LinkedList<Module> list = m_cmd.LoadModulesStack();
+            LinkedList<Module> list = m_cmd.LoadModulesStack(new string[] { "atk" });
 
             Assert.AreEqual(2, list.Count);
             Assert.AreEqual("glib", list.First.Value.Id);
@@ -225,7 +223,7 @@ namespace HSBuild.Core.Tests
         [Test]
         public void ExecuteListCommandAll()
         {
-            ListCommand cmd = new ListCommand(Config.CreateDefaultConfig());
+            ListCommand cmd = new ListCommand(Config.CreateDefaultConfig(null));
             cmd.Execute(engine, engine, engine);
 
             string[] output = engine.NormalOutput;
@@ -243,8 +241,7 @@ namespace HSBuild.Core.Tests
         [Test]
         public void ExecuteListCommandPartial()
         {
-            ListCommand cmd = new ListCommand(Config.CreateDefaultConfig());
-            cmd.Config.OverrideModules(new string[] { "cairo" });
+            ListCommand cmd = new ListCommand(Config.CreateDefaultConfig(new string[] { "cairo" }));
             cmd.Execute(engine, engine, engine);
 
             string[] output = engine.NormalOutput;
@@ -258,8 +255,7 @@ namespace HSBuild.Core.Tests
         [Test]
         public void ExecuteUpdateCommandSimple()
         {
-            UpdateCommand cmd = new UpdateCommand(Config.CreateDefaultConfig());
-            cmd.Config.OverrideModules(new string[] { "glib" });
+            UpdateCommand cmd = new UpdateCommand(Config.CreateDefaultConfig(new string[] { "glib" }));
             cmd.Execute(engine, engine, engine);
 
             ITask[] tasks = engine.TaskQueue;
@@ -277,8 +273,7 @@ namespace HSBuild.Core.Tests
         [Test]
         public void ExecuteUpdateCommandWithPatches()
         {
-            UpdateCommand cmd = new UpdateCommand(Config.CreateDefaultConfig());
-            cmd.Config.OverrideModules(new string[] { "pixman" });
+            UpdateCommand cmd = new UpdateCommand(Config.CreateDefaultConfig(new string[] { "pixman" }));
             cmd.Execute(engine, engine, engine);
 
             ITask[] tasks = engine.TaskQueue;
