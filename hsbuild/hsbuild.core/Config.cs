@@ -39,7 +39,10 @@ namespace HSBuild.Core
 
         public static Config LoadFromFile(string filename)
         {
-            return LoadFromTextReader(new StreamReader(filename));
+            Config ret = LoadFromTextReader(new StreamReader(filename));
+            ret.m_filename = filename;
+
+            return ret;
         }
 
         public static Config LoadFromDirectory(string directory)
@@ -148,6 +151,14 @@ namespace HSBuild.Core
         #endregion
 
         #region Properties
+        public string Filename
+        {
+            get
+            {
+                return m_filename;
+            }
+        }
+
         public string[] Modules
         {
             get
@@ -180,6 +191,7 @@ namespace HSBuild.Core
             }
         }
 
+        private string m_filename;
         private Dictionary<Variable, string> m_bag;
         #endregion
 
