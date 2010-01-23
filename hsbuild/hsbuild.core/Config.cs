@@ -116,6 +116,9 @@ namespace HSBuild.Core
             }
 
             string moduleset = GetOptionEntryDictionaryValue(options, "moduleset");
+            if (string.IsNullOrEmpty(moduleset))
+                moduleset = FindModulesetFile(Environment.CurrentDirectory);
+
             if (!string.IsNullOrEmpty(moduleset))
                 ret.m_bag[Variable.MODULESET] = moduleset;
 
@@ -133,6 +136,19 @@ namespace HSBuild.Core
             return null;
         }
 
+        private static string FindModulesetFile(string directory)
+        {
+            DirectoryInfo di = new DirectoryInfo(directory);
+            if (!di.Exists)
+                return null;
+
+            FileInfo[] files = di.GetFiles("*" + Config.ModuleSetFileExt, SearchOption.TopDirectoryOnly);
+            if (files == null || files.Length <= 0)
+                return null;
+
+            return files[0].FullName;
+        }
+
         public void OverrideModules(string[] modules)
         {
             m_bag[Variable.MODULES] = string.Join(" ", modules);
@@ -144,7 +160,7 @@ namespace HSBuild.Core
             m_bag = new Dictionary<Variable, string>();
             m_bag.Add(Variable.PREFIX, "__build__");
             m_bag.Add(Variable.CHECKOUT_ROOT, Environment.CurrentDirectory);
-            m_bag.Add(Variable.MODULESET, Path.Combine(Environment.CurrentDirectory, DefaultModuleSetFileName));
+            m_bag.Add(Variable.MODULESET, "");
             m_bag.Add(Variable.MODULES, "");
         }
 
@@ -196,7 +212,6 @@ namespace HSBuild.Core
         #endregion
 
         public const string ModuleSetFileExt = ".modules";
-        public const string DefaultModuleSetFileName = "hsbuild" + ModuleSetFileExt;
         public const string DefaultConfigFileName = ".hsbuildconf";
 
         public static string GetHomePath()
