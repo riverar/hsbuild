@@ -90,7 +90,7 @@ namespace HSBuild.Core
             else
                 list = new LinkedList<string>(args);
 
-            Config cfg = CreateConfig(ParseOptions(globalOptions, ref list));
+            Config cfg = Config.CreateConfig(ParseOptions(globalOptions, ref list));
 
             try
             {
@@ -200,60 +200,6 @@ namespace HSBuild.Core
             }
 
             return builder.ToString();
-        }
-
-        private static Config CreateConfig(Dictionary<OptionEntrySpec, object> options)
-        {
-            string cfgFile = GetOptionEntryDictionaryValue(options, "file");
-            List<string> configPossibilities = new List<string>(3);
-
-            if (!string.IsNullOrEmpty(cfgFile))
-            {
-                if (File.Exists(cfgFile))
-                {
-                    configPossibilities.Add(cfgFile);
-                }
-                else
-                {
-                    // TODO: error/warning?
-                }
-            }
-
-            configPossibilities.Add(System.IO.Path.Combine(Environment.CurrentDirectory, Config.DefaultConfigFileName));
-            configPossibilities.Add(Config.GetDefaultConfigFile());
-
-            Config ret = null;
-            foreach (string cfg in configPossibilities)
-            {
-                if (File.Exists(cfg))
-                {
-                    ret = Config.LoadFromFile(cfg, Path.GetDirectoryName(cfg));
-                    break;
-                }
-            }
-
-            if (ret == null)
-            {
-                // TODO: warning?
-                ret = Config.CreateDefaultConfig();
-            }
-
-            string moduleset = GetOptionEntryDictionaryValue(options, "moduleset");
-            if (!string.IsNullOrEmpty(moduleset))
-                ret.OverrideModuleSet(moduleset);
-
-            return ret;
-        }
-
-        private static string GetOptionEntryDictionaryValue(Dictionary<OptionEntrySpec, object> options, string spec)
-        {
-            foreach (KeyValuePair<OptionEntrySpec, object> pair in options)
-            {
-                if (string.Compare(pair.Key.Specifier, spec, true) == 0)
-                    return pair.Value.ToString();
-            }
-
-            return null;
         }
 
         private static Command ParseCommand(Config config, ref LinkedList<string> list)
