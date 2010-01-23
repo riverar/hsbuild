@@ -136,16 +136,6 @@ namespace HSBuild.Core
             return ret;
         }
 
-        public bool IsDefaultConfig()
-        {
-            Config def = CreateDefaultConfig();
-
-            return this.CheckoutRoot == def.CheckoutRoot &&
-                this.Modules.Length == def.Modules.Length && def.Modules.Length == 0 &&
-                this.ModuleSet == def.ModuleSet &&
-                this.Prefix == def.Prefix;
-        }
-
         private static string FindConfigFile(string directory)
         {
             return Path.Combine(directory, DefaultConfigFileName);

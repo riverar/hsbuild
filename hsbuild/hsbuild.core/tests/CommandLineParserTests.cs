@@ -33,7 +33,6 @@ namespace HSBuild.Core.Tests
 
             Assert.IsNotNull(cmd);
             Assert.IsInstanceOf(typeof(BuildCommand), cmd);
-            Assert.That(cmd.Config.IsDefaultConfig());
             Assert.AreEqual(0, cmd.Arguments.Count);
         }
 
