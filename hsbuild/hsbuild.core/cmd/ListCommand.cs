@@ -38,7 +38,7 @@ namespace HSBuild.Commands
             return ListCommandOptionEntries;
         }
 
-        public override void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output)
+        protected override void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output)
         {
             if (Arguments.ContainsKey(ListCommandOptionEntries[0].Specifier) ||
                 Config.Modules == null || Config.Modules.Length <= 0)

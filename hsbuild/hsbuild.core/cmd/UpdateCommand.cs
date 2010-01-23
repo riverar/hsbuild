@@ -33,7 +33,7 @@ namespace HSBuild.Commands
             return null;
         }
 
-        public override void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output)
+        protected override void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output)
         {
             if (!LoadModuleSetAndSetupModules(loader, output))
                 return;

@@ -39,7 +39,7 @@ namespace HSBuild.Commands
             return BuildCommandOptionEntries;
         }
 
-        public override void Execute(ITaskQueue taskqueue, IModuleSetLoader loader, IOutputEngine output)
+        protected override void Execute(ITaskQueue taskqueue, IModuleSetLoader loader, IOutputEngine output)
         {
             if (!LoadModuleSetAndSetupModules(loader, output))
                 return;

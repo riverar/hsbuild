@@ -35,7 +35,7 @@ namespace HSBuild.Commands
             m_ex = ex;
         }
 
-        public override void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output)
+        protected override void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output)
         {
             if (ErrorMsg != null)
                 output.WriteOutput(OutputType.Error, ErrorMsg);

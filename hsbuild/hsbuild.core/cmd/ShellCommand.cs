@@ -38,7 +38,7 @@ namespace HSBuild.Commands
             return ShellCommandOptionEntries;
         }
 
-        public override void Execute(ITaskQueue taskqueue, IModuleSetLoader loader, IOutputEngine output)
+        protected override void Execute(ITaskQueue taskqueue, IModuleSetLoader loader, IOutputEngine output)
         {
             output.WriteOutput(OutputType.Heading, "Starting HSBuild shell...");
             taskqueue.QueueTask(new ConsoleTask("cmd.exe", null, null));

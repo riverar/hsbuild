@@ -34,7 +34,7 @@ namespace HSBuild.Core.Tests
             m_moduleset = moduleset;
         }
 
-        public override void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output)
+        protected override void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output)
         {
             throw new NotImplementedException();
         }
@@ -224,7 +224,7 @@ namespace HSBuild.Core.Tests
         public void ExecuteListCommandAll()
         {
             ListCommand cmd = new ListCommand(Config.CreateDefaultConfig(null));
-            cmd.Execute(engine, engine, engine);
+            cmd.ExecuteCommand(engine, engine, engine);
 
             string[] output = engine.NormalOutput;
             Assert.IsNotNull(output);
@@ -242,7 +242,7 @@ namespace HSBuild.Core.Tests
         public void ExecuteListCommandPartial()
         {
             ListCommand cmd = new ListCommand(Config.CreateDefaultConfig(new string[] { "cairo" }));
-            cmd.Execute(engine, engine, engine);
+            cmd.ExecuteCommand(engine, engine, engine);
 
             string[] output = engine.NormalOutput;
             Assert.IsNotNull(output);
@@ -256,7 +256,7 @@ namespace HSBuild.Core.Tests
         public void ExecuteUpdateCommandSimple()
         {
             UpdateCommand cmd = new UpdateCommand(Config.CreateDefaultConfig(new string[] { "glib" }));
-            cmd.Execute(engine, engine, engine);
+            cmd.ExecuteCommand(engine, engine, engine);
 
             ITask[] tasks = engine.TaskQueue;
 
@@ -274,7 +274,7 @@ namespace HSBuild.Core.Tests
         public void ExecuteUpdateCommandWithPatches()
         {
             UpdateCommand cmd = new UpdateCommand(Config.CreateDefaultConfig(new string[] { "pixman" }));
-            cmd.Execute(engine, engine, engine);
+            cmd.ExecuteCommand(engine, engine, engine);
 
             ITask[] tasks = engine.TaskQueue;
 

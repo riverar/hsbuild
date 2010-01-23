@@ -130,7 +130,7 @@ namespace HSBuild.Console
 
                 if (cmd.Config != null)
                     cmd.Config.SetupEnvironment();
-                cmd.Execute(queueEngine, loader, output);
+                cmd.ExecuteCommand(queueEngine, loader, output);
                 queueEngine.ExecuteTaskQueue(queueEngine.TaskQueue, output);
             }
         }

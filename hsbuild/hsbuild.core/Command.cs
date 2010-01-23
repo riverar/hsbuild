@@ -83,7 +83,12 @@ namespace HSBuild.Core
             m_arguments = args;
         }
 
-        public abstract void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output);
+        protected abstract void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output);
+        public void ExecuteCommand(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output)
+        {
+            Execute(taskQueue, loader, output);
+        }
+
         internal virtual OptionEntrySpec[] GetOptionEntrySpecs()
         {
             return null;
