@@ -61,7 +61,7 @@
     <Compile Include="TaskEngine.cs" />
     <Compile Include="modtypes\HSBuildModule.cs" />
     <Compile Include="Module.cs" />
-    <Compile Include="ModuleBranch.cs" />
+    <Compile Include="ModuleSourceLocation.cs" />
     <Compile Include="ModuleSet.cs" />
     <Compile Include="Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

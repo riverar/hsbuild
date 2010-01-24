@@ -39,7 +39,7 @@ namespace HSBuild.VCS
             }
         }
 
-        internal override Branch FindBranch(ModuleBranch branch, string modName, string checkoutroot)
+        internal override Branch GetRemoteBranch(ModuleVCSBranch branch, string checkoutroot)
         {
             return new BzrBranch(this, branch.Module, branch.Revision, checkoutroot, branch.CheckoutDir);
         }

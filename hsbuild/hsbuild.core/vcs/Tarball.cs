@@ -39,16 +39,17 @@ namespace HSBuild.VCS
             }
         }
 
-        internal override Branch FindBranch(ModuleBranch branch, string modName, string checkoutroot)
+        internal override Branch GetRemoteBranch(ModuleVCSBranch branch, string checkoutroot)
         {
-            return new TarballBranch(this, branch.Module, modName, branch.Version, checkoutroot);
+            return new TarballBranch(this, branch.Module, branch.Module, branch.Version, checkoutroot);
         }
     }
 
     public class TarballBranch : Branch
     {
         public TarballBranch(TarballRepository repo, string mod, string id, string ver, string root)
-            : base(GetTarballName(id, ver), null, root, null)
+            : base(mod.Replace(".tar.gz", ""), null, root, null)
+            //: base(GetTarballName(id, ver), null, root, null)
         {
             if (mod == null)
                 throw new ArgumentNullException("mod");

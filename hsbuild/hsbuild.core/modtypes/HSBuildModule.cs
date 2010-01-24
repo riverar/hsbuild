@@ -16,6 +16,7 @@
 // along with HSBuild.  If not, see <http://www.gnu.org/licenses/>.
 //
 using System;
+using System.IO;
 using System.Xml;
 using System.Collections.Generic;
 using HSBuild.Core;
@@ -27,64 +28,47 @@ namespace HSBuild.Modules
     {
         internal static HSBuildModule ParseModule(string id, string[] deps, XmlElement xmlModule)
         {
-            XmlNodeList branchList = xmlModule.GetElementsByTagName("branch");
+            ModuleSourceLocation msl = ModuleSourceLocation.ParseSourceLocation(xmlModule, id);
 
-            if (branchList == null || branchList.Count < 1)
-                throw new NotImplementedException("TODO: Error.. missing branch tag in module.");
-            else if (branchList.Count > 1)
-                throw new NotImplementedException("TODO: Error.. only one branch is allowed for each module.");
-
-            return new HSBuildModule(id, deps, xmlModule, ModuleBranch.ParseBranch(branchList[0] as XmlElement, id));
+            return new HSBuildModule(id, deps, xmlModule, msl);
         }
 
-        private HSBuildModule(string id, string[] deps, XmlElement xmlModule, ModuleBranch branch)
+        private HSBuildModule(string id, string[] deps, XmlElement xmlModule, ModuleSourceLocation location)
             : base(id, deps)
         {
             XmlAttribute proj = xmlModule.Attributes["projects"];
             if (proj != null)
                 m_proj = proj.Value;
 
-            m_branch = branch;
+            m_location = location;
         }
 
         internal override bool BindRepository(Dictionary<string, Repository> repos)
         {
-            return repos.TryGetValue(m_branch.Repository, out m_repository);
+            return Location.BindRepository(repos);
         }
 
         public void Update(ITaskQueue taskQueue, IOutputEngine output, Config config, bool onlyFirstTime)
         {
-            Branch branch = Repository.FindBranch(Branch, Id, config.CheckoutRoot);
-            if (branch == null)
-                throw new NullReferenceException();
-
-            if (!onlyFirstTime || !branch.Exists(false))
-                branch.SyncBranch(taskQueue, Branch.PatchQueue, output);
+            Location.Update(taskQueue, output, config, onlyFirstTime);
         }
 
         public void Build(ITaskQueue taskQueue, IOutputEngine output, Config config, Dictionary<string, object> buildArgs)
         {
-            Branch branch = Repository.FindBranch(Branch, Id, config.CheckoutRoot);
+            string localLocation = Path.Combine(config.CheckoutRoot, Location.CheckoutDir);
+
             if (string.IsNullOrEmpty(Projects))
-                taskQueue.QueueTask(new MSBuildTask(buildArgs, config, null, branch.BranchRoot));
+                taskQueue.QueueTask(new MSBuildTask(buildArgs, config, null, localLocation));
             else
                 foreach (string proj in Projects.Split(';'))
-                    taskQueue.QueueTask(new MSBuildTask(buildArgs, config, proj, branch.BranchRoot));
+                    taskQueue.QueueTask(new MSBuildTask(buildArgs, config, proj, localLocation));
         }
 
-        public Repository Repository
+        public ModuleSourceLocation Location
         {
             get
             {
-                return m_repository;
-            }
-        }
-
-        public ModuleBranch Branch
-        {
-            get
-            {
-                return m_branch;
+                return m_location;
             }
         }
 
@@ -93,8 +77,7 @@ namespace HSBuild.Modules
             get { return m_proj; }
         }
 
-        protected Repository m_repository;
-        protected ModuleBranch m_branch;
+        protected ModuleSourceLocation m_location;
         private string m_proj = null;
     }
 }
