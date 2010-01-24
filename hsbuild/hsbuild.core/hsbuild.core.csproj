@@ -58,6 +58,7 @@
     <Compile Include="Command.cs" />
     <Compile Include="CommandLineParser.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="modtypes\MetaModule.cs" />
     <Compile Include="TaskEngine.cs" />
     <Compile Include="modtypes\HSBuildModule.cs" />
     <Compile Include="Module.cs" />

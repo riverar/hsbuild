@@ -46,6 +46,8 @@ namespace HSBuild.Core
 
             switch (module.Name.ToLower())
             {
+                case "module":
+                    return new MetaModule(id.Value, deps);
                 case "hsbuildmodule":
                     return HSBuildModule.ParseModule(id.Value, deps, module);
                 default:
