@@ -32,22 +32,19 @@ namespace HSBuild.Core
             XmlAttribute module = branch.Attributes["module"];
             XmlAttribute checkoutdir = branch.Attributes["checkoutdir"];
             XmlAttribute revision = branch.Attributes["revision"];
-            XmlAttribute version = branch.Attributes["version"];
             XmlNodeList patches = branch.SelectNodes("patches/patch");
             return new ModuleVCSBranch(repo.Value,
                 module == null ? moduleFallback : module.Value,
                 checkoutdir == null ? null : checkoutdir.Value,
                 revision == null ? null : revision.Value,
-                version == null ? null : version.Value,
                 ParsePatches(patches));
         }
 
-        private ModuleVCSBranch(string repo, string module, string checkoutdir, string revision, string version, Patch patchQueue)
-            : base(module, checkoutdir != null ? checkoutdir : module.Replace(".tar.gz", ""), patchQueue)
+        private ModuleVCSBranch(string repo, string module, string checkoutdir, string revision, Patch patchQueue)
+            : base(module, checkoutdir != null ? checkoutdir : module, patchQueue)
         {
             m_repoName = repo;
             m_revision = revision;
-            m_version = version;
         }
 
         internal override bool BindRepository(Dictionary<string, Repository> repos)
@@ -79,17 +76,8 @@ namespace HSBuild.Core
             }
         }
 
-        public string Version
-        {
-            get
-            {
-                return m_version;
-            }
-        }
-
         private string m_repoName;
         private string m_revision;
-        private string m_version;
         private Repository m_repository;
     }
 

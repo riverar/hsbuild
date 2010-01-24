@@ -72,7 +72,6 @@
     <Compile Include="tasks\MSBuildTask.cs" />
     <Compile Include="vcs\Bzr.cs" />
     <Compile Include="vcs\Git.cs" />
-    <Compile Include="vcs\Tarball.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

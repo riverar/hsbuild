@@ -41,10 +41,6 @@ namespace HSBuild.Core
                         if (href != null)
                             return new BzrRepository(name.Value, href.Value);
                         break;
-                    case "tarball":
-                        if (href != null)
-                            return new TarballRepository(name.Value, href.Value);
-                        break;
                 }
             }
 
