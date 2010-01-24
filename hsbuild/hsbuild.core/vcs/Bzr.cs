@@ -41,14 +41,14 @@ namespace HSBuild.VCS
 
         internal override Branch GetRemoteBranch(ModuleVCSBranch branch, string checkoutroot)
         {
-            return new BzrBranch(this, branch.Module, branch.Revision, checkoutroot, branch.CheckoutDir);
+            return new BzrBranch(this, branch, checkoutroot);
         }
     }
 
     public class BzrBranch : Branch
     {
-        public BzrBranch(BzrRepository repo, string mod, string rev, string root, string dir)
-            : base(mod, rev, root, dir)
+        public BzrBranch(BzrRepository repo, ModuleVCSBranch branch, string root)
+            : base(branch, root)
         {
             m_repo = repo;
         }
@@ -63,13 +63,13 @@ namespace HSBuild.VCS
 
         protected override void Checkout(ITaskQueue taskQueue)
         {
-            Uri uri = new Uri(new Uri(m_repo.HRef), m_module);
-            taskQueue.QueueTask(new ConsoleTask("bzr", new string[] { "branch", uri.AbsoluteUri }, m_checkoutRoot));
+            Uri uri = new Uri(new Uri(m_repo.HRef), m_branch.Module);
+            taskQueue.QueueTask(new ConsoleTask("bzr", new string[] { "branch", uri.AbsoluteUri, m_branch.Module }, m_checkoutRoot));
         }
 
         protected override void Update(ITaskQueue taskQueue)
         {
-            taskQueue.QueueTask(new ConsoleTask("bzr", new string[] { "pull", "--overwrite", "-r", m_revision }, BranchRoot));
+            taskQueue.QueueTask(new ConsoleTask("bzr", new string[] { "pull", "--overwrite", "-r", m_branch.Revision }, BranchRoot));
         }
 
         protected override void ApplyPatch(ITaskQueue taskQueue, Patch patch, string local_patch)

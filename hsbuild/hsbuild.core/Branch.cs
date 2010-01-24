@@ -23,12 +23,10 @@ namespace HSBuild.Core
 {
     public abstract class Branch
     {
-        protected Branch(string mod, string rev, string root, string dir)
+        protected Branch(ModuleVCSBranch branch, string root)
         {
-            m_module = mod;
-            m_revision = rev;
+            m_branch = branch;
             m_checkoutRoot = root;
-            m_checkoutDir = string.IsNullOrEmpty(dir) ? mod : dir;
         }
 
         public void SyncBranch(ITaskQueue taskQueue, Patch patchQueue, IOutputEngine output)
@@ -58,19 +56,14 @@ namespace HSBuild.Core
             }
         }
 
-        public virtual string BranchRoot { get { return Path.Combine(m_checkoutRoot, m_checkoutDir); } }
+        public virtual string BranchRoot { get { return Path.Combine(m_checkoutRoot, m_branch.CheckoutDir); } }
         public abstract bool Exists(bool remote);
 
         protected abstract void Checkout(ITaskQueue taskQueue);
         protected abstract void Update(ITaskQueue taskQueue);
         protected abstract void ApplyPatch(ITaskQueue taskQueue, Patch patch, string local_patch);
 
-        #region Properties
-        #endregion
-
-        protected string m_module;
-        protected string m_revision;
-        protected string m_checkoutDir;
+        protected ModuleVCSBranch m_branch;
         protected string m_checkoutRoot;
     }
 }

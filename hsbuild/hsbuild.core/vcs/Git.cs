@@ -41,14 +41,14 @@ namespace HSBuild.VCS
 
         internal override Branch GetRemoteBranch(ModuleVCSBranch branch, string checkoutroot)
         {
-            return new GitBranch(this, branch.Module, branch.Revision, checkoutroot, branch.CheckoutDir);
+            return new GitBranch(this, branch, checkoutroot);
         }
     }
 
     public class GitBranch : Branch
     {
-        public GitBranch(GitRepository repo, string mod, string rev, string root, string dir)
-            : base(mod, rev, root, dir)
+        public GitBranch(GitRepository repo, ModuleVCSBranch branch, string root)
+            : base(branch, root)
         {
             m_repo = repo;
 
@@ -65,14 +65,14 @@ namespace HSBuild.VCS
 
         protected override void Checkout(ITaskQueue taskQueue)
         {
-            Uri uri = new Uri(new Uri(m_repo.HRef), m_module);
-            taskQueue.QueueTask(new ConsoleTask(m_gitEXE, new string[] { "clone", uri.AbsoluteUri, m_checkoutDir }, m_checkoutRoot));
+            Uri uri = new Uri(new Uri(m_repo.HRef), m_branch.Module);
+            taskQueue.QueueTask(new ConsoleTask(m_gitEXE, new string[] { "clone", uri.AbsoluteUri, m_branch.CheckoutDir }, m_checkoutRoot));
         }
 
         protected override void Update(ITaskQueue taskQueue)
         {
             taskQueue.QueueTask(new ConsoleTask(m_gitEXE, new string[] { "pull", "--rebase" }, BranchRoot));
-            taskQueue.QueueTask(new ConsoleTask(m_gitEXE, new string[] { "checkout", m_revision }, BranchRoot));
+            taskQueue.QueueTask(new ConsoleTask(m_gitEXE, new string[] { "checkout", m_branch.Revision }, BranchRoot));
         }
 
         protected override void ApplyPatch(ITaskQueue taskQueue, Patch patch, string local_patch)
