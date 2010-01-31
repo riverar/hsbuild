@@ -187,12 +187,12 @@
         />
 
       <ItemGroup>
-        <Obj Include="@(ClCompile->'$(IntDir)%(FileName).obj')" Condition="'%(ClCompile.ExcludedFromBuild)'!='true'">
+        <Obj Include="@(ClCompile->'%(ObjectFileName)%(FileName).obj')" Condition="'%(ClCompile.ExcludedFromBuild)'!='true'">
           <LinkCompiled>%(ClCompile.LinkCompiled)</LinkCompiled>
           <LibCompiled>%(ClCompile.LibCompiled)</LibCompiled>
           <GenerateSymbols>%(ClCompile.GenerateSymbols)</GenerateSymbols>
         </Obj>
-        <FileWrites Include="@(ClCompile->'$(IntDir)%(FileName).obj')" Condition="'%(ClCompile.ExcludedFromBuild)'!='true'" />
+        <FileWrites Include="@(ClCompile->'%(ObjectFileName)%(FileName).obj')" Condition="'%(ClCompile.ExcludedFromBuild)'!='true'" />
       </ItemGroup>
   </Target>
 
