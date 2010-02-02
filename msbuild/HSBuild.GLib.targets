@@ -159,9 +159,17 @@
         Condition=" '%(GLibMkenums.SubDirectory)' != '' "
         />
 
+      <ConvertToAbsolutePath Paths="$(IntDir)">
+        <Output TaskParameter="AbsolutePaths" PropertyName="_IntDirAbs" />
+      </ConvertToAbsolutePath>
+      <ConvertToAbsolutePath Paths="@(GLibMkenums)">
+        <Output TaskParameter="AbsolutePaths" ItemName="_GLibMkenums" />
+      </ConvertToAbsolutePath>
+
       <Exec
+        WorkingDirectory="%(_GLibMkenums.BaseDirectory)"
         Command="
-          perl.exe &quot;$(GLibMkenumsExecPath)&quot; --template %(GLibMkenums.Identity) %(GLibMkenums.InputHeaders) &gt; &quot;$(IntDir)%(GLibMkenums.SubDirectory)/%(GLibMkenums.Filename)&quot;
+          perl.exe &quot;$(GLibMkenumsExecPath)&quot; --template %(_GLibMkenums.Identity) %(_GLibMkenums.InputHeaders) &gt; &quot;$(_IntDirAbs)%(_GLibMkenums.SubDirectory)/%(_GLibMkenums.Filename)&quot;
           "
         />
 
