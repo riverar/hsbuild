@@ -1,7 +1,9 @@
-/* Manually created for OAH */
+/* Manually created for HSBuild */
 
 /* the host CPU */
 #define HOST_CPU "i686"
+
+#define HAVE_CPU_I386
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
