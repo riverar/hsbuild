@@ -95,7 +95,7 @@
       <PreprocessSuppressLineNumbers    Condition="'%(ClCompile.PreprocessSuppressLineNumbers)' == ''">false</PreprocessSuppressLineNumbers>
       <ProcessorNumber                  Condition="'$(CL_MPCount)'                              != ''">$(CL_MPCount)</ProcessorNumber>
       <ProgramDataBaseFileName          Condition="'%(ClCompile.ProgramDataBaseFileName)'       == '' and
-                                                   '$(PlatformToolsetVersion)'                  != ''">$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+                                                   '$(PlatformToolsetVersion)'                  != ''">%(ObjectFileName)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <ProgramDataBaseFileName          Condition="'%(ClCompile.ProgramDataBaseFileName)'       == ''">$(IntDir)</ProgramDataBaseFileName>
       <RuntimeLibrary                   Condition="'%(ClCompile.RuntimeLibrary)'                == ''">MultiThreaded</RuntimeLibrary>
       <ShowIncludes                     Condition="'%(ClCompile.ShowIncludes)'                  == ''">false</ShowIncludes>
