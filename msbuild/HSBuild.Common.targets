@@ -60,6 +60,8 @@
         <Package Condition=" '$(Package)' == '' ">$(MSBuildProjectName)</Package>
         <PackageName Condition=" '$(PackageName)' == '' ">$(PackageName)</PackageName>
         <PackageString Condition=" '$(PackageString)' == '' ">$(PackageName) $(Version)</PackageString>
+
+        <ConfigHeader Condition=" '$(ConfigHeader)' == '' ">$(HSBuildTemplates)config.h</ConfigHeader>
       </PropertyGroup>
 
       <ItemGroup>
@@ -69,29 +71,42 @@
           <ConfigPreprocessor Include="PACKAGE_STRING &quot;$(PackageString)&quot;" />
           <ConfigPreprocessor Include="PACKAGE_VERSION &quot;$(Version)&quot;" />
           <ConfigPreprocessor Include="PACKAGE_DATADIR &quot;inavlid-for-win32&quot;" />
+
+          <_DestConfigHeaderItem Include="$(IntDir)config.h" />
       </ItemGroup>
 
-      <PropertyGroup Condition=" '$(ConfigHeader)' == '' ">
-          <ConfigHeader>$(HSBuildTemplates)config.h</ConfigHeader>
-      </PropertyGroup>
+      <!-- Always generate a new _config.h and give it the same modified time as config.h -->
+      <Delete
+        Files="$(IntDir)_config.h"
+        Condition=" Exists('$(IntDir)_config.h') "
+        />
 
       <Copy
         SourceFiles="$(ConfigHeader)"
         DestinationFiles="$(IntDir)_config.h"
-        Condition=" Exists ('$(ConfigHeader)')"
+        Condition=" Exists('$(ConfigHeader)')"
         />
 
       <WriteLinesToFile
         File="$(IntDir)_config.h"
         Lines="@(ConfigPreprocessor->'#define %(Identity)')"
-        Condition=" '@(ConfigPreprocessor)' != '' and Exists ('$(IntDir)_config.h') "
+        Condition=" '@(ConfigPreprocessor)' != '' and Exists('$(IntDir)_config.h') "
         Overwrite="false"
         />
 
+      <Touch
+        Files="$(IntDir)_config.h"
+        Time="%(_DestConfigHeaderItem.ModifiedTime)"
+        Condition=" Exists('%(_DestConfigHeaderItem.Identity)') "
+        />
+
+      <!-- _config.h should have the same modified time as config.h.
+            So <Copy /> should only copy if config.h doesn't exist or size is different.
+        -->
       <Copy
         SourceFiles="$(IntDir)_config.h"
-        Condition=" Exists ('$(IntDir)_config.h') "
-        DestinationFiles="$(IntDir)config.h"
+        Condition=" Exists('$(IntDir)_config.h') "
+        DestinationFiles="@(_DestConfigHeaderItem)"
         SkipUnchangedFiles="true"
         >
           <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
@@ -99,7 +114,7 @@
 
       <Delete
         Files="$(IntDir)_config.h"
-        Condition=" Exists ('$(IntDir)_config.h') "
+        Condition=" Exists('$(IntDir)_config.h') "
         />
   </Target>
 
