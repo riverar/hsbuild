@@ -29,7 +29,11 @@
       <HSBuildTasksDir        Condition=" '$(HSBuildTasksDir)' == '' and '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\HSBuild\</HSBuildTasksDir>
       <HSBuildTasksDir        Condition=" '$(HSBuildTasksDir)' == '' "              >$(MSBuildExtensionsPath)\HSBuild\</HSBuildTasksDir>
       <HSBuildTasksBin        Condition=" '$(HSBuildTasksBin)' == '' "              >HSBuildTasks.dll</HSBuildTasksBin>
+      <HSBuildTasksX86Bin     Condition=" '$(HSBuildTasksX86Bin)' == '' "           >HSBuildTasks.x86.dll</HSBuildTasksX86Bin>
+      <HSBuildTasksX86_64Bin  Condition=" '$(HSBuildTasksX86_64Bin)' == '' "        >HSBuildTasks.x86_64.dll</HSBuildTasksX86_64Bin>
       <HSBuildTasksPath       Condition=" '$(HSBuildTasksPath)' == '' "             >$(HSBuildTasksDir)$(HSBuildTasksBin)</HSBuildTasksPath>
+      <HSBuildTasksX86Path    Condition=" '$(HSBuildTasksX86Path)' == '' "          >$(HSBuildTasksDir)$(HSBuildTasksX86Bin)</HSBuildTasksX86Path>
+      <HSBuildTasksX86_64Path Condition=" '$(HSBuildTasksX86_64Path)' == '' "       >$(HSBuildTasksDir)$(HSBuildTasksX86_64Bin)</HSBuildTasksX86_64Path>
       <HSBuildTemplates       Condition=" '$(HSBuildTemplates)' == '' "             >$(HSBuildTasksDir)templates\$(Platform)\</HSBuildTemplates>
   </PropertyGroup>
 

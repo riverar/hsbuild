@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{EE262E45-3228-4331-B330-C46CF3CCBE43}</ProjectGuid>
+    <ProjectGuid>{2E965566-2EB9-44BD-B14B-3C2E6A5FD00C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HSBuild</RootNamespace>
-    <AssemblyName>HSBuildTasks</AssemblyName>
+    <AssemblyName>HSBuildTasks.x86</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -46,18 +46,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="dumpsymbols.cs" />
-    <Compile Include="environment.cs" />
-    <Compile Include="msmanifest.cs" />
-    <Compile Include="msmanifestresource.cs" />
-    <Compile Include="msvclib.cs" />
-    <Compile Include="pkgconfigvariable.cs" />
-    <Compile Include="pkgconfig.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="msresourcecompiler.cs" />
-    <Compile Include="substitute.cs" />
-    <Compile Include="aggregator.cs" />
-    <Compile Include="vala.cs" />
+    <Compile Include="msvccompiler.cs" />
+    <Compile Include="msvclinker.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="HSBuild.MSF\HSBuild.MSF.csproj">
+      <Project>{A2589642-04D5-441B-9B6A-31625B5B2877}</Project>
+      <Name>HSBuild.MSF</Name>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+
+  <UsingTask  TaskName="MSVCCompiler"              AssemblyFile="$(HSBuildTasksX86Path)" />
+  <UsingTask  TaskName="MSVCLinker"                AssemblyFile="$(HSBuildTasksX86Path)" />
+
+  <PropertyGroup Condition=" '$(MSVCToolPath)' != '' " >
+      <CC                 Condition=" '$(CC)' == '' "                           >$(MSVCToolPath)cl.exe</CC>
+  </PropertyGroup>
+
+  <!-- TARGET: Compile C To Object -->
+  <Target
+    Name="_CCompile"
+    Condition=" '@(ClCompile)' != '' "
+    >
+      <ItemGroup>
+        <ClCompile>
+          <PrecompiledHeaderOutputFile  Condition="'%(ClCompile.PrecompiledHeader)' == 'NotUsing' or '%(ClCompile.PrecompiledHeader)' == ''"></PrecompiledHeaderOutputFile>
+          <PrecompiledHeaderFile        Condition="'%(ClCompile.PrecompiledHeader)' == 'NotUsing' or '%(ClCompile.PrecompiledHeader)' == ''"></PrecompiledHeaderFile>
+          <AssemblerListingLocation     Condition="'%(ClCompile.AssemblerOutput)' == 'NoListing' or '%(ClCompile.AssemblerOutput)' == ''"></AssemblerListingLocation>
+          <CompileAs                    Condition="'%(ClCompile.CompileAs)' == 'Default' and '%(ClCompile.Extension)' == '.c'">CompileAsC</CompileAs>
+          <CompileAs                    Condition="'%(ClCompile.CompileAs)' == 'Default' and '%(ClCompile.Extension)' != '.c'">CompileAsCpp</CompileAs>
+          <MinimalRebuildFromTracking   Condition="'%(ClCompile.MinimalRebuildFromTracking)'    == '' and '$(BuildType)' == 'Build' and '$(ForceRebuild)' != 'true'">true</MinimalRebuildFromTracking>
+        </ClCompile>
+
+        <_CompileObjectDirs
+          Include="%(ClCompile.ObjectFileName)"
+          Condition=" HasTrailingSlash('%(ClCompile.ObjectFileName)') "
+          />
+      </ItemGroup>
+
+      <MakeDir Directories="@(_CompileObjectDirs)" />
+
+      <!-- Compile C sources -->
+      <MSVCCompiler Condition="'%(ClCompile.ExcludedFromBuild)'!='true'"
+        Sources                            ="@(ClCompile)"
+
+        AdditionalIncludeDirectories       ="%(ClCompile.AdditionalIncludeDirectories);@(AdditionalIncludeDirectories)"
+        AdditionalOptions                  ="%(ClCompile.AdditionalOptions)"
+
+        AssemblerListingLocation           ="%(ClCompile.AssemblerListingLocation)"
+
+        BasicRuntimeChecks                 ="%(ClCompile.BasicRuntimeChecks)"
+
+
+        BufferSecurityCheck                ="%(ClCompile.BufferSecurityCheck)"
+
+
+
+        DebugInformationFormat             ="%(ClCompile.DebugInformationFormat)"
+
+
+
+
+
+        ErrorReport                        ="%(ClCompile.ErrorReport)"
+
+
+
+        FavorSizeOrSpeed                   ="%(ClCompile.FavorSizeOrSpeed)"
+
+
+
+        ForceIncludes                      ="%(ClCompile.ForceIncludes)"
+        ForceUsing                         ="%(ClCompile.ForceUsing)"
+        FunctionLevelLinking               ="%(ClCompile.FunctionLevelLinking)"
+
+
+        InlineFunctionExpansion            ="%(ClCompile.InlineFunctionExpansion)"
+        IntrinsicFunctions                 ="%(ClCompile.IntrinsicFunctions)"
+        MinimalRebuild                     ="%(ClCompile.MinimalRebuild)"
+
+        ObjectFileName                     ="%(ClCompile.ObjectFileName)"
+
+
+
+        Optimization                       ="%(ClCompile.Optimization)"
+        PrecompiledHeader                  ="%(ClCompile.PrecompiledHeader)"
+        PrecompiledHeaderFile              ="%(ClCompile.PrecompiledHeaderFile)"
+        PrecompiledHeaderOutputFile        ="%(ClCompile.PrecompiledHeaderOutputFile)"
+
+        PreprocessorDefinitions            ="%(ClCompile.PreprocessorDefinitions)"
+
+
+
+        ProgramDataBaseFileName            ="%(ClCompile.ProgramDataBaseFileName)"
+        RuntimeLibrary                     ="%(ClCompile.RuntimeLibrary)"
+        RuntimeTypeInfo                    ="%(ClCompile.RuntimeTypeInfo)"
+
+        SmallerTypeCheck                   ="%(ClCompile.SmallerTypeCheck)"
+        StringPooling                      ="%(ClCompile.StringPooling)"
+
+        SuppressStartupBanner              ="%(ClCompile.SuppressStartupBanner)"
+
+        TreatWarningAsError                ="%(ClCompile.TreatWarningAsError)"
+
+
+
+
+
+        WarningLevel                       ="%(ClCompile.WarningLevel)"
+
+
+
+
+
+        ToolPath                           ="$(MSVCToolPath)"
+        MinimalRebuildFromTracking         ="%(ClCompile.MinimalRebuildFromTracking)"
+        />
+
+      <ItemGroup>
+        <Obj Include="@(ClCompile->'%(ObjectFileName)%(FileName).obj')" Condition="'%(ClCompile.ExcludedFromBuild)'!='true'">
+          <LinkCompiled>%(ClCompile.LinkCompiled)</LinkCompiled>
+          <LibCompiled>%(ClCompile.LibCompiled)</LibCompiled>
+          <GenerateSymbols>%(ClCompile.GenerateSymbols)</GenerateSymbols>
+          <SymbolsFile>%(ClCompile.SymbolsFile)</SymbolsFile>
+        </Obj>
+        <FileWrites Include="@(ClCompile->'%(ObjectFileName)%(FileName).obj')" Condition="'%(ClCompile.ExcludedFromBuild)'!='true'" />
+      </ItemGroup>
+  </Target>
+
+  <!-- TARGET: _Link -->
+  <Target
+    Name="_Link"
+    Condition=" '@(Link)' != '' "
+    >
+      <MSVCLinker
+        ToolPath                       ="$(MSVCToolPath)"
+
+        Sources                        ="@(Link)"
+
+        AdditionalDependencies         ="%(Link.AdditionalDependencies);@(AdditionalDependencies)"
+        AdditionalLibraryDirectories   ="%(Link.AdditionalLibraryDirectories);@(AdditionalLibraryDirectories)"
+        AdditionalManifestDependencies ="%(Link.AdditionalManifestDependencies);@(AdditionalManifestDependencies)"
+        AdditionalOptions              ="%(Link.AdditionalOptions)"
+        AllowIsolation                 ="%(Link.AllowIsolation)"
+        BaseAddress                    ="%(Link.BaseAddress)"
+        DataExecutionPrevention        ="%(Link.DataExecutionPrevention)"
+        DelayLoadDLLs                  ="%(Link.DelayLoadDLLs)"
+        DelaySign                      ="%(Link.DelaySign)"
+        Driver                         ="%(Link.Driver)"
+        EnableCOMDATFolding            ="%(Link.EnableCOMDATFolding)"
+        EnableUAC                      ="%(Link.EnableUAC)"
+        EntryPointSymbol               ="%(Link.EntryPointSymbol)"
+        LinkErrorReporting             ="%(Link.LinkErrorReporting)"
+        FixedBaseAddress               ="%(Link.FixedBaseAddress)"
+        ForceSymbolReferences          ="%(Link.ForceSymbolReferences)"
+        GenerateDebugInformation       ="%(Link.GenerateDebugInformation)"
+        GenerateManifest               ="%(Link.GenerateManifest)"
+        GenerateMapFile                ="%(Link.GenerateMapFile)"
+        HeapCommitSize                 ="%(Link.HeapCommitSize)"
+        HeapReserveSize                ="%(Link.HeapReserveSize)"
+        IgnoreAllDefaultLibraries      ="%(Link.IgnoreAllDefaultLibraries)"
+        IgnoreEmbeddedIDL              ="%(Link.IgnoreEmbeddedIDL)"
+        IgnoreSpecificDefaultLibraries ="%(Link.IgnoreSpecificDefaultLibraries)"
+        ImageHasSafeExceptionHandlers  ="%(Link.ImageHasSafeExceptionHandlers)"
+        ImportLibrary                  ="%(Link.ImportLibrary)"
+        KeyContainer                   ="%(Link.KeyContainer)"
+        KeyFile                        ="%(Link.KeyFile)"
+        LargeAddressAware              ="%(Link.LargeAddressAware)"
+        LinkDLL                        ="%(Link.LinkDLL)"
+        LinkIncremental                ="$(LinkIncremental)"
+        LinkTimeCodeGeneration         ="%(Link.LinkTimeCodeGeneration)"
+        ManifestFile                   ="%(Link.ManifestFile)"
+        MapExports                     ="%(Link.MapExports)"
+        MapFileName                    ="%(Link.MapFileName)"
+        MergedIDLBaseFileName          ="%(Link.MergedIDLBaseFileName)"
+        MergeSections                  ="%(Link.MergeSections)"
+        MidlCommandFile                ="%(Link.MidlCommandFile)"
+        ModuleDefinitionFile           ="%(Link.ModuleDefinitionFile)"
+        MSDOSStubFileName              ="%(Link.MSDOSStubFileName)"
+        OptimizeReferences             ="%(Link.OptimizeReferences)"
+        OutputFile                     ="%(Link.OutputFile)"
+        PreventDllBinding              ="%(Link.PreventDllBinding)"
+        Profile                        ="%(Link.Profile)"
+        ProfileGuidedDatabase          ="%(Link.ProfileGuidedDatabase)"
+        ProgramDatabaseFile            ="%(Link.ProgramDatabaseFile)"
+        RandomizedBaseAddress          ="%(Link.RandomizedBaseAddress)"
+        NoEntryPoint                   ="%(Link.NoEntryPoint)"
+        SectionAlignment               ="%(Link.SectionAlignment)"
+        SetChecksum                    ="%(Link.SetChecksum)"
+        SpecifySectionAttributes       ="%(Link.SpecifySectionAttributes)"
+        StackCommitSize                ="%(Link.StackCommitSize)"
+        StackReserveSize               ="%(Link.StackReserveSize)"
+        StripPrivateSymbols            ="%(Link.StripPrivateSymbols)"
+        SubSystem                      ="%(Link.SubSystem)"
+        SupportUnloadOfDelayLoadedDLL  ="%(Link.SupportUnloadOfDelayLoadedDLL)"
+        SupportNobindOfDelayLoadedDLL  ="%(Link.SupportNobindOfDelayLoadedDLL)"
+        SuppressStartupBanner          ="%(Link.SuppressStartupBanner)"
+        SwapRunFromCD                  ="%(Link.SwapRunFromCD)"
+        SwapRunFromNET                 ="%(Link.SwapRunFromNET)"
+        TargetMachine                  ="%(Link.TargetMachine)"
+        TerminalServerAware            ="%(Link.TerminalServerAware)"
+        TreatLinkerWarningAsErrors     ="%(Link.TreatLinkerWarningAsErrors)"
+        TypeLibraryFile                ="%(Link.TypeLibraryFile)"
+        TypeLibraryResourceID          ="%(Link.TypeLibraryResourceID)"
+        UACExecutionLevel              ="%(Link.UACExecutionLevel)"
+        UACUIAccess                    ="%(Link.UACUIAccess)"
+        Version                        ="%(Link.Version)"
+        />
+  </Target>
+
+  <!-- TARGET: _LinkEmbedManifest -->
+  <Target
+    Name="_LinkEmbedManifest"
+    Condition=" '@(Link)' != '' "
+    >
+      <MSVCLinker
+        ToolPath                       ="$(MSVCToolPath)"
+
+        Sources                        ="@(Link)"
+
+        AdditionalDependencies         ="%(Link.AdditionalDependencies);@(AdditionalDependencies)"
+        AdditionalLibraryDirectories   ="%(Link.AdditionalLibraryDirectories);@(AdditionalLibraryDirectories)"
+        AdditionalManifestDependencies ="%(Link.AdditionalManifestDependencies);@(AdditionalManifestDependencies)"
+        AdditionalOptions              ="%(Link.AdditionalOptions)"
+        AllowIsolation                 ="%(Link.AllowIsolation)"
+        BaseAddress                    ="%(Link.BaseAddress)"
+        DataExecutionPrevention        ="%(Link.DataExecutionPrevention)"
+        DelayLoadDLLs                  ="%(Link.DelayLoadDLLs)"
+        DelaySign                      ="%(Link.DelaySign)"
+        Driver                         ="%(Link.Driver)"
+        EnableCOMDATFolding            ="%(Link.EnableCOMDATFolding)"
+        EnableUAC                      ="%(Link.EnableUAC)"
+        EntryPointSymbol               ="%(Link.EntryPointSymbol)"
+        LinkErrorReporting             ="%(Link.LinkErrorReporting)"
+        FixedBaseAddress               ="%(Link.FixedBaseAddress)"
+        ForceSymbolReferences          ="%(Link.ForceSymbolReferences)"
+        GenerateDebugInformation       ="%(Link.GenerateDebugInformation)"
+        GenerateManifest               ="%(Link.GenerateManifest)"
+        GenerateMapFile                ="%(Link.GenerateMapFile)"
+        HeapCommitSize                 ="%(Link.HeapCommitSize)"
+        HeapReserveSize                ="%(Link.HeapReserveSize)"
+        IgnoreAllDefaultLibraries      ="%(Link.IgnoreAllDefaultLibraries)"
+        IgnoreEmbeddedIDL              ="%(Link.IgnoreEmbeddedIDL)"
+        IgnoreSpecificDefaultLibraries ="%(Link.IgnoreSpecificDefaultLibraries)"
+        ImageHasSafeExceptionHandlers  ="%(Link.ImageHasSafeExceptionHandlers)"
+        ImportLibrary                  ="%(Link.ImportLibrary)"
+        KeyContainer                   ="%(Link.KeyContainer)"
+        KeyFile                        ="%(Link.KeyFile)"
+        LargeAddressAware              ="%(Link.LargeAddressAware)"
+        LinkDLL                        ="%(Link.LinkDLL)"
+        LinkIncremental                ="$(LinkIncremental)"
+        LinkTimeCodeGeneration         ="%(Link.LinkTimeCodeGeneration)"
+        ManifestFile                   ="%(Link.ManifestFile)"
+        MapExports                     ="%(Link.MapExports)"
+        MapFileName                    ="%(Link.MapFileName)"
+        MergedIDLBaseFileName          ="%(Link.MergedIDLBaseFileName)"
+        MergeSections                  ="%(Link.MergeSections)"
+        MidlCommandFile                ="%(Link.MidlCommandFile)"
+        ModuleDefinitionFile           ="%(Link.ModuleDefinitionFile)"
+        MSDOSStubFileName              ="%(Link.MSDOSStubFileName)"
+        OptimizeReferences             ="%(Link.OptimizeReferences)"
+        OutputFile                     ="%(Link.OutputFile)"
+        PreventDllBinding              ="%(Link.PreventDllBinding)"
+        Profile                        ="%(Link.Profile)"
+        ProfileGuidedDatabase          ="%(Link.ProfileGuidedDatabase)"
+        ProgramDatabaseFile            ="%(Link.ProgramDatabaseFile)"
+        RandomizedBaseAddress          ="%(Link.RandomizedBaseAddress)"
+        NoEntryPoint                   ="%(Link.NoEntryPoint)"
+        SectionAlignment               ="%(Link.SectionAlignment)"
+        SetChecksum                    ="%(Link.SetChecksum)"
+        SpecifySectionAttributes       ="%(Link.SpecifySectionAttributes)"
+        StackCommitSize                ="%(Link.StackCommitSize)"
+        StackReserveSize               ="%(Link.StackReserveSize)"
+        StripPrivateSymbols            ="%(Link.StripPrivateSymbols)"
+        SubSystem                      ="%(Link.SubSystem)"
+        SupportUnloadOfDelayLoadedDLL  ="%(Link.SupportUnloadOfDelayLoadedDLL)"
+        SupportNobindOfDelayLoadedDLL  ="%(Link.SupportNobindOfDelayLoadedDLL)"
+        SuppressStartupBanner          ="%(Link.SuppressStartupBanner)"
+        SwapRunFromCD                  ="%(Link.SwapRunFromCD)"
+        SwapRunFromNET                 ="%(Link.SwapRunFromNET)"
+        TargetMachine                  ="%(Link.TargetMachine)"
+        TerminalServerAware            ="%(Link.TerminalServerAware)"
+        TreatLinkerWarningAsErrors     ="%(Link.TreatLinkerWarningAsErrors)"
+        TypeLibraryFile                ="%(Link.TypeLibraryFile)"
+        TypeLibraryResourceID          ="%(Link.TypeLibraryResourceID)"
+        UACExecutionLevel              ="%(Link.UACExecutionLevel)"
+        UACUIAccess                    ="%(Link.UACUIAccess)"
+        Version                        ="%(Link.Version)"
+        />
+  </Target>
+
+</Project>

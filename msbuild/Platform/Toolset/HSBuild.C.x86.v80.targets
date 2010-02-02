@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <!-- FIXME: HSBuild.MSVC.targets will be removed -->
   <Import Project="HSBuild.MSVC.targets" />
+  <Import Project="HSBuild.MSVC.x86.targets" />
 
 </Project>
