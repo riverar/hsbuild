@@ -107,7 +107,14 @@
           <CompileAs                    Condition="'%(ClCompile.CompileAs)' == 'Default' and '%(ClCompile.Extension)' != '.c'">CompileAsCpp</CompileAs>
           <MinimalRebuildFromTracking   Condition="'%(ClCompile.MinimalRebuildFromTracking)'    == '' and '$(BuildType)' == 'Build' and '$(ForceRebuild)' != 'true'">true</MinimalRebuildFromTracking>
         </ClCompile>
+
+        <_CompileObjectDirs
+          Include="%(ClCompile.ObjectFileName)"
+          Condition=" HasTrailingSlash('%(ClCompile.ObjectFileName)') "
+          />
       </ItemGroup>
+
+      <MakeDir Directories="@(_CompileObjectDirs)" />
 
       <!-- Compile C sources -->
       <MSVCCompiler Condition="'%(ClCompile.ExcludedFromBuild)'!='true'"
