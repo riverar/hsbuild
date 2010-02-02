@@ -115,6 +115,7 @@
           <Switches Condition=" '%(GLibGenmarshal.SkipSource)' == 'true' ">%(GLibGenmarshal.Switches) --skip--source</Switches>
           <Switches Condition=" '%(GLibGenmarshal.StdInc)' == 'true' ">%(GLibGenmarshal.Switches) --stdinc</Switches>
           <Switches Condition=" '%(GLibGenmarshal.NoStdInc)' == 'true' ">%(GLibGenmarshal.Switches) --nostdinc</Switches>
+          <Switches Condition=" '%(GLibGenmarshal.Internal)' == 'true' ">%(GLibGenmarshal.Switches) --internal</Switches>
         </GlibGenmarshal>
       </ItemGroup>
 
@@ -139,7 +140,7 @@
 
       <ItemGroup>
         <Compile Condition=" '%(GLibGenmarshal.Compile)' == 'true' " Include="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c" />
-        <InstallInclude Condition=" '%(GLibGenmarshal.Internal)' != 'true' " Include="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h" />
+        <InstallInclude Condition=" '%(GLibGenmarshal.Install)' == 'true' " Include="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h" />
       </ItemGroup>
   </Target>
 
@@ -175,12 +176,12 @@
 
       <ItemGroup>
         <_MkenumsOut Include="$(IntDir)%(GLibMkenums.SubDirectory)/%(GLibMkenums.Filename)">
-          <Internal Condition=" '%(GLibMkenums.Internal)' != '' ">%(GLibMkenums.Internal)</Internal>
+          <Install Condition=" '%(GLibMkenums.Install)' != '' ">%(GLibMkenums.Install)</Install>
           <Compile  Condition=" '%(GLibMkenums.Compile)'  != '' ">%(GLibMkenums.Compile)</Compile>
         </_MkenumsOut>
 
-        <Compile        Include="@(_MkenumsOut)" Condition=" '%(_MkenumsOut.Extension)' == '.c' and '%(_MkenumsOut.Compile)'  == 'true' " />
-        <InstallInclude Include="@(_MkenumsOut)" Condition=" '%(_MkenumsOut.Extension)' == '.h' and '%(_MkenumsOut.Internal)' != 'true' " />
+        <Compile        Include="@(_MkenumsOut)" Condition=" '%(_MkenumsOut.Extension)' == '.c' and '%(_MkenumsOut.Compile)' == 'true' " />
+        <InstallInclude Include="@(_MkenumsOut)" Condition=" '%(_MkenumsOut.Extension)' == '.h' and '%(_MkenumsOut.Install)' == 'true' " />
       </ItemGroup>
   </Target>
 </Project>
