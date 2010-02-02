@@ -140,7 +140,9 @@
 
       <ItemGroup>
         <Compile Condition=" '%(GLibGenmarshal.Compile)' == 'true' " Include="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c" />
-        <InstallInclude Condition=" '%(GLibGenmarshal.Install)' == 'true' " Include="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h" />
+        <InstallInclude Condition=" '%(GLibGenmarshal.Install)' == 'true' " Include="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h">
+          <SubDirectory Condition=" '%(GLibGenmarshal.InstallSubDirectory)' != '' ">%(GLibGenmarshal.InstallSubDirectory)</SubDirectory>
+        </InstallInclude>
       </ItemGroup>
   </Target>
 
@@ -177,11 +179,14 @@
       <ItemGroup>
         <_MkenumsOut Include="$(IntDir)%(GLibMkenums.SubDirectory)/%(GLibMkenums.Filename)">
           <Install Condition=" '%(GLibMkenums.Install)' != '' ">%(GLibMkenums.Install)</Install>
+          <InstallSubDirectory Condition=" '%(GLibMkenums.InstallSubDirectory)' != '' ">%(GLibMkenums.InstallSubDirectory)</InstallSubDirectory>
           <Compile  Condition=" '%(GLibMkenums.Compile)'  != '' ">%(GLibMkenums.Compile)</Compile>
         </_MkenumsOut>
 
         <Compile        Include="@(_MkenumsOut)" Condition=" '%(_MkenumsOut.Extension)' == '.c' and '%(_MkenumsOut.Compile)' == 'true' " />
-        <InstallInclude Include="@(_MkenumsOut)" Condition=" '%(_MkenumsOut.Extension)' == '.h' and '%(_MkenumsOut.Install)' == 'true' " />
+        <InstallInclude Include="@(_MkenumsOut)" Condition=" '%(_MkenumsOut.Extension)' == '.h' and '%(_MkenumsOut.Install)' == 'true' ">
+          <SubDirectory Condition=" '%(_MkenumsOut.InstallSubDirectory)' != '' ">%(_MkenumsOut.InstallSubDirectory)</SubDirectory>
+        </InstallInclude>
       </ItemGroup>
   </Target>
 </Project>
