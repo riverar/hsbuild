@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="Toolset/HSBuild.C.$(Platform).$(PlatformToolset).props" />
+
+  <PropertyGroup>
+    <DebuggerFlavor Condition="'$(DebuggerFlavor)'==''">WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <RuntimeLibrary Condition="'$(Configuration)'== 'Release'">MultiThreadedDll</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Configuration)'== 'Debug'">MultiThreadedDebugDll</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <TargetMachine Condition="'%(Link.TargetMachine)' == ''">MachineX64</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <!-- Core Windows Libraries -->
+  <!-- <Import Condition="'$(NonCoreWin)' != 'true' and ( '$(UseOfMFC)' == 'false' OR '$(UseOfMFC)' == '')" Project="$(VCTargetsPath)\microsoft.Cpp.CoreWin.props"/> -->
+  <ItemDefinitionGroup Condition="'$(NonCoreWin)' != 'true' and ( '$(UseOfMFC)' == 'false' OR '$(UseOfMFC)' == '')">
+    <Link>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <!-- MFC -->
+  <!-- <Import Condition="'$(UseOfMFC)' == 'Static'"   Project="$(VCTargetsPath)\microsoft.Cpp.MFCStatic.props"/> -->
+  <ItemDefinitionGroup Condition = "'$(UseOfMFC)' == 'Static'">
+    <Link>
+      <DelayLoadDLLs>OleAcc.dll</DelayLoadDLLs>
+      <AdditionalDependencies>%(AdditionalDependencies);DelayImp.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <!-- <Import Condition="'$(UseOfMFC)' == 'Dynamic'"  Project="$(VCTargetsPath)\microsoft.Cpp.MFCDynamic.props"/> -->
+  <ItemDefinitionGroup Condition="'$(UseOfMFC)' == 'Dynamic'">
+    <ClCompile>
+      <PreprocessorDefinitions>_AFXDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_AFXDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+
+  <!-- ATL -->
+  <!-- <Import Condition="'$(UseOfATL)' == 'Static'"   Project="$(VCTargetsPath)\microsoft.Cpp.ATLStatic.props"/> -->
+  <ItemDefinitionGroup Condition="'$(UseOfATL)' == 'Static'">
+    <ClCompile>
+      <PreprocessorDefinitions>_ATL_STATIC_REGISTRY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <!-- <Import Condition="'$(UseOfATL)' == 'Dynamic'"  Project="$(VCTargetsPath)\microsoft.Cpp.ATLDynamic.props"/> -->
+  <ItemDefinitionGroup Condition="'$(UseOfATL)' == 'Dynamic'">
+    <ClCompile>
+      <PreprocessorDefinitions>_ATL_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <!-- Character Set -->
+  <!-- <Import Condition="'$(CharacterSet)' == 'Unicode'"    Project="$(VCTargetsPath)\microsoft.Cpp.unicodesupport.props"/> -->
+  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'Unicode'">
+    <ClCompile>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+
+    <ResourceCompile>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <!-- <Import Condition="'$(CharacterSet)' == 'MultiByte'"  Project="$(VCTargetsPath)\microsoft.Cpp.MultiByteCharSupport.props"/> -->
+  <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'MultiByte'">
+    <ClCompile>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <!-- Configuration Type -->
+  <!-- <Import Condition="'$(ConfigurationType)' == 'DynamicLibrary'"  Project="$(VCTargetsPath)\microsoft.Cpp.WinDLL.props"/> -->
+  <ItemDefinitionGroup Condition=" '$(OutputType)' == 'dll' OR '$(OutputType)' == 'library' ">
+    <ClCompile>
+      <PreprocessorDefinitions>_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <LinkDLL>true</LinkDLL>
+    </Link>
+  </ItemDefinitionGroup>
+  <!-- <Import Condition="'$(ConfigurationType)' == 'Application'"     Project="$(VCTargetsPath)\microsoft.Cpp.Application.props"/> -->
+  <!-- nothing -->
+
+  <!-- Whole Program Optimization -->
+  <!--
+  <Import Condition="'$(WholeProgramOptimization)' == 'true'"           Project="$(VCTargetsPath)\microsoft.Cpp.WholeProgramOptimization.props"/>
+  <Import Condition="'$(WholeProgramOptimization)' == 'PGOInstrument'"  Project="$(VCTargetsPath)\microsoft.Cpp.pgoinstrument.props"/>
+  <Import Condition="'$(WholeProgramOptimization)' == 'PGOOptimize'"    Project="$(VCTargetsPath)\microsoft.Cpp.pgooptimize.props"/>
+  <Import Condition="'$(WholeProgramOptimization)' == 'PGUpdate'"      Project="$(VCTargetsPath)\microsoft.Cpp.pgupdate.props"/>
+  -->
+
+  <!-- Common Language Runtime Support  -->
+  <!--
+  <Import Condition="'$(CLRSupport)' == 'true'"       Project="$(VCTargetsPath)\microsoft.Cpp.ManagedExtensions.props"/>
+  <Import Condition="'$(CLRSupport)' == 'Pure'"       Project="$(VCTargetsPath)\microsoft.Cpp.ManagedExtensionsPure.props"/>
+  <Import Condition="'$(CLRSupport)' == 'Safe'"       Project="$(VCTargetsPath)\microsoft.Cpp.ManagedExtensionsSafe.props"/>
+  <Import Condition="'$(CLRSupport)' == 'OldSyntax'"  Project="$(VCTargetsPath)\microsoft.Cpp.ManagedExtensionsOldSyntax.props"/>
+  -->
+</Project>

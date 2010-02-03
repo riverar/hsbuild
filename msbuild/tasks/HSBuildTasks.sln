@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HSBuild.MSF", "HSBuild.MSF\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HSBuildTasks.x86", "HSBuildTasks.x86.csproj", "{2E965566-2EB9-44BD-B14B-3C2E6A5FD00C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HSBuildTasks.x86_64", "HSBuildTasks.x86_64.csproj", "{18F55C5C-BDD9-4DE5-AE24-4BAF944D75B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{2E965566-2EB9-44BD-B14B-3C2E6A5FD00C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E965566-2EB9-44BD-B14B-3C2E6A5FD00C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E965566-2EB9-44BD-B14B-3C2E6A5FD00C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18F55C5C-BDD9-4DE5-AE24-4BAF944D75B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18F55C5C-BDD9-4DE5-AE24-4BAF944D75B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18F55C5C-BDD9-4DE5-AE24-4BAF944D75B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18F55C5C-BDD9-4DE5-AE24-4BAF944D75B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

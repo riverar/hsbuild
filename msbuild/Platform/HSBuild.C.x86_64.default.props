@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PlatformShortName>x86_64</PlatformShortName>
+    <PlatformArchitecture>64</PlatformArchitecture>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(PlatformToolset)' == ''">
+    <PlatformToolset>v90</PlatformToolset>
+    <CRTSuffix>vc90</CRTSuffix>
+  </PropertyGroup>
+</Project>
