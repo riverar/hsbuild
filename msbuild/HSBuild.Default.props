@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- BuildPlatform                                              -->
+  <PropertyGroup>
+    <BuildPlatform           Condition=" '$(PROCESSOR_ARCHITECTURE)' == 'AMD64' OR '$(PROCESSOR_ARCHITEW6432)' == 'AMD64' ">x86_64</BuildPlatform>
+    <BuildPlatform           Condition=" '$(BuildPlatform)' == '' "                                 >x86</BuildPlatform>
+  </PropertyGroup>
+
   <!-- Configuration/Platform defaults                            -->
   <PropertyGroup>
     <Configuration      Condition=" '$(Configuration)' == '' "          >Debug</Configuration>
-    <Platform           Condition=" '$(Platform)' == '' "               >x86</Platform>
+    <Platform           Condition=" '$(Platform)' == '' "               >$(BuildPlatform)</Platform>
+  </PropertyGroup>
 
+  <!-- Make sure TopBldDir have trailing slash!                   -->
+  <PropertyGroup>
     <TopBldDir          Condition=" '$(TopBldDir)'  != '' AND !HasTrailingSlash('$(TopBldDir)') " >$(TopBldDir)/</TopBldDir>
   </PropertyGroup>
 
