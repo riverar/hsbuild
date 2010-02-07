@@ -27,12 +27,13 @@
   </PropertyGroup>
 
   <!-- Output initialization  - MAY be overridden           -->
-  <PropertyGroup Condition="'$(OutDir)' == ''">
-    <OutDir      Condition=" '$(HSBUILD_PREFIX_PATH)' != '' "    >$(HSBUILD_PREFIX_PATH)</OutDir>
-    <OutDir                                                      >$(OutDir)$(Platform)/$(Configuration)/</OutDir>
-  </PropertyGroup>
-
   <PropertyGroup>
+    <OutTopDir   Condition=" '$(HSBUILD_PREFIX_PATH)' != '' "    >$(HSBUILD_PREFIX_PATH)</OutTopDir>
+    <OutDir      Condition="'$(OutDir)' == ''"                   >$(OutTopDir)$(Platform)/$(Configuration)/</OutDir>
+
+    <!-- Should configuration be Release hardcoded?? -->
+    <BuildOutDir                                                 >$(OutTopDir)$(BuildPlatform)/$(Configuration)/</BuildOutDir>
+
     <OutputPath Condition="'$(OutputPath)' == ''">$(OutDir)</OutputPath>
     <OutputPath Condition="'$(OutputPath)' != '' and !HasTrailingSlash('$(OutputPath)')">$(OutputPath)/</OutputPath>
   </PropertyGroup>
