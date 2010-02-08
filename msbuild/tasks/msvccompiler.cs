@@ -544,6 +544,7 @@ namespace HSBuild.Tasks
 
       switch (BasicRuntimeChecks.ToLower())
       {
+        case "default":
         case "disabled":
           break;
         case "uninitvariablesruntimecheck":
