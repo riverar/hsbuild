@@ -118,9 +118,15 @@
         </DumpSymbols>
       </ItemGroup>
 
+      <PropertyGroup>
+        <_DumpSymbolsStripInitialUnderscore Condition=" '$(Platform)' != 'x86' ">false</_DumpSymbolsStripInitialUnderscore>
+        <_DumpSymbolsStripInitialUnderscore Condition=" '$(_DumpSymbolsStripInitialUnderscore)' == '' ">true</_DumpSymbolsStripInitialUnderscore>
+      </PropertyGroup>
+
       <DumpSymbols
         Sources="@(DumpSymbols)"
         SymbolsFile="%(DumpSymbols.SymbolsFile)"
+        StripInitialUnderscore="$(_DumpSymbolsStripInitialUnderscore)"
         MatchAllFilterExpressions="%(DumpSymbols.MatchAllFilterExpressions)"
         FilterExpressions="%(DumpSymbols.FilterExpressions)"
         />
