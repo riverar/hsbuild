@@ -17,7 +17,7 @@
     >
       <PkgConfigQueryVariable
         Packages="orc-$(OrcVersionApi)"
-        PkgConfigPaths="$(OutDir)$(PkgConfigOutputSubDir);$(HSBuildInstalledPkgConfigPath)"
+        PkgConfigPaths="$(BuildOutDir)$(PkgConfigOutputSubDir);$(HSBuildInstalledPkgConfigPath)"
         ToolPath="$(HSBuildToolPath)"
         Key="orcc"
         >
