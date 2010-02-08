@@ -4,6 +4,7 @@
 #define HOST_CPU "x86_64"
 
 #define HAVE_CPU_X86_64
+#define HAVE_AMD64
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
