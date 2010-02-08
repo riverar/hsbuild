@@ -37,6 +37,7 @@ namespace HSBuild.Tasks
         [Required]
         public string SymbolsFile { get; set; }
 
+        public bool StripInitialUnderscore { get; set; }
         public bool MatchAllFilterExpressions { get; set; }
         public ITaskItem[] FilterExpressions { get; set; }
         #endregion
@@ -128,11 +129,16 @@ namespace HSBuild.Tasks
                     if (!coll[div - 2].Trim().Equals("()", StringComparison.OrdinalIgnoreCase))
                         continue;
 
-                    // Filter out symbols like @_FOO_bar
-                    if (coll[div + 1].Trim()[0] != '_')
-                        continue;
+                    string sym = coll[div + 1].Trim();
+                    if (StripInitialUnderscore)
+                    {
+                        // Filter out symbols like @_FOO_bar
+                        if (sym[0] != '_')
+                            continue;
 
-                    string sym = coll[div + 1].Trim().Substring(1);
+                        sym = sym.Substring(1);
+                    }
+
                     if (!FilterSymbol(sym))
                     {
                         Log.LogMessage(MessageImportance.Low, "Skipping {0} symbol.", sym);
