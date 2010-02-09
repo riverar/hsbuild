@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+Tools.wxs - WiX source for various tool needed for HSBuild
+
+-->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+		<!-- Directories -->
+		<DirectoryRef Id="APPLICATIONFOLDER">
+			<Directory Id="AppToolsDir" Name="tools">
+				<Directory Id="AppToolsBinDir" Name="bin" />
+			</Directory>
+		</DirectoryRef>
+
+		<!-- Components -->
+		<DirectoryRef Id="AppToolsBinDir">
+			<Component Id="pkgconfig" Guid="{4FD3B2B5-ABBE-42d5-8405-A3FA79C27BC5}">
+				<File Id="pkg_config.exe" Source="..\tools\bin\pkg-config.exe" KeyPath="yes"/>
+				<File Id="glib.dll" Source="..\tools\bin\glib-2.0-vc90.dll" />
+			</Component>
+			<Component Id="sed" Guid="{50A9DA60-FB84-40fb-8733-66DE5284A816}">
+				<File Id="sed.exe" Source="..\tools\bin\sed.exe" KeyPath="yes"/>
+			</Component>
+			<Component Id="bisonflex_dist" Guid="{DDF82C8E-42B0-4bfa-BB2E-88637EC48268}">
+				<File Id="bisonflex_dist.exe" Source="..\tools\bin\bisonflex-dist.exe" KeyPath="yes"/>
+			</Component>
+		</DirectoryRef>
+
+		<ComponentGroup Id="Tools">
+			<ComponentRef Id="pkgconfig" />
+			<ComponentRef Id="sed" />
+			<ComponentRef Id="bisonflex_dist" />
+		</ComponentGroup>
+	</Fragment>
+</Wix>

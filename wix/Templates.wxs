@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+Templates.wxs - WiX source for template files used by HSBuild
+
+-->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+		<!-- Directories -->
+		<DirectoryRef Id="HSBUILDTOOLSETLOCATION">
+			<Directory Id="TemplatesDir" Name="templates">
+				<Directory Id="x86TemplatesDir" Name="x86" />
+				<Directory Id="x86_64TemplatesDir" Name="x86_64" />
+			</Directory>
+		</DirectoryRef>
+
+		<!-- Components -->
+		<DirectoryRef Id="x86TemplatesDir">
+			<Component Id="x86Config_h" Guid="{F8162AD2-B85D-492d-B66E-EF2064CEBE36}">
+				<File Id="x86Config.h" Source="..\msbuild\templates\x86\config.h" KeyPath="yes"/>
+			</Component>
+		</DirectoryRef>
+		<DirectoryRef Id="x86_64TemplatesDir">
+			<Component Id="x86_64Config_h" Guid="{6924B883-12C6-4a21-B480-AEAB09C12152}">
+				<File Id="x86_64Config.h" Source="..\msbuild\templates\x86_64\config.h" KeyPath="yes"/>
+			</Component>
+		</DirectoryRef>
+
+		<ComponentGroup Id="Templates">
+			<ComponentRef Id="x86Config_h" />
+			<ComponentRef Id="x86_64Config_h" />
+		</ComponentGroup>
+	</Fragment>
+</Wix>

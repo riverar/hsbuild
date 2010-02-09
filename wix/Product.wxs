@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+	<?define ProductVersion="0.1.0" ?>
+	<?define ProductDirectoryName="HSBuild" ?>
+	<?define ManufacturerName="Haakon Sporsheim" ?>
+	<?define ProductCode="{3AC21789-4A62-4c6d-8B4D-8767A93B7CA7}"?>
+	<?define UpgradeCode="{612D4994-03FE-421d-B429-F04F0012A5CF}"?>
+	<?define PackageCode="*"?>
+
+	<Product Id="$(var.ProductCode)" UpgradeCode="$(var.UpgradeCode)" Version="$(var.ProductVersion)" Language="1033" Name="HSBuild" Manufacturer="$(var.ManufacturerName)">
+		<Package Id='$(var.PackageCode)' InstallerVersion="300" Compressed="yes" InstallScope="perMachine"
+				Description="HSBuild for building software with PkgConfig" Manufacturer="$(var.ManufacturerName)" />
+		<Media Id="1" Cabinet="hsbuild.cab" EmbedCab="yes" />
+
+		<Upgrade Id="$(var.UpgradeCode)">
+			<UpgradeVersion Minimum="$(var.ProductVersion)" IncludeMinimum="no" OnlyDetect="yes" Language="1033" Property="NEWPRODUCTFOUND" />
+		</Upgrade>
+
+		<Condition Message="An administrator must approve or install [ProductName].">
+			Privileged
+		</Condition>
+		<Condition Message="A later version of [ProductName] is already installed.">
+			NOT NEWPRODUCTFOUND
+		</Condition>
+
+		<Property Id="ARPURLINFOABOUT" Value="http://launchpad.net/hsbuild" />
+		<Property Id="ARPURLUPDATEINFO" Value="http://launchpad.net/hsbuild" />
+
+		<!-- Directories -->
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="APPLICATIONFOLDER" Name="$(var.ProductDirectoryName)" />
+
+				<Directory Id="MSBuildDir" Name="MSBuild">
+					<Directory Id="HSBUILDTOOLSETLOCATION" Name="HSBuild" />
+				</Directory>
+			</Directory>
+		</Directory>
+
+		<!-- PATH environment variable -->
+		<DirectoryRef Id="TARGETDIR">
+			<Component Id="PathEnv" Guid="{3AA9AFE1-7083-47ca-9035-C5952AD99C1F}">
+				<Environment Id="PATH_update" Name="PATH" Value="[APPLICATIONFOLDER]bin" Action="set" Part="last" Permanent="no" System="yes" />
+			</Component>
+		</DirectoryRef>
+
+		<!-- Features -->
+		<Feature Id="HSBuildToolset" Title="HSBuild Toolset and Tasks" Level="1" Display="expand" Absent="disallow" Description="Installs .targets and HSBuildTasks*.dll">
+			<ComponentGroupRef Id="ToolsetTasks" />
+			<ComponentGroupRef Id="Toolset" />
+
+			<Feature Id="Tools" Title="Misc HSBuild Tools" Level="1" Absent="disallow" Description="Installs tools needed for building. pkg-config.exe, sed.exe and bison/flex dist.">
+				<ComponentGroupRef Id="Tools" />
+			</Feature>
+
+			<Feature Id="Templates" Title="Template config.h files" Level="1" Description="Installs pre half generated config.h files.">
+				<ComponentGroupRef Id="Templates" />
+			</Feature>
+		</Feature>
+
+		<Feature Id="HSBuild" Title="HSBuild Build Tool" Level="1" Display="expand" Description="Installs the HSBuild tool used for pulling down source code and building it and dependencies.">
+			<ComponentGroupRef Id="HSBuildTool" />
+
+			<Feature Id="Environment" Title="Include in PATH" Level="1" InstallDefault="followParent" Description="Make sure hsbuild.exe in ([APPLICATIONFOLDER]) will be accessible by putting in the system wide environment.">
+				<ComponentRef Id="PathEnv" />
+			</Feature>
+		</Feature>
+
+		<!-- Install Sequences -->
+		<InstallExecuteSequence>
+			<FindRelatedProducts Before="LaunchConditions" />
+			<RemoveExistingProducts After="InstallValidate" />
+		</InstallExecuteSequence>
+
+		<InstallUISequence>
+			<FindRelatedProducts Before="LaunchConditions" />
+		</InstallUISequence>
+
+		<Property Id="WIXUI_EXITDIALOGOPTIONALTEXT" Value="hsbuild.exe is now available on your system. Create a new directory and download a .modules file to this directory or create one yourself. Then open a command prompt in this directory and run hsbuild.exe build &lt;module&gt;." />
+		<Property Id="ApplicationFolderName" Value="$(var.ProductDirectoryName)" />
+		<Property Id="WixAppFolder" Value="WixPerMachineFolder" />
+		<WixVariable Id="WixUISupportPerMachine" Value="1" />
+		<WixVariable Id="WixUISupportPerUser" Value="0" />
+		<WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+
+		<UIRef Id="WixUI_Advanced" />
+	</Product>
+</Wix>

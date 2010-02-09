@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+Toolset.wxs - WiX source for HSBuild tasks and targets
+
+-->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+		<!-- Directories -->
+		<DirectoryRef Id="HSBUILDTOOLSETLOCATION">
+			<Directory Id="PlatformDir" Name="Platform">
+				<Directory Id="ToolsetDir" Name="Toolset" />
+			</Directory>
+		</DirectoryRef>
+
+		<!-- Components -->
+		<DirectoryRef Id="HSBUILDTOOLSETLOCATION">
+			<Component Id="hsbuild_msf" Guid="{B7012EE2-2405-4ada-BEF6-D5AD2D1D4248}">
+				<File Id="hsbuild.msf.dll" Source="..\msbuild\tasks\bin\Release\HSBuild.MSF.dll" KeyPath="yes"/>
+			</Component>
+			<Component Id="hsbuildtasks" Guid="{D7A50426-75B1-4068-B141-91CC9D388E00}">
+				<File Id="hsbuildtasks.dll" Source="..\msbuild\tasks\bin\Release\HSBuildTasks.dll" KeyPath="yes"/>
+			</Component>
+			<Component Id="hsbuildtasks_x86" Guid="{B5FA26B6-DFEF-445f-A277-A9762E1CECC6}">
+				<File Id="hsbuildtasks.x86.dll" Source="..\msbuild\tasks\bin\Release\HSBuildTasks.x86.dll" KeyPath="yes"/>
+			</Component>
+			<Component Id="hsbuildtasks_x86_64" Guid="{E9B6C95D-11CE-498e-ABE0-83C70D43AF56}">
+				<File Id="hsbuildtasks.x86_64.dll" Source="..\msbuild\tasks\bin\Release\HSBuildTasks.x86_64.dll" KeyPath="yes"/>
+			</Component>
+
+			<Component Id="hsbuild_common_targets" Guid="{1807DA65-09DC-4ab8-B815-81368081C623}">
+				<File Id="hsbuild.common.targets" Source="..\msbuild\HSBuild.Common.targets" KeyPath="yes"/>
+				<File Id="hsbuild.default.props" Source="..\msbuild\HSBuild.Default.props" />
+				<File Id="hsbuild.buildsteps.targets" Source="..\msbuild\HSBuild.BuildSteps.targets" />
+			</Component>
+			<Component Id="hsbuild_pkgconfig_targets" Guid="{8FACC59B-63AF-4f94-82EF-6F135FEA9ABC}">
+				<File Id="hsbuild.pkgconfig.targets" Source="..\msbuild\HSBuild.PkgConfig.targets" KeyPath="yes"/>
+			</Component>
+			<Component Id="hsbuild_utility_targets" Guid="{EB497B5A-EC61-4bef-9154-480394630DC1}">
+				<File Id="hsbuild.utility.targets" Source="..\msbuild\HSBuild.Utility.targets" KeyPath="yes"/>
+			</Component>
+			<Component Id="hsbuild_c_targets" Guid="{3FC336FF-9649-411c-84D6-E5BAC95836CA}">
+				<File Id="hsbuild.c.targets" Source="..\msbuild\HSBuild.C.targets" KeyPath="yes"/>
+				<File Id="hsbuild.c.default.props" Source="..\msbuild\HSBuild.C.Default.props" />
+				<File Id="hsbuild.c.props" Source="..\msbuild\HSBuild.C.props" />
+			</Component>
+			<Component Id="hsbuild_glib_targets" Guid="{9FD11FD3-15ED-45c3-BA88-A0ED1E859762}">
+				<File Id="hsbuild.glib.targets" Source="..\msbuild\HSBuild.GLib.targets" KeyPath="yes"/>
+			</Component>
+			<Component Id="hsbuild_vala_targets" Guid="{9F8D5A16-FD2B-4019-8010-E6A55FA8D45E}">
+				<File Id="hsbuild.vala.targets" Source="..\msbuild\HSBuild.Vala.targets" KeyPath="yes"/>
+				<File Id="hsbuild.vala.default.props" Source="..\msbuild\HSBuild.Vala.Default.props" />
+				<File Id="hsbuild.vala.props" Source="..\msbuild\HSBuild.Vala.props" />
+			</Component>
+			<Component Id="hsbuild_orc_targets" Guid="{205998F8-062D-4d0a-A743-3BFD6CEBA6C6}">
+				<File Id="hsbuild.orc.targets" Source="..\msbuild\HSBuild.Orc.targets" KeyPath="yes"/>
+				<File Id="hsbuild.orc.props" Source="..\msbuild\HSBuild.Orc.props" />
+			</Component>
+		</DirectoryRef>
+
+		<DirectoryRef Id="PlatformDir">
+			<Component Id="hsbuild_c_x86_props" Guid="{540FD2DA-370E-46d7-A54D-36BCAEC3E60F}">
+				<File Id="hsbuild.C.x86.props" Source="..\msbuild\Platform\HSBuild.C.x86.props" KeyPath="yes"/>
+				<File Id="hsbuild.C.x86.default.props" Source="..\msbuild\Platform\HSBuild.C.x86.default.props" />
+			</Component>
+			<Component Id="hsbuild_c_x86_64_props" Guid="{F31BDBE7-A416-4577-9438-272C3AE1393B}">
+				<File Id="hsbuild.C.x86_64.props" Source="..\msbuild\Platform\HSBuild.C.x86_64.props" KeyPath="yes"/>
+				<File Id="hsbuild.C.x86_64.default.props" Source="..\msbuild\Platform\HSBuild.C.x86_64.default.props" />
+			</Component>
+		</DirectoryRef>
+
+		<DirectoryRef Id="ToolsetDir">
+			<Component Id="hsbuild_c_x86_v80_targets" Guid="{61CD50E1-DA0D-4258-913F-B14A0E3EC65C}">
+				<File Id="hsbuild.C.x86.v80.targets" Source="..\msbuild\Platform\Toolset\HSBuild.C.x86.v80.targets" KeyPath="yes"/>
+				<File Id="hsbuild.C.x86.v80.props" Source="..\msbuild\Platform\Toolset\HSBuild.C.x86.v80.props" />
+			</Component>
+			<Component Id="hsbuild_c_x86_v90_targets" Guid="{97F0FD29-B8A5-4a8a-ACEC-5DEB71E63D1A}">
+				<File Id="hsbuild.C.x86.v90.targets" Source="..\msbuild\Platform\Toolset\HSBuild.C.x86.v90.targets" KeyPath="yes"/>
+				<File Id="hsbuild.C.x86.v90.props" Source="..\msbuild\Platform\Toolset\HSBuild.C.x86.v90.props" />
+			</Component>
+			<Component Id="hsbuild_c_x86_64_v80_targets" Guid="{0FF2AEA3-C9C7-4256-8325-9B9130E49045}">
+				<File Id="hsbuild.C.x86_64.v80.targets" Source="..\msbuild\Platform\Toolset\HSBuild.C.x86_64.v80.targets" KeyPath="yes"/>
+				<File Id="hsbuild.C.x86_64.v80.props" Source="..\msbuild\Platform\Toolset\HSBuild.C.x86_64.v80.props" />
+			</Component>
+			<Component Id="hsbuild_c_x86_64_v90_targets" Guid="{B9594BAA-0D00-4745-904B-5728D3AFB77D}">
+				<File Id="hsbuild.C.x86_64.v90.targets" Source="..\msbuild\Platform\Toolset\HSBuild.C.x86_64.v90.targets" KeyPath="yes"/>
+				<File Id="hsbuild.C.x86_64.v90.props" Source="..\msbuild\Platform\Toolset\HSBuild.C.x86_64.v90.props" />
+			</Component>
+
+			<Component Id="hsbuild_msvc_targets" Guid="{388B0C12-D18A-4b8f-85EE-F9BCF6A43739}">
+				<File Id="hsbuild.MSVC.targets" Source="..\msbuild\Platform\Toolset\HSBuild.MSVC.targets" KeyPath="yes"/>
+				<File Id="hsbuild.MSVC.x86.targets" Source="..\msbuild\Platform\Toolset\HSBuild.MSVC.x86.targets" />
+				<File Id="hsbuild.MSVC.x86_64.targets" Source="..\msbuild\Platform\Toolset\HSBuild.MSVC.x86_64.targets" />
+			</Component>
+		</DirectoryRef>
+
+		<ComponentGroup Id="ToolsetTasks">
+			<ComponentRef Id="hsbuild_msf" />
+			<ComponentRef Id="hsbuildtasks" />
+			<ComponentRef Id="hsbuildtasks_x86" />
+			<ComponentRef Id="hsbuildtasks_x86_64" />
+		</ComponentGroup>
+
+		<ComponentGroup Id="Toolset">
+			<ComponentRef Id="hsbuild_common_targets" />
+			<ComponentRef Id="hsbuild_pkgconfig_targets" />
+			<ComponentRef Id="hsbuild_utility_targets" />
+			<ComponentRef Id="hsbuild_c_targets" />
+			<ComponentRef Id="hsbuild_glib_targets" />
+			<ComponentRef Id="hsbuild_vala_targets" />
+			<ComponentRef Id="hsbuild_orc_targets" />
+
+			<ComponentRef Id="hsbuild_c_x86_props" />
+			<ComponentRef Id="hsbuild_c_x86_64_props" />
+
+			<ComponentRef Id="hsbuild_c_x86_v80_targets" />
+			<ComponentRef Id="hsbuild_c_x86_v90_targets" />
+			<ComponentRef Id="hsbuild_c_x86_64_v80_targets" />
+			<ComponentRef Id="hsbuild_c_x86_64_v90_targets" />
+			<ComponentRef Id="hsbuild_msvc_targets" />
+		</ComponentGroup>
+	</Fragment>
+</Wix>
