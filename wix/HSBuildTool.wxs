@@ -14,13 +14,13 @@ HSBuildTool.wxs - WiX source for HSBuild tool
 		<!-- Components -->
 		<DirectoryRef Id="AppBinDir">
 			<Component Id="sharpziplib" Guid="{CA0B01F8-5EB5-4907-A63F-730EC2460EEC}">
-				<File Id="sharpziplib.dll" Source="..\hsbuild\bin\Release\ICSharpCode.SharpZipLib.dll" KeyPath="yes"/>
+				<File Id="sharpziplib.dll" Source="..\hsbuild\bin\x86\Release\ICSharpCode.SharpZipLib.dll" KeyPath="yes"/>
 			</Component>
 			<Component Id="hsbuildexe" Guid="{31361D15-2C11-467c-BAD4-B301BEEF7874}">
-				<File Id="hsbuild.exe" Source="..\hsbuild\bin\Release\hsbuild.console.exe" Name="hsbuild.exe" KeyPath="yes"/>
+				<File Id="hsbuild.exe" Source="..\hsbuild\bin\x86\Release\hsbuild.console.exe" Name="hsbuild.exe" KeyPath="yes"/>
 			</Component>
 			<Component Id="hsbuildcore" Guid="{DA7FEB05-A0E9-4d96-BD41-E2A8FF16AEDF}">
-				<File Id="hsbuild.core.dll" Source="..\hsbuild\bin\Release\HSBuild.Core.dll" KeyPath="yes"/>
+				<File Id="hsbuild.core.dll" Source="..\hsbuild\bin\x86\Release\HSBuild.Core.dll" KeyPath="yes"/>
 			</Component>
 		</DirectoryRef>
 
