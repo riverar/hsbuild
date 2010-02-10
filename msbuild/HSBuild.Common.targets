@@ -27,7 +27,7 @@
   <!-- Import all HSBUILD tasks -->
   <PropertyGroup>
       <HSBuildTasksDir        Condition=" '$(HSBuildTasksDir)' == '' and '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\HSBuild\</HSBuildTasksDir>
-      <HSBuildTasksDir        Condition=" '$(HSBuildTasksDir)' == '' "              >$(MSBuildExtensionsPath)\HSBuild\</HSBuildTasksDir>
+      <HSBuildTasksDir        Condition=" '$(HSBuildTasksDir)' == '' or !Exists('$(HSBuildTasksDir)') "      >$(MSBuildExtensionsPath)\HSBuild\</HSBuildTasksDir>
       <HSBuildTasksBin        Condition=" '$(HSBuildTasksBin)' == '' "              >HSBuildTasks.dll</HSBuildTasksBin>
       <HSBuildTasksX86Bin     Condition=" '$(HSBuildTasksX86Bin)' == '' "           >HSBuildTasks.x86.dll</HSBuildTasksX86Bin>
       <HSBuildTasksX86_64Bin  Condition=" '$(HSBuildTasksX86_64Bin)' == '' "        >HSBuildTasks.x86_64.dll</HSBuildTasksX86_64Bin>
