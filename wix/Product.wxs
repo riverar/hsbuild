@@ -43,12 +43,16 @@
 			<Component Id="PathEnv" Guid="{3AA9AFE1-7083-47ca-9035-C5952AD99C1F}">
 				<Environment Id="PATH_update" Name="PATH" Value="[APPLICATIONFOLDER]bin" Action="set" Part="last" Permanent="no" System="yes" />
 			</Component>
+			<Component Id="HSBuildInstalledPathEnv" Guid="{37E9C3C5-9BB9-495e-A6C9-C959DBAA3948}">
+				<Environment Id="HSBUILD_INSTALLED_PATH" Name="HSBUILD_INSTALLED_PATH" Value="[APPLICATIONFOLDER]" Action="set" Permanent="no" System="yes" />
+			</Component>
 		</DirectoryRef>
 
 		<!-- Features -->
 		<Feature Id="HSBuildToolset" Title="HSBuild Toolset and Tasks" Level="1" Display="expand" Absent="disallow" Description="Installs .targets and HSBuildTasks*.dll">
 			<ComponentGroupRef Id="ToolsetTasks" />
 			<ComponentGroupRef Id="Toolset" />
+			<ComponentRef Id="HSBuildInstalledPathEnv" />
 
 			<Feature Id="Tools" Title="Misc HSBuild Tools" Level="1" Absent="disallow" Description="Installs tools needed for building. pkg-config.exe, sed.exe and bison/flex dist.">
 				<ComponentGroupRef Id="Tools" />
