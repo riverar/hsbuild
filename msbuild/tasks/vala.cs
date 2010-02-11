@@ -28,28 +28,13 @@ namespace HSBuild.Tasks
   {
     private const string ValaToolName = "valac.exe";
 
-    private ITaskItem[] sourceFiles;
     private List<ITaskItem> outputFiles;
-    private ITaskItem[] packages;
-    private ITaskItem[] vapidirs;
-    private string basedir;
-    private string outdir;
-    private string library;
     private string headerFileName;
     private string vapiFileName;
-    private bool quietMode = false;
-    private bool verboseOutput = false;
-    private bool debug = false;
-    private bool keepTemp = false;
-    private bool multithreadSupport = false;
 
     #region Tool properties
     [Required]
-    public ITaskItem[] Sources
-    {
-      get { return this.sourceFiles; }
-      set { this.sourceFiles = value; }
-    }
+    public ITaskItem[] Sources { get; set; }
 
     [Output]
     public ITaskItem[] DestinationFiles
@@ -95,7 +80,7 @@ namespace HSBuild.Tasks
         if (string.IsNullOrEmpty(HeaderFileName))
           return null;
 
-        return new TaskItem(Path.Combine(outdir, HeaderFileName));
+        return new TaskItem(Path.Combine(OutputDirectory, HeaderFileName));
       }
     }
 
@@ -107,7 +92,7 @@ namespace HSBuild.Tasks
         if (string.IsNullOrEmpty(Library))
           return null;
 
-        return new TaskItem(Path.Combine(outdir, Library) + ".symbols");
+        return new TaskItem(Path.Combine(OutputDirectory, Library) + ".symbols");
       }
     }
 
@@ -129,65 +114,17 @@ namespace HSBuild.Tasks
       }
     }
 
-    public ITaskItem[] Packages
-    {
-      get { return this.packages; }
-      set { this.packages = value; }
-    }
+    public ITaskItem[] Packages { get; set; }
+    public string BaseDirectory { get; set; }
+    public string OutputDirectory { get; set; }
+    public string Library { get; set; }
 
-    public string BaseDirectory
-    {
-      get { return this.basedir; }
-      set { this.basedir = value; }
-    }
-
-    public string OutputDirectory
-    {
-      get { return this.outdir; }
-      set { this.outdir = value; }
-    }
-
-    public string Library
-    {
-      get { return this.library; }
-      set { this.library = value; }
-    }
-
-    public ITaskItem[] VapiDirectories
-    {
-      get { return this.vapidirs; }
-      set { this.vapidirs = value; }
-    }
-
-    public bool Quiet
-    {
-      get { return this.quietMode; }
-      set { this.quietMode = value; }
-    }
-
-    public bool Debug
-    {
-      get { return this.debug; }
-      set { this.debug = value; }
-    }
-
-    public bool Verbose
-    {
-      get { return this.verboseOutput; }
-      set { this.verboseOutput = value; }
-    }
-
-    public bool KeepTemporaryFiles
-    {
-      get { return this.keepTemp; }
-      set { this.keepTemp = value; }
-    }
-
-    public bool Thread
-    {
-      get { return this.multithreadSupport; }
-      set { this.multithreadSupport = value; }
-    }
+    public ITaskItem[] VapiDirectories { get; set; }
+    public bool Quiet { get; set; }
+    public bool Debug { get; set; }
+    public bool Verbose { get; set; }
+    public bool KeepTemporaryFiles { get; set; }
+    public bool Thread { get; set; }
 
     #endregion
 
@@ -244,28 +181,28 @@ namespace HSBuild.Tasks
 
     private void CreateOutputDirectoriesAndFiles()
     {
-      outputFiles = new List<ITaskItem>(sourceFiles.Length);
+      outputFiles = new List<ITaskItem>(Sources.Length);
 
-      foreach (ITaskItem item in sourceFiles)
+      foreach (ITaskItem item in Sources)
       {
         string spec = item.ItemSpec;
 
         if (Path.GetExtension(spec).ToLower() == ".vapi")
           continue;
 
-        if (basedir != null)
+        if (BaseDirectory != null)
         {
-          if (spec.StartsWith(basedir))
+          if (spec.StartsWith(BaseDirectory))
           {
-            spec = spec.Remove(0, basedir.Length).TrimStart(Path.DirectorySeparatorChar);
+              spec = spec.Remove(0, BaseDirectory.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
           }
           else
           {
-            Log.LogWarning("Found vala file ({1}) outside basedir ({0})", basedir, spec);
+              Log.LogWarning("Found vala file ({1}) outside basedir ({0})", BaseDirectory, spec);
           }
         }
 
-        string filePath = outdir != null ? Path.Combine(outdir, spec) : spec;
+        string filePath = string.IsNullOrEmpty(OutputDirectory) ? spec : Path.Combine(OutputDirectory, spec);
 
         string cfile = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileNameWithoutExtension(filePath)) + ".c";
         outputFiles.Add(new TaskItem(cfile));
