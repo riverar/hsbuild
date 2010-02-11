@@ -1,0 +1,78 @@
+HSBuild is a build system mainly for building software for Microsoft Windows.
+
+HSBuild consists of following components:
+ * HSBuild.Tasks (MSBuild Tasks)
+ * HSBuild targets (MSBuild extensions)
+ * HSBuild tool (Console application for building modules and dependencies)
+
+===============================================================================
+== HSBuild.Tasks                                                             ==
+===============================================================================
+The HSBuild.Tasks*.dll binaries are installed to %ProgramFiles%/MSBuild/HSBuild
+
+The binaries contain task/tool classes which basically create a file or
+transform file(s). These tasks/tools are used by the HSBuild.*.targets.
+
+===============================================================================
+== HSBuild .targets and .props                                               ==
+===============================================================================
+These files are installed to %ProgramFiles%/MSBuild/HSBuild
+
+The files contain specifications for how to build software. They will be
+used in every HSBuild based module out there so that the modules own build
+script could easily composed. They define rules of how to compose HSBuild
+build script.
+
+All the *.props files initializes default properties/variables used by
+targets in the build process.
+
+HSBuild.BuildSteps.targets defines the order of build execution.
+E.g. C files should compiled first, and then the output object files should
+then be linked into a library or binary.
+
+HSBuild.Common.targets defines targets/tools for generating files needed for
+various parts of the build process.
+
+HSBuild.C.targets defines targets/tools for building C/C++ code into a
+static or dynamic library or a executable.
+
+HSBuild.Vala.targets defines targets/tools for building Vala code into C code.
+
+and so on...
+
+===============================================================================
+== HSBuild tool                                                              ==
+===============================================================================
+The HSBuild tool could be compared to JHBuild tool which is commonly used for
+building Gnome related software for linux systems.
+
+It parses a .modules file in current working directory which specify how to:
+ 1. Locate a source code repository (using git, bzr or a tarball)
+ 2. Optionally apply patches.
+ 3. Build the source code.
+
+Each module in the .modules file does also specify dependencies to other
+modules.
+
+A typical usage of hsbuild from the terminal/command line would be:
+hsbuild build gst-plugins-good
+
+hsbuild will now parse the .modules file and find the gst-plugins-good module.
+Then it will resolve dependencies and order the build commands in the right
+order. gst-plugins-good depends on gst-plugins-base and gstreamer which then
+again depends on glib.
+
+Then it checks if each module's source code is available. If not it is
+downloaded or checked out using specified version control system starting
+with the module without any dependencies. Lets say that is glib.
+glib will be checkd out from gnome.org using:
+git clone git://git.gnome.org/glib
+
+Since we need to add/apply the HSBuild build script, the module defines a
+patch located on a http server. hsbuild downloades the patch and applies it to
+the root directory of the module repository on local hard drive.
+
+When this is done hsbuild executes msbuild to start the build process of glib.
+
+Further more, this is done in the same way for all modules until
+gst-plugins-good is built.
