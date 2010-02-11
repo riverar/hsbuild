@@ -207,6 +207,7 @@ namespace HSBuild.Tasks
         string cfile = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileNameWithoutExtension(filePath)) + ".c";
         outputFiles.Add(new TaskItem(cfile));
 
+        Log.LogMessage(MessageImportance.Low, "Create {0} from {1}", cfile, spec);
         DirectoryInfo info = new DirectoryInfo(Path.GetDirectoryName(cfile));
         if (!info.Exists) info.Create();
       }
