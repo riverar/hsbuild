@@ -46,6 +46,9 @@
 			<Component Id="HSBuildInstalledPathEnv" Guid="{37E9C3C5-9BB9-495e-A6C9-C959DBAA3948}">
 				<Environment Id="HSBUILD_INSTALLED_PATH" Name="HSBUILD_INSTALLED_PATH" Value="[APPLICATIONFOLDER]" Action="set" Permanent="no" System="yes" />
 			</Component>
+			<Component Id="Readme" Guid="{36282A50-0864-4999-9AB2-653C7A12FD5E}">
+				<File Id="README" Source="..\README" KeyPath="yes"/>
+			</Component>
 		</DirectoryRef>
 
 		<!-- Features -->
@@ -53,6 +56,7 @@
 			<ComponentGroupRef Id="ToolsetTasks" />
 			<ComponentGroupRef Id="Toolset" />
 			<ComponentRef Id="HSBuildInstalledPathEnv" />
+			<ComponentRef Id="Readme" />
 
 			<Feature Id="Tools" Title="Misc HSBuild Tools" Level="1" Absent="disallow" Description="Installs tools needed for building. pkg-config.exe, sed.exe and bison/flex dist.">
 				<ComponentGroupRef Id="Tools" />
