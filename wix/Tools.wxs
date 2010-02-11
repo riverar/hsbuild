@@ -10,6 +10,12 @@ Tools.wxs - WiX source for various tool needed for HSBuild
 		<DirectoryRef Id="APPLICATIONFOLDER">
 			<Directory Id="AppToolsDir" Name="tools">
 				<Directory Id="AppToolsBinDir" Name="bin" />
+
+				<Directory Id="AppToolsShareDir" Name="share">
+					<Directory Id="AppToolsShareValaDir" Name="vala">
+						<Directory Id="AppToolsShareValaVapiDir" Name="vapi" />
+					</Directory>
+				</Directory>
 			</Directory>
 		</DirectoryRef>
 
@@ -17,7 +23,6 @@ Tools.wxs - WiX source for various tool needed for HSBuild
 		<DirectoryRef Id="AppToolsBinDir">
 			<Component Id="pkgconfig" Guid="{4FD3B2B5-ABBE-42d5-8405-A3FA79C27BC5}">
 				<File Id="pkg_config.exe" Source="..\tools\bin\pkg-config.exe" KeyPath="yes"/>
-				<File Id="glib.dll" Source="..\tools\bin\glib-2.0-vc90.dll" />
 			</Component>
 			<Component Id="sed" Guid="{50A9DA60-FB84-40fb-8733-66DE5284A816}">
 				<File Id="sed.exe" Source="..\tools\bin\sed.exe" KeyPath="yes"/>
@@ -25,10 +30,198 @@ Tools.wxs - WiX source for various tool needed for HSBuild
 			<Component Id="bisonflex_dist" Guid="{DDF82C8E-42B0-4bfa-BB2E-88637EC48268}">
 				<File Id="bisonflex_dist.exe" Source="..\tools\bin\bisonflex-dist.exe" KeyPath="yes"/>
 			</Component>
+			<Component Id="glib" Guid="{9D9844E1-F294-4e40-B426-6D54586BAA91}">
+				<File Id="glib.dll" Source="..\tools\bin\glib-2.0-vc90.dll" KeyPath="yes" />
+				<File Id="gobject.dll" Source="..\tools\bin\gobject-2.0-vc90.dll" />
+				<File Id="gthread.dll" Source="..\tools\bin\gthread-2.0-vc90.dll" />
+			</Component>
+			<Component Id="vala" Guid="{8F2A8180-2894-44e7-AA88-AC41C5DADA64}">
+				<File Id="valac.exe" Source="..\tools\bin\valac.exe" KeyPath="yes" />
+				<File Id="vala.dll" Source="..\tools\bin\vala-vc90.dll" />
+			</Component>
+		</DirectoryRef>
+		<DirectoryRef Id="AppToolsShareValaVapiDir">
+			<Component Id="vapi" Guid="{8D2AA061-EC1C-4866-80E4-EADCE43BCF4D}">
+				<File Id="alsa.vapi" Source="..\tools\share\vala\vapi\alsa.vapi" />
+				<File Id="atk.vapi" Source="..\tools\share\vala\vapi\atk.vapi" />
+				<File Id="avahi_gobject.deps" Source="..\tools\share\vala\vapi\avahi-gobject.deps" />
+				<File Id="avahi_gobject.vapi" Source="..\tools\share\vala\vapi\avahi-gobject.vapi" />
+				<File Id="bzlib.vapi" Source="..\tools\share\vala\vapi\bzlib.vapi" />
+				<File Id="cairo_xcb.deps" Source="..\tools\share\vala\vapi\cairo-xcb.deps" />
+				<File Id="cairo_xcb.vapi" Source="..\tools\share\vala\vapi\cairo-xcb.vapi" />
+				<File Id="cairo.vapi" Source="..\tools\share\vala\vapi\cairo.vapi" />
+				<File Id="ccss_1.vapi" Source="..\tools\share\vala\vapi\ccss-1.vapi" />
+				<File Id="clutter_1.0.deps" Source="..\tools\share\vala\vapi\clutter-1.0.deps" />
+				<File Id="clutter_1.0.vapi" Source="..\tools\share\vala\vapi\clutter-1.0.vapi" />
+				<File Id="clutter_json_1.0.vapi" Source="..\tools\share\vala\vapi\clutter-json-1.0.vapi" />
+				<File Id="cogl_1.0.deps" Source="..\tools\share\vala\vapi\cogl-1.0.deps" />
+				<File Id="cogl_1.0.vapi" Source="..\tools\share\vala\vapi\cogl-1.0.vapi" />
+				<File Id="curses.vapi" Source="..\tools\share\vala\vapi\curses.vapi" />
+				<File Id="dbus_glib_1.vapi" Source="..\tools\share\vala\vapi\dbus-glib-1.vapi" />
+				<File Id="dconf.vapi" Source="..\tools\share\vala\vapi\dconf.vapi" />
+				<File Id="enchant.vapi" Source="..\tools\share\vala\vapi\enchant.vapi" />
+				<File Id="fuse.deps" Source="..\tools\share\vala\vapi\fuse.deps" />
+				<File Id="fuse.vapi" Source="..\tools\share\vala\vapi\fuse.vapi" />
+				<File Id="gconf_2.0.vapi" Source="..\tools\share\vala\vapi\gconf-2.0.vapi" />
+				<File Id="gdk_2.0.deps" Source="..\tools\share\vala\vapi\gdk-2.0.deps" />
+				<File Id="gdk_2.0.vapi" Source="..\tools\share\vala\vapi\gdk-2.0.vapi" />
+				<File Id="gdk_pixbuf_2.0.deps" Source="..\tools\share\vala\vapi\gdk-pixbuf-2.0.deps" />
+				<File Id="gdk_pixbuf_2.0.vapi" Source="..\tools\share\vala\vapi\gdk-pixbuf-2.0.vapi" />
+				<File Id="gdk_x11_2.0.deps" Source="..\tools\share\vala\vapi\gdk-x11-2.0.deps" />
+				<File Id="gdk_x11_2.0.vapi" Source="..\tools\share\vala\vapi\gdk-x11-2.0.vapi" />
+				<File Id="gio_2.0.vapi" Source="..\tools\share\vala\vapi\gio-2.0.vapi" />
+				<File Id="gio_unix_2.0.deps" Source="..\tools\share\vala\vapi\gio-unix-2.0.deps" />
+				<File Id="gio_unix_2.0.vapi" Source="..\tools\share\vala\vapi\gio-unix-2.0.vapi" />
+				<File Id="glib_2.0.vapi" Source="..\tools\share\vala\vapi\glib-2.0.vapi" KeyPath="yes" />
+				<File Id="gmodule_2.0.vapi" Source="..\tools\share\vala\vapi\gmodule-2.0.vapi" />
+				<File Id="gnet_2.0.deps" Source="..\tools\share\vala\vapi\gnet-2.0.deps" />
+				<File Id="gnet_2.0.vapi" Source="..\tools\share\vala\vapi\gnet-2.0.vapi" />
+				<File Id="gnome_desktop_2.0.deps" Source="..\tools\share\vala\vapi\gnome-desktop-2.0.deps" />
+				<File Id="gnome_desktop_2.0.vapi" Source="..\tools\share\vala\vapi\gnome-desktop-2.0.vapi" />
+				<File Id="gnome_keyring_1.vapi" Source="..\tools\share\vala\vapi\gnome-keyring-1.vapi" />
+				<File Id="gnome_vfs_2.0.vapi" Source="..\tools\share\vala\vapi\gnome-vfs-2.0.vapi" />
+				<File Id="gnutls.vapi" Source="..\tools\share\vala\vapi\gnutls.vapi" />
+				<File Id="gobject_2.0.vapi" Source="..\tools\share\vala\vapi\gobject-2.0.vapi" />
+				<File Id="goocanvas.deps" Source="..\tools\share\vala\vapi\goocanvas.deps" />
+				<File Id="goocanvas.vapi" Source="..\tools\share\vala\vapi\goocanvas.vapi" />
+				<File Id="gsl.vapi" Source="..\tools\share\vala\vapi\gsl.vapi" />
+				<File Id="gstreamer_0.10.deps" Source="..\tools\share\vala\vapi\gstreamer-0.10.deps" />
+				<File Id="gstreamer_0.10.vapi" Source="..\tools\share\vala\vapi\gstreamer-0.10.vapi" />
+				<File Id="gstreamer_audio_0.10.deps" Source="..\tools\share\vala\vapi\gstreamer-audio-0.10.deps" />
+				<File Id="gstreamer_audio_0.10.vapi" Source="..\tools\share\vala\vapi\gstreamer-audio-0.10.vapi" />
+				<File Id="gstreamer_base_0.10.deps" Source="..\tools\share\vala\vapi\gstreamer-base-0.10.deps" />
+				<File Id="gstreamer_base_0.10.vapi" Source="..\tools\share\vala\vapi\gstreamer-base-0.10.vapi" />
+				<File Id="gstreamer_check_0.10.deps" Source="..\tools\share\vala\vapi\gstreamer-check-0.10.deps" />
+				<File Id="gstreamer_check_0.10.vapi" Source="..\tools\share\vala\vapi\gstreamer-check-0.10.vapi" />
+				<File Id="gstreamer_controller_0.10.deps" Source="..\tools\share\vala\vapi\gstreamer-controller-0.10.deps" />
+				<File Id="gstreamer_controller_0.10.vapi" Source="..\tools\share\vala\vapi\gstreamer-controller-0.10.vapi" />
+				<File Id="gstreamer_dataprotocol_0.10.deps" Source="..\tools\share\vala\vapi\gstreamer-dataprotocol-0.10.deps" />
+				<File Id="gstreamer_dataprotocol_0.10.vapi" Source="..\tools\share\vala\vapi\gstreamer-dataprotocol-0.10.vapi" />
+				<File Id="gstreamer_fft_0.10.deps" Source="..\tools\share\vala\vapi\gstreamer-fft-0.10.deps" />
+				<File Id="gstreamer_fft_0.10.vapi" Source="..\tools\share\vala\vapi\gstreamer-fft-0.10.vapi" />
+				<File Id="gstreamer_interfaces_0.10.deps" Source="..\tools\share\vala\vapi\gstreamer-interfaces-0.10.deps" />
+				<File Id="gstreamer_interfaces_0.10.vapi" Source="..\tools\share\vala\vapi\gstreamer-interfaces-0.10.vapi" />
+				<File Id="gstreamer_net_0.10.deps" Source="..\tools\share\vala\vapi\gstreamer-net-0.10.deps" />
+				<File Id="gstreamer_net_0.10.vapi" Source="..\tools\share\vala\vapi\gstreamer-net-0.10.vapi" />
+				<File Id="gstreamer_netbuffer_0.10.deps" Source="..\tools\share\vala\vapi\gstreamer-netbuffer-0.10.deps" />
+				<File Id="gstreamer_netbuffer_0.10.vapi" Source="..\tools\share\vala\vapi\gstreamer-netbuffer-0.10.vapi" />
+				<File Id="gstreamer_pbutils_0.10.deps" Source="..\tools\share\vala\vapi\gstreamer-pbutils-0.10.deps" />
+				<File Id="gstreamer_pbutils_0.10.vapi" Source="..\tools\share\vala\vapi\gstreamer-pbutils-0.10.vapi" />
+				<File Id="gstreamer_riff_0.10.deps" Source="..\tools\share\vala\vapi\gstreamer-riff-0.10.deps" />
+				<File Id="gstreamer_riff_0.10.vapi" Source="..\tools\share\vala\vapi\gstreamer-riff-0.10.vapi" />
+				<File Id="gstreamer_rtp_0.10.deps" Source="..\tools\share\vala\vapi\gstreamer-rtp-0.10.deps" />
+				<File Id="gstreamer_rtp_0.10.vapi" Source="..\tools\share\vala\vapi\gstreamer-rtp-0.10.vapi" />
+				<File Id="gstreamer_rtsp_0.10.deps" Source="..\tools\share\vala\vapi\gstreamer-rtsp-0.10.deps" />
+				<File Id="gstreamer_rtsp_0.10.vapi" Source="..\tools\share\vala\vapi\gstreamer-rtsp-0.10.vapi" />
+				<File Id="gstreamer_sdp_0.10.deps" Source="..\tools\share\vala\vapi\gstreamer-sdp-0.10.deps" />
+				<File Id="gstreamer_sdp_0.10.vapi" Source="..\tools\share\vala\vapi\gstreamer-sdp-0.10.vapi" />
+				<File Id="gstreamer_tag_0.10.deps" Source="..\tools\share\vala\vapi\gstreamer-tag-0.10.deps" />
+				<File Id="gstreamer_tag_0.10.vapi" Source="..\tools\share\vala\vapi\gstreamer-tag-0.10.vapi" />
+				<File Id="gstreamer_video_0.10.deps" Source="..\tools\share\vala\vapi\gstreamer-video-0.10.deps" />
+				<File Id="gstreamer_video_0.10.vapi" Source="..\tools\share\vala\vapi\gstreamer-video-0.10.vapi" />
+				<File Id="gtk_2.0.deps" Source="..\tools\share\vala\vapi\gtk+-2.0.deps" />
+				<File Id="gtk_2.0.vapi" Source="..\tools\share\vala\vapi\gtk+-2.0.vapi" />
+				<File Id="gtkmozembed.deps" Source="..\tools\share\vala\vapi\gtkmozembed.deps" />
+				<File Id="gtkmozembed.vapi" Source="..\tools\share\vala\vapi\gtkmozembed.vapi" />
+				<File Id="gtksourceview_2.0.deps" Source="..\tools\share\vala\vapi\gtksourceview-2.0.deps" />
+				<File Id="gtksourceview_2.0.vapi" Source="..\tools\share\vala\vapi\gtksourceview-2.0.vapi" />
+				<File Id="hal.deps" Source="..\tools\share\vala\vapi\hal.deps" />
+				<File Id="hal.vapi" Source="..\tools\share\vala\vapi\hal.vapi" />
+				<File Id="hildon_1.deps" Source="..\tools\share\vala\vapi\hildon-1.deps" />
+				<File Id="hildon_1.vapi" Source="..\tools\share\vala\vapi\hildon-1.vapi" />
+				<File Id="hildon_fm_2.deps" Source="..\tools\share\vala\vapi\hildon-fm-2.deps" />
+				<File Id="hildon_fm_2.vapi" Source="..\tools\share\vala\vapi\hildon-fm-2.vapi" />
+				<File Id="json_glib_1.0.vapi" Source="..\tools\share\vala\vapi\json-glib-1.0.vapi" />
+				<File Id="libarchive.deps" Source="..\tools\share\vala\vapi\libarchive.deps" />
+				<File Id="libarchive.vapi" Source="..\tools\share\vala\vapi\libarchive.vapi" />
+				<File Id="libbonoboui_2.0.vapi" Source="..\tools\share\vala\vapi\libbonoboui-2.0.vapi" />
+				<File Id="libdaemon.vapi" Source="..\tools\share\vala\vapi\libdaemon.vapi" />
+				<File Id="libepc_1.0.vapi" Source="..\tools\share\vala\vapi\libepc-1.0.vapi" />
+				<File Id="libftdi.deps" Source="..\tools\share\vala\vapi\libftdi.deps" />
+				<File Id="libftdi.vapi" Source="..\tools\share\vala\vapi\libftdi.vapi" />
+				<File Id="libgda_4.0.deps" Source="..\tools\share\vala\vapi\libgda-4.0.deps" />
+				<File Id="libgda_4.0.vapi" Source="..\tools\share\vala\vapi\libgda-4.0.vapi" />
+				<File Id="libgdata.deps" Source="..\tools\share\vala\vapi\libgdata.deps" />
+				<File Id="libgdata.vapi" Source="..\tools\share\vala\vapi\libgdata.vapi" />
+				<File Id="libglade_2.0.deps" Source="..\tools\share\vala\vapi\libglade-2.0.deps" />
+				<File Id="libglade_2.0.vapi" Source="..\tools\share\vala\vapi\libglade-2.0.vapi" />
+				<File Id="libgnome_2.0.vapi" Source="..\tools\share\vala\vapi\libgnome-2.0.vapi" />
+				<File Id="libgnome_menu.vapi" Source="..\tools\share\vala\vapi\libgnome-menu.vapi" />
+				<File Id="libgnomeui_2.0.deps" Source="..\tools\share\vala\vapi\libgnomeui-2.0.deps" />
+				<File Id="libgnomeui_2.0.vapi" Source="..\tools\share\vala\vapi\libgnomeui-2.0.vapi" />
+				<File Id="libgsf_1.deps" Source="..\tools\share\vala\vapi\libgsf-1.deps" />
+				<File Id="libgsf_1.vapi" Source="..\tools\share\vala\vapi\libgsf-1.vapi" />
+				<File Id="libmagic.vapi" Source="..\tools\share\vala\vapi\libmagic.vapi" />
+				<File Id="libnl_1.vapi" Source="..\tools\share\vala\vapi\libnl-1.vapi" />
+				<File Id="libnl_2.0.vapi" Source="..\tools\share\vala\vapi\libnl-2.0.vapi" />
+				<File Id="libnotify.deps" Source="..\tools\share\vala\vapi\libnotify.deps" />
+				<File Id="libnotify.vapi" Source="..\tools\share\vala\vapi\libnotify.vapi" />
+				<File Id="liboobs_1.vapi" Source="..\tools\share\vala\vapi\liboobs-1.vapi" />
+				<File Id="libosso.vapi" Source="..\tools\share\vala\vapi\libosso.vapi" />
+				<File Id="libpanelapplet_2.0.deps" Source="..\tools\share\vala\vapi\libpanelapplet-2.0.deps" />
+				<File Id="libpanelapplet_2.0.vapi" Source="..\tools\share\vala\vapi\libpanelapplet-2.0.vapi" />
+				<File Id="libpq.vapi" Source="..\tools\share\vala\vapi\libpq.vapi" />
+				<File Id="librsvg_2.0.deps" Source="..\tools\share\vala\vapi\librsvg-2.0.deps" />
+				<File Id="librsvg_2.0.vapi" Source="..\tools\share\vala\vapi\librsvg-2.0.vapi" />
+				<File Id="libsexy.deps" Source="..\tools\share\vala\vapi\libsexy.deps" />
+				<File Id="libsexy.vapi" Source="..\tools\share\vala\vapi\libsexy.vapi" />
+				<File Id="libsoup_2.2.vapi" Source="..\tools\share\vala\vapi\libsoup-2.2.vapi" />
+				<File Id="libsoup_2.4.deps" Source="..\tools\share\vala\vapi\libsoup-2.4.deps" />
+				<File Id="libsoup_2.4.vapi" Source="..\tools\share\vala\vapi\libsoup-2.4.vapi" />
+				<File Id="libusb_1.0.deps" Source="..\tools\share\vala\vapi\libusb-1.0.deps" />
+				<File Id="libusb_1.0.vapi" Source="..\tools\share\vala\vapi\libusb-1.0.vapi" />
+				<File Id="libusb.vapi" Source="..\tools\share\vala\vapi\libusb.vapi" />
+				<File Id="libwnck_1.0.deps" Source="..\tools\share\vala\vapi\libwnck-1.0.deps" />
+				<File Id="libwnck_1.0.vapi" Source="..\tools\share\vala\vapi\libwnck-1.0.vapi" />
+				<File Id="libxml_2.0.vapi" Source="..\tools\share\vala\vapi\libxml-2.0.vapi" />
+				<File Id="linux.deps" Source="..\tools\share\vala\vapi\linux.deps" />
+				<File Id="linux.vapi" Source="..\tools\share\vala\vapi\linux.vapi" />
+				<File Id="loudmouth_1.0.vapi" Source="..\tools\share\vala\vapi\loudmouth-1.0.vapi" />
+				<File Id="lua.vapi" Source="..\tools\share\vala\vapi\lua.vapi" />
+				<File Id="mysql.vapi" Source="..\tools\share\vala\vapi\mysql.vapi" />
+				<File Id="pango.deps" Source="..\tools\share\vala\vapi\pango.deps" />
+				<File Id="pango.vapi" Source="..\tools\share\vala\vapi\pango.vapi" />
+				<File Id="pangocairo.deps" Source="..\tools\share\vala\vapi\pangocairo.deps" />
+				<File Id="pangocairo.vapi" Source="..\tools\share\vala\vapi\pangocairo.vapi" />
+				<File Id="poppler_glib.deps" Source="..\tools\share\vala\vapi\poppler-glib.deps" />
+				<File Id="poppler_glib.vapi" Source="..\tools\share\vala\vapi\poppler-glib.vapi" />
+				<File Id="posix.vapi" Source="..\tools\share\vala\vapi\posix.vapi" />
+				<File Id="raptor.vapi" Source="..\tools\share\vala\vapi\raptor.vapi" />
+				<File Id="rasqal.vapi" Source="..\tools\share\vala\vapi\rasqal.vapi" />
+				<File Id="readline.vapi" Source="..\tools\share\vala\vapi\readline.vapi" />
+				<File Id="rest.deps" Source="..\tools\share\vala\vapi\rest.deps" />
+				<File Id="rest.vapi" Source="..\tools\share\vala\vapi\rest.vapi" />
+				<File Id="sdl_gfx.vapi" Source="..\tools\share\vala\vapi\sdl-gfx.vapi" />
+				<File Id="sdl_image.vapi" Source="..\tools\share\vala\vapi\sdl-image.vapi" />
+				<File Id="sdl_mixer.vapi" Source="..\tools\share\vala\vapi\sdl-mixer.vapi" />
+				<File Id="sdl_net.vapi" Source="..\tools\share\vala\vapi\sdl-net.vapi" />
+				<File Id="sdl_ttf.vapi" Source="..\tools\share\vala\vapi\sdl-ttf.vapi" />
+				<File Id="sdl.vapi" Source="..\tools\share\vala\vapi\sdl.vapi" />
+				<File Id="sqlite3.vapi" Source="..\tools\share\vala\vapi\sqlite3.vapi" />
+				<File Id="taglib_c.vapi" Source="..\tools\share\vala\vapi\taglib_c.vapi" />
+				<File Id="tiff.vapi" Source="..\tools\share\vala\vapi\tiff.vapi" />
+				<File Id="tracker_indexer_module_1.0.vapi" Source="..\tools\share\vala\vapi\tracker-indexer-module-1.0.vapi" />
+				<File Id="twitter_glib_1.0.deps" Source="..\tools\share\vala\vapi\twitter-glib-1.0.deps" />
+				<File Id="twitter_glib_1.0.vapi" Source="..\tools\share\vala\vapi\twitter-glib-1.0.vapi" />
+				<File Id="unique_1.0.deps" Source="..\tools\share\vala\vapi\unique-1.0.deps" />
+				<File Id="unique_1.0.vapi" Source="..\tools\share\vala\vapi\unique-1.0.vapi" />
+				<File Id="v4l2.vapi" Source="..\tools\share\vala\vapi\v4l2.vapi" />
+				<File Id="vala_1.0.vapi" Source="..\tools\share\vala\vapi\vala-1.0.vapi" />
+				<File Id="vte.deps" Source="..\tools\share\vala\vapi\vte.deps" />
+				<File Id="vte.vapi" Source="..\tools\share\vala\vapi\vte.vapi" />
+				<File Id="webkit_1.0.deps" Source="..\tools\share\vala\vapi\webkit-1.0.deps" />
+				<File Id="webkit_1.0.vapi" Source="..\tools\share\vala\vapi\webkit-1.0.vapi" />
+				<File Id="x11.vapi" Source="..\tools\share\vala\vapi\x11.vapi" />
+				<File Id="xcb.vapi" Source="..\tools\share\vala\vapi\xcb.vapi" />
+				<File Id="zlib.vapi" Source="..\tools\share\vala\vapi\zlib.vapi" />
+			</Component>
 		</DirectoryRef>
 
 		<ComponentGroup Id="Tools">
+			<ComponentRef Id="glib" />
 			<ComponentRef Id="pkgconfig" />
+			<ComponentRef Id="vala" />
+			<ComponentRef Id="vapi" />
 			<ComponentRef Id="sed" />
 			<ComponentRef Id="bisonflex_dist" />
 		</ComponentGroup>
