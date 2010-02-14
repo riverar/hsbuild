@@ -67,6 +67,8 @@ namespace HSBuild.VCS
         {
             Uri uri = new Uri(new Uri(m_repo.HRef), m_branch.Module);
             taskQueue.QueueTask(new ConsoleTask(m_gitEXE, new string[] { "clone", uri.AbsoluteUri, m_branch.CheckoutDir }, m_checkoutRoot));
+            if (!string.IsNullOrEmpty(m_branch.Revision))
+                taskQueue.QueueTask(new ConsoleTask(m_gitEXE, new string[] { "checkout", m_branch.Revision, "-b", "hsbuild" }, BranchRoot));
         }
 
         protected override void Update(ITaskQueue taskQueue)
