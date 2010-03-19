@@ -37,10 +37,6 @@
       <HSBuildTemplates       Condition=" '$(HSBuildTemplates)' == '' "             >$(HSBuildTasksDir)templates\$(Platform)\</HSBuildTemplates>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(HSBuildToolPath)' == '' ">
-      <HSBuildToolPath        Condition=" '$(HSBUILD_INSTALLED_PATH)' != '' "       >$(HSBUILD_INSTALLED_PATH)tools\bin\</HSBuildToolPath>
-  </PropertyGroup>
-
   <Import     Project="$(MSBuildToolsPath)\Microsoft.Common.Tasks" />
   <UsingTask  TaskName="Substitute"                AssemblyFile="$(HSBuildTasksPath)" />
   <UsingTask  TaskName="Aggregator"                AssemblyFile="$(HSBuildTasksPath)" />
