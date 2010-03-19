@@ -121,8 +121,8 @@
 
       <Exec
         Command="
-          &quot;$(GLibGenmarshalExecPath)&quot; --header%(GLibGenmarshal.Switches) --prefix=%(GLibGenmarshal.Prefix) %(GLibGenmarshal.Identity) &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h&quot;
-          &quot;$(GLibGenmarshalExecPath)&quot; --body%(GLibGenmarshal.Switches) --prefix=%(GLibGenmarshal.Prefix) %(GLibGenmarshal.Identity) &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c&quot;
+          &quot;$(GLibGenmarshalExecPath)&quot; --header%(GLibGenmarshal.Switches) --prefix=%(GLibGenmarshal.Prefix) &quot;%(GLibGenmarshal.Identity)&quot; &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h&quot;
+          &quot;$(GLibGenmarshalExecPath)&quot; --body%(GLibGenmarshal.Switches) --prefix=%(GLibGenmarshal.Prefix) &quot;%(GLibGenmarshal.Identity)&quot; &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c&quot;
           "
         />
 
@@ -172,7 +172,7 @@
       <Exec
         WorkingDirectory="%(_GLibMkenums.BaseDirectory)"
         Command="
-          perl.exe &quot;$(GLibMkenumsExecPath)&quot; --template %(_GLibMkenums.Identity) %(_GLibMkenums.InputHeaders) &gt; &quot;$(_IntDirAbs)%(_GLibMkenums.SubDirectory)/%(_GLibMkenums.Filename)&quot;
+          perl.exe &quot;$(GLibMkenumsExecPath)&quot; --template &quot;%(_GLibMkenums.Identity)&quot; %(_GLibMkenums.InputHeaders) &gt; &quot;$(_IntDirAbs)%(_GLibMkenums.SubDirectory)/%(_GLibMkenums.Filename)&quot;
           "
         />
 
