@@ -41,8 +41,12 @@ namespace HSBuild.Tasks
 
             if (platform != null && !string.IsNullOrEmpty(platform.ToString()))
                 args.Add("/p:Platform=" + platform.ToString());
+
             if (conf != null && !string.IsNullOrEmpty(conf.ToString()))
                 args.Add("/p:Configuration=" + conf);
+            else if (!string.IsNullOrEmpty(cfg.Configuration))
+                args.Add("/p:Configuration=" + cfg.Configuration);
+
             if (buildArgs.TryGetValue("Verbose", out none))
                 args.Add("/v:d");
 
