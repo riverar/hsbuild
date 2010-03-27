@@ -30,6 +30,7 @@ namespace HSBuild.Core
             CHECKOUT_ROOT,
             MODULESET,
             MODULES,
+            CONTINUE_ON_ERROR,
         }
 
         public static Config CreateDefaultConfig(string[] modules)
@@ -160,6 +161,7 @@ namespace HSBuild.Core
             m_bag = new Dictionary<Variable, string>();
             m_bag.Add(Variable.PREFIX, "__build__");
             m_bag.Add(Variable.CHECKOUT_ROOT, Environment.CurrentDirectory);
+            m_bag.Add(Variable.CONTINUE_ON_ERROR, "");
             m_bag.Add(Variable.MODULESET, "");
             m_bag.Add(Variable.MODULES, modules == null ? "" : string.Join(" ", modules));
         }
@@ -204,6 +206,15 @@ namespace HSBuild.Core
             get
             {
                 return m_bag[Variable.MODULESET];
+            }
+        }
+
+        public bool ContinueOnError
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(m_bag[Variable.CONTINUE_ON_ERROR]) &&
+                    string.Compare(m_bag[Variable.CONTINUE_ON_ERROR], "TRUE", true) == 0;
             }
         }
 
