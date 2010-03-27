@@ -35,7 +35,7 @@ namespace HSBuild.Tasks
         {
             List<string> args = new List<string>();
 
-            object platform, conf;
+            object platform, conf, none;
             buildArgs.TryGetValue("Platform", out platform);
             buildArgs.TryGetValue("Configuration", out conf);
 
@@ -43,6 +43,8 @@ namespace HSBuild.Tasks
                 args.Add("/p:Platform=" + platform.ToString());
             if (conf != null && !string.IsNullOrEmpty(conf.ToString()))
                 args.Add("/p:Configuration=" + conf);
+            if (buildArgs.TryGetValue("Verbose", out none))
+                args.Add("/v:d");
 
             // FIXME: add opt more switches...
 

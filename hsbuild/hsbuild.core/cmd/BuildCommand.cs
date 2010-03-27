@@ -32,6 +32,7 @@ namespace HSBuild.Commands
         {
             new OptionEntrySpec("Configuration", "-c", "--configuration", OptionEntrySpec.OptionType.String),
             new OptionEntrySpec("Platform", "-p", "--platform", OptionEntrySpec.OptionType.String),
+            new OptionEntrySpec("Verbose", "-v", "--verbose", OptionEntrySpec.OptionType.None),
         };
 
         internal override OptionEntrySpec[] GetOptionEntrySpecs()
