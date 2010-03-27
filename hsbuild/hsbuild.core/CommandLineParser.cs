@@ -205,7 +205,12 @@ namespace HSBuild.Core
         private static Command ParseCommand(Config config, ref LinkedList<string> list)
         {
             if (list.Count <= 0)
-                return new BuildCommand(config);
+            {
+                if (config.Modules == null || config.Modules.Length <= 0)
+                    return new HelpCommand(config);
+                else
+                    return new BuildCommand(config);
+            }
 
             Command ret = null;
 
@@ -216,7 +221,7 @@ namespace HSBuild.Core
                 case "--help":
                 case "help":
                 case "-h":
-                    ret = new HelpCommand();
+                    ret = new HelpCommand(config);
                     break;
                 //case "clean":
                 //    ret =  new CleanCommand(config);

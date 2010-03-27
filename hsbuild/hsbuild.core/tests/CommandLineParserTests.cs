@@ -32,7 +32,7 @@ namespace HSBuild.Core.Tests
             Command cmd = CommandLineParser.Parse(null);
 
             Assert.IsNotNull(cmd);
-            Assert.IsInstanceOf(typeof(BuildCommand), cmd);
+            Assert.IsInstanceOf(typeof(HelpCommand), cmd);
             Assert.AreEqual(0, cmd.Arguments.Count);
         }
 
@@ -69,6 +69,7 @@ namespace HSBuild.Core.Tests
                 Command cmd = CommandLineParser.Parse("--moduleset my.modules".Split(' '));
 
                 Assert.IsNotNull(cmd);
+                Assert.IsNotNull(cmd.Config);
                 Assert.AreEqual("my.modules", cmd.Config.ModuleSet);
             }
 
@@ -78,6 +79,7 @@ namespace HSBuild.Core.Tests
                 Command cmd = CommandLineParser.Parse("--moduleset=\"my first.modules\"".Split(' '));
 
                 Assert.IsNotNull(cmd);
+                Assert.IsNotNull(cmd.Config);
                 Assert.AreEqual("my first.modules", cmd.Config.ModuleSet);
             }
 

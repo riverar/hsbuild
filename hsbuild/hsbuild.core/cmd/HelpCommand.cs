@@ -24,8 +24,8 @@ namespace HSBuild.Commands
 {
     public class HelpCommand : Command
     {
-        public HelpCommand()
-            : base(null)
+        public HelpCommand(Config config)
+            : base(config)
         {
         }
 
