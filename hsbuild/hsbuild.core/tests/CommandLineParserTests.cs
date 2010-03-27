@@ -45,6 +45,7 @@ namespace HSBuild.Core.Tests
             Assert.IsInstanceOf(typeof(BuildCommand), cmd);
             Assert.AreEqual(1, cmd.Config.Modules.Length);
             Assert.Contains("mymodule1", cmd.Config.Modules);
+            Assert.AreEqual("Release", cmd.Config.Configuration);
         }
 
         [Test]
