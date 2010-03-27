@@ -43,7 +43,7 @@ namespace HSBuild.Console
 
         #region ITaskEngine Members
 
-        public bool ExecuteTaskQueue(ITask[] queue, IOutputEngine output)
+        public bool ExecuteTaskQueue(ITask[] queue, IOutputEngine output, Config config)
         {
             if (queue == null)
                 return false;
@@ -52,8 +52,19 @@ namespace HSBuild.Console
             {
                 int ret = t.Execute(output);
 
-                output.WriteOutput(ret == 0 ? OutputType.Debug : OutputType.Error,
-                    string.Format("Task '{0}' executed with error code {1}.", t.ToString(), ret));
+                if (ret == 0)
+                {
+                    output.WriteOutput(OutputType.Debug,
+                        string.Format("Task '{0}' executed successfully.", t.ToString()));
+                }
+                else
+                {
+                    output.WriteOutput(OutputType.Error,
+                        string.Format("Task '{0}' executed with error code {1}.", t.ToString(), ret));
+
+                    if (config == null || !config.ContinueOnError)
+                        break;
+                }
             }
 
             return true;
@@ -124,11 +135,15 @@ namespace HSBuild.Console
                 ConsoleTaskQueue queueEngine = new ConsoleTaskQueue();
                 FileModuleSetLoader loader = new FileModuleSetLoader();
                 ConsoleOutputEngine output = new ConsoleOutputEngine();
+                Config cfg = cmd.Config;
 
-                if (cmd.Config != null)
-                    cmd.Config.SetupEnvironment();
+                if (cfg != null)
+                    cfg.SetupEnvironment();
+                else
+                    cfg = Config.CreateDefaultConfig(null);
                 cmd.ExecuteCommand(queueEngine, loader, output);
-                queueEngine.ExecuteTaskQueue(queueEngine.TaskQueue, output);
+
+                queueEngine.ExecuteTaskQueue(queueEngine.TaskQueue, output, cfg);
             }
         }
     }

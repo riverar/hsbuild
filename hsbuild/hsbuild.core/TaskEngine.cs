@@ -33,6 +33,6 @@ namespace HSBuild.Core
 
     public interface ITaskEngine
     {
-        bool ExecuteTaskQueue(ITask[] queue, IOutputEngine output);
+        bool ExecuteTaskQueue(ITask[] queue, IOutputEngine output, Config config);
     }
 }
