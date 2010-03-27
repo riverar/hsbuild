@@ -45,17 +45,27 @@ namespace HSBuild.Tasks
         {
             output.WriteOutput(OutputType.Heading, "Download: " + m_uri.ToString());
 
-            WebClient client = new WebClient();
-            Stream stream_in = client.OpenRead(m_uri);
-            if (!stream_in.CanRead)
-                return 1;
-
             long lenStream = -1;
-            string lenContent = client.ResponseHeaders.Get("Content-Length");
-            if (!string.IsNullOrEmpty(lenContent))
+            Stream stream_in;
+
+            try
             {
-                output.WriteOutput(OutputType.Info, string.Format("Size: {0} bytes", lenContent));
-                lenStream = long.Parse(lenContent);
+                WebClient client = new WebClient();
+                stream_in = client.OpenRead(m_uri);
+                if (!stream_in.CanRead)
+                    return 1;
+
+                string lenContent = client.ResponseHeaders.Get("Content-Length");
+                if (!string.IsNullOrEmpty(lenContent))
+                {
+                    output.WriteOutput(OutputType.Info, string.Format("Size: {0} bytes", lenContent));
+                    lenStream = long.Parse(lenContent);
+                }
+            }
+            catch (WebException wex)
+            {
+                output.WriteOutput(OutputType.Error, wex.Message);
+                return -1;
             }
 
             Stream stream_out = File.Create(m_local);
