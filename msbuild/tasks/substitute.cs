@@ -18,6 +18,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -149,12 +150,12 @@ namespace HSBuild.Tasks
         return null;
       }
 
-      StringBuilder buffer = new StringBuilder(input.ReadToEnd());
+      string buffer = input.ReadToEnd();
 
       input.Close();
 
       foreach (ITaskItem exp in expressions)
-        ExecuteExpression(buffer, exp.ItemSpec);
+        buffer = ExecuteExpression(buffer, exp.ItemSpec);
 
       output.Write(buffer);
       output.Close();
@@ -185,20 +186,19 @@ namespace HSBuild.Tasks
       return Path.Combine(outdir, Path.GetFileName(file));
     }
 
-    private void ExecuteExpression(StringBuilder buffer, string exp)
+    private string ExecuteExpression(string buffer, string exp)
     {
       switch (exp[0])
       {
         case 's':
-          ExecuteSubstitution(buffer, exp);
-          break;
+          return ExecuteSubstitution(buffer, exp);
         default:
           Log.LogErrorFromException(new NotImplementedException(),false, true, exp);
-          break;
+          return buffer;
       }
     }
 
-    private void ExecuteSubstitution(StringBuilder buffer, string exp)
+    private string ExecuteSubstitution(string buffer, string exp)
     {
       string replacement = null;
       string pattern = null;
@@ -210,7 +210,9 @@ namespace HSBuild.Tasks
       else if (replacement == null)
         Log.LogError("Couldn't find replacement in expression", exp);
       else
-        buffer.Replace(pattern, replacement);
+        return Regex.Replace(buffer, pattern, replacement);
+
+      return buffer;
     }
 
     private void ParseSubstitution(string exp, ref string pattern, ref string replacement)
