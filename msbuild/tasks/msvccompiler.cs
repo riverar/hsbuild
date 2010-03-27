@@ -69,7 +69,13 @@ namespace HSBuild.Tasks
     public ITaskItem[] AdditionalIncludeDirectories
     {
       get { return this.includeDirectories; }
-      set { this.includeDirectories = value; }
+      set
+      {
+        this.includeDirectories = value;
+
+        foreach (ITaskItem dir in this.includeDirectories)
+          dir.ItemSpec = dir.ItemSpec.Trim('"', '\'');
+      }
     }
 
     public ITaskItem[] PreprocessorDefinitions
@@ -345,7 +351,7 @@ namespace HSBuild.Tasks
       if (AdditionalIncludeDirectories != null)
       {
         foreach (ITaskItem dir in AdditionalIncludeDirectories)
-          builder.AppendSwitchUnquotedIfNotNull("/I", dir);
+          builder.AppendSwitchIfNotNull("/I", dir);
       }
 
       builder.AppendFileNamesIfNotNull(inputfiles, " ");
