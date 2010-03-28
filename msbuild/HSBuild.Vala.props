@@ -5,7 +5,7 @@
 
   <ItemDefinitionGroup>
     <ValaCompile>
-      <LibraryName Condition=" '$(OutputType)' == 'dll' ">$(AssemblyName)</LibraryName>
+      <LibraryName Condition=" '$(OutputType)' != 'exe' AND '$(OutputType)' != 'winexe' ">$(AssemblyName)</LibraryName>
       <VapiDirectory>$(OutDir)$(DataOutputSubDir)vala/vapi</VapiDirectory>
     </ValaCompile>
     <InstallInclude>
