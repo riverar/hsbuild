@@ -33,17 +33,19 @@ namespace HSBuild.Core
             Filename,
         }
 
-        public OptionEntrySpec(string spec, string shortName, string longName, OptionType type)
+        public OptionEntrySpec(string spec, string shortName, string longName, OptionType type, string desc)
         {
             m_spec = spec;
             m_short = shortName;
             m_long = longName;
             m_type = type;
+            m_desc = desc;
         }
 
         private string m_spec;
         private string m_short;
         private string m_long;
+        private string m_desc;
         private OptionType m_type;
 
         public string Specifier
@@ -67,6 +69,14 @@ namespace HSBuild.Core
             get
             {
                 return m_long;
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                return m_desc;
             }
         }
 
@@ -104,9 +114,12 @@ namespace HSBuild.Core
 
         private static OptionEntrySpec[] globalOptions =
         {
-            new OptionEntrySpec("file", "-f", "--file", OptionEntrySpec.OptionType.Filename),
-            new OptionEntrySpec("moduleset", "-m", "--moduleset", OptionEntrySpec.OptionType.Filename),
-            new OptionEntrySpec("no-interact", null, "--no-interact", OptionEntrySpec.OptionType.None)
+            new OptionEntrySpec("file", "-f", "--file", OptionEntrySpec.OptionType.Filename,
+                "TODO"),
+            new OptionEntrySpec("moduleset", "-m", "--moduleset", OptionEntrySpec.OptionType.Filename,
+                "TODO"),
+            new OptionEntrySpec("no-interact", null, "--no-interact", OptionEntrySpec.OptionType.None,
+                "TODO")
         };
 
         private static Dictionary<OptionEntrySpec, object> ParseOptions(OptionEntrySpec[] entries, ref LinkedList<string> list)
@@ -243,6 +256,12 @@ namespace HSBuild.Core
                     break;
                 default:
                     throw new ArgumentException("Command word " + cmdWord + " not recognized.");
+            }
+
+            foreach (string it in list)
+            {
+                if (string.Compare(it, "--help", true) == 0 || string.Compare(it, "-h") == 0)
+                    return new HelpCommand(ret);
             }
 
             ret.SetParsedArguments(ParseOptions(ret.GetOptionEntrySpecs(), ref list));

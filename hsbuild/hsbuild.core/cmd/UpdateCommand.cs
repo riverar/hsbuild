@@ -36,6 +36,12 @@ namespace HSBuild.Commands
             return null;
         }
 
+        public override void PrintHelp(IOutputEngine output)
+        {
+            PrintCommandShortHelp(output, Name, Description);
+            PrintOptionEntriesHelp(output);
+        }
+
         protected override void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output)
         {
             if (!LoadModuleSetAndSetupModules(loader, output))

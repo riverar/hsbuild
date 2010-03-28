@@ -41,6 +41,12 @@ namespace HSBuild.Commands
             return ShellCommandOptionEntries;
         }
 
+        public override void PrintHelp(IOutputEngine output)
+        {
+            PrintCommandShortHelp(output, Name, Description);
+            PrintOptionEntriesHelp(output);
+        }
+
         protected override void Execute(ITaskQueue taskqueue, IModuleSetLoader loader, IOutputEngine output)
         {
             output.WriteOutput(OutputType.Heading, "Starting HSBuild shell...");

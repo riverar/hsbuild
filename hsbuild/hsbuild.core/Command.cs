@@ -83,6 +83,43 @@ namespace HSBuild.Core
             m_arguments = args;
         }
 
+        protected void PrintCommandShortHelp(IOutputEngine output, string name, string desc)
+        {
+            output.WriteOutput(OutputType.Heading, "\t" + name);
+            foreach (string line in desc.Split('\n'))
+                output.WriteOutput(OutputType.Normal, "\t\t" + line);
+        }
+
+        protected void PrintOptionEntriesHelp(IOutputEngine output)
+        {
+            foreach (OptionEntrySpec entry in GetOptionEntrySpecs())
+            {
+                string line = "";
+                if (!string.IsNullOrEmpty(entry.ShortName))
+                    line += entry.ShortName + " , ";
+                line += entry.LongName;
+                switch (entry.Type)
+                {
+                    case OptionEntrySpec.OptionType.Filename:
+                        line += "=<filename>";
+                        break;
+                    case OptionEntrySpec.OptionType.String:
+                        line += "=<string>";
+                        break;
+                    case OptionEntrySpec.OptionType.Number:
+                        line += "=<number>";
+                        break;
+                    default:
+                        break;
+                }
+
+                foreach (string desc in entry.Description.Split('\n'))
+                    output.WriteOutput(OutputType.Info, "\t\t  " + desc);
+                output.WriteOutput(OutputType.Info, "\t\t\t" + line);
+            }
+        }
+
+        public abstract void PrintHelp(IOutputEngine output);
         protected abstract void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output);
         public void ExecuteCommand(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output)
         {

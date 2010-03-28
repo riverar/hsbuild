@@ -33,12 +33,19 @@ namespace HSBuild.Commands
 
         private static OptionEntrySpec[] ListCommandOptionEntries =
         {
-            new OptionEntrySpec("all", "-a", "--all-modules", OptionEntrySpec.OptionType.None),
+            new OptionEntrySpec("all", "-a", "--all-modules", OptionEntrySpec.OptionType.None,
+                "Don't filter, but list all modules"),
         };
 
         internal override OptionEntrySpec[] GetOptionEntrySpecs()
         {
             return ListCommandOptionEntries;
+        }
+
+        public override void PrintHelp(IOutputEngine output)
+        {
+            PrintCommandShortHelp(output, Name, Description);
+            PrintOptionEntriesHelp(output);
         }
 
         protected override void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output)

@@ -34,6 +34,11 @@ namespace HSBuild.Core.Tests
             m_moduleset = moduleset;
         }
 
+        public override void PrintHelp(IOutputEngine output)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output)
         {
             throw new NotImplementedException();

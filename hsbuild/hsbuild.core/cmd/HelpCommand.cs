@@ -29,6 +29,12 @@ namespace HSBuild.Commands
         {
         }
 
+        public HelpCommand(Command cmd)
+            : base(null)
+        {
+            m_cmd = cmd;
+        }
+
         public HelpCommand(Exception ex)
             : base(null)
         {
@@ -38,21 +44,10 @@ namespace HSBuild.Commands
         public static string Name { get { return "help"; } }
         public static string Description { get { return "Prints this help information."; } }
 
-        private void PrintCommandShortHelp(IOutputEngine output, string name, string desc)
+        public override void PrintHelp(IOutputEngine output)
         {
-            output.WriteOutput(OutputType.Heading, "\t" + name);
-            foreach (string line in desc.Split('\n'))
-                output.WriteOutput(OutputType.Normal, "\t\t" + line);
-        }
-
-        protected override void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output)
-        {
-            if (ErrorMsg != null)
-                output.WriteOutput(OutputType.Error, ErrorMsg);
-
-            output.WriteOutput(OutputType.Normal, "HSBuild " + Assembly.GetExecutingAssembly().GetName().Version.ToString());
-            output.WriteOutput(OutputType.Info, "  by Haakon Sporsheim <haakon.sporsheim@gmail.com>");
             output.WriteOutput(OutputType.Heading, "\nCommands:");
+            output.WriteOutput(OutputType.Info, "  for individual command help run hsbuild <command> --help");
             PrintCommandShortHelp(output, ListCommand.Name, ListCommand.Description);
             PrintCommandShortHelp(output, UpdateCommand.Name, UpdateCommand.Description);
             PrintCommandShortHelp(output, BuildCommand.Name, BuildCommand.Description);
@@ -63,6 +58,21 @@ namespace HSBuild.Commands
             //output.WriteOutput(OutputType.Normal, "\tinfo:");
         }
 
+        protected override void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output)
+        {
+            if (ErrorMsg != null)
+                output.WriteOutput(OutputType.Error, ErrorMsg);
+
+            output.WriteOutput(OutputType.Normal, "HSBuild " + Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            output.WriteOutput(OutputType.Info, "  by Haakon Sporsheim <haakon.sporsheim@gmail.com>");
+
+            if (m_cmd != null)
+                m_cmd.PrintHelp(output);
+            else
+                this.PrintHelp(output);
+        }
+
+        private Command m_cmd = null;
         private Exception m_ex = null;
         public string ErrorMsg { get { return m_ex == null ? null : m_ex.Message; } }
     }

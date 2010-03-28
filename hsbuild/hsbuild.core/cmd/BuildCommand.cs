@@ -33,14 +33,23 @@ namespace HSBuild.Commands
 
         private static OptionEntrySpec[] BuildCommandOptionEntries =
         {
-            new OptionEntrySpec("Configuration", "-c", "--configuration", OptionEntrySpec.OptionType.String),
-            new OptionEntrySpec("Platform", "-p", "--platform", OptionEntrySpec.OptionType.String),
-            new OptionEntrySpec("Verbose", "-v", "--verbose", OptionEntrySpec.OptionType.None),
+            new OptionEntrySpec("Configuration", "-c", "--configuration", OptionEntrySpec.OptionType.String,
+                "Specify configuration to build <Debug|Release> Defaults to Release."),
+            new OptionEntrySpec("Platform", "-p", "--platform", OptionEntrySpec.OptionType.String,
+                "Specify platform to build <x86|x86_64> Defaults to build machine platform."),
+            new OptionEntrySpec("Verbose", "-v", "--verbose", OptionEntrySpec.OptionType.None,
+                "Use verbose output"),
         };
 
         internal override OptionEntrySpec[] GetOptionEntrySpecs()
         {
             return BuildCommandOptionEntries;
+        }
+
+        public override void PrintHelp(IOutputEngine output)
+        {
+            PrintCommandShortHelp(output, Name, Description);
+            PrintOptionEntriesHelp(output);
         }
 
         protected override void Execute(ITaskQueue taskqueue, IModuleSetLoader loader, IOutputEngine output)
