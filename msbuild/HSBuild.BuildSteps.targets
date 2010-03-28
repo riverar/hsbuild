@@ -68,6 +68,14 @@
         />
   </Target>
 
+  <Target
+    Name="DeleteIntDir"
+    >
+      <RemoveDir
+        Directories="$(IntDir)"
+        />
+  </Target>
+
   <!-- ======================================================================== -->
   <!--                              Common targets                              -->
   <!-- ======================================================================== -->
@@ -161,6 +169,7 @@
       BeforeClean;
       PrepareFileWrites;
       DeleteFileWrites;
+      DeleteIntDir;
       AfterClean
     </CleanDependsOn>
   </PropertyGroup>
