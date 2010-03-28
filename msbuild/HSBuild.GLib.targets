@@ -99,16 +99,16 @@
         />
 
       <WriteLinesToFile
-        File="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h"
+        File="$(IntDir)%(GLibGenmarshal.SubDirectory)/_%(GLibGenmarshal.Filename).h"
         Lines="%(GLibGenmarshal.HeaderPrependLines)"
         Overwrite="true"
-       />
+        />
 
       <WriteLinesToFile
-        File="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c"
+        File="$(IntDir)%(GLibGenmarshal.SubDirectory)/_%(GLibGenmarshal.Filename).c"
         Lines="%(GLibGenmarshal.BodyPrependLines)"
         Overwrite="true"
-       />
+        />
 
       <ItemGroup>
         <GlibGenmarshal>
@@ -121,22 +121,29 @@
 
       <Exec
         Command="
-          &quot;$(GLibGenmarshalExecPath)&quot; --header%(GLibGenmarshal.Switches) --prefix=%(GLibGenmarshal.Prefix) &quot;%(GLibGenmarshal.Identity)&quot; &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h&quot;
-          &quot;$(GLibGenmarshalExecPath)&quot; --body%(GLibGenmarshal.Switches) --prefix=%(GLibGenmarshal.Prefix) &quot;%(GLibGenmarshal.Identity)&quot; &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c&quot;
+          &quot;$(GLibGenmarshalExecPath)&quot; --header%(GLibGenmarshal.Switches) --prefix=%(GLibGenmarshal.Prefix) &quot;%(GLibGenmarshal.Identity)&quot; &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/_%(GLibGenmarshal.Filename).h&quot;
+          &quot;$(GLibGenmarshalExecPath)&quot; --body%(GLibGenmarshal.Switches) --prefix=%(GLibGenmarshal.Prefix) &quot;%(GLibGenmarshal.Identity)&quot; &gt;&gt; &quot;$(IntDir)%(GLibGenmarshal.SubDirectory)/_%(GLibGenmarshal.Filename).c&quot;
           "
         />
 
       <WriteLinesToFile
-        File="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h"
+        File="$(IntDir)%(GLibGenmarshal.SubDirectory)/_%(GLibGenmarshal.Filename).h"
         Lines="%(GLibGenmarshal.HeaderAppendLines)"
         Condition=" '%(GLibGenmarshal.HeaderAppendLines)' != '' "
-       />
+        />
 
       <WriteLinesToFile
-        File="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c"
+        File="$(IntDir)%(GLibGenmarshal.SubDirectory)/_%(GLibGenmarshal.Filename).c"
         Lines="%(GLibGenmarshal.BodyAppendLines)"
         Condition=" '%(GLibGenmarshal.BodyAppendLines)' != '' "
-       />
+        />
+
+      <Copy2
+        SourceFiles="$(IntDir)%(GLibGenmarshal.SubDirectory)/_%(GLibGenmarshal.Filename).h"
+        DestinationFiles="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).h" />
+      <Copy2
+        SourceFiles="$(IntDir)%(GLibGenmarshal.SubDirectory)/_%(GLibGenmarshal.Filename).c"
+        DestinationFiles="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c" />
 
       <ItemGroup>
         <Compile Condition=" '%(GLibGenmarshal.Compile)' == 'true' " Include="$(IntDir)%(GLibGenmarshal.SubDirectory)/%(GLibGenmarshal.Filename).c" />
@@ -172,9 +179,13 @@
       <Exec
         WorkingDirectory="%(_GLibMkenums.BaseDirectory)"
         Command="
-          perl.exe &quot;$(GLibMkenumsExecPath)&quot; --template &quot;%(_GLibMkenums.Identity)&quot; %(_GLibMkenums.InputHeaders) &gt; &quot;$(_IntDirAbs)%(_GLibMkenums.SubDirectory)/%(_GLibMkenums.Filename)&quot;
+          perl.exe &quot;$(GLibMkenumsExecPath)&quot; --template &quot;%(_GLibMkenums.Identity)&quot; %(_GLibMkenums.InputHeaders) &gt; &quot;$(_IntDirAbs)%(_GLibMkenums.SubDirectory)/_%(_GLibMkenums.Filename)&quot;
           "
         />
+
+      <Copy2
+        SourceFiles="$(IntDir)%(GLibMkenums.SubDirectory)/_%(GLibMkenums.Filename)"
+        DestinationFiles="$(IntDir)%(GLibMkenums.SubDirectory)/%(GLibMkenums.Filename)" />
 
       <ItemGroup>
         <_MkenumsOut Include="$(IntDir)%(GLibMkenums.SubDirectory)/%(GLibMkenums.Filename)">

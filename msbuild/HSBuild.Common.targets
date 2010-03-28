@@ -40,6 +40,7 @@
   <Import     Project="$(MSBuildToolsPath)\Microsoft.Common.Tasks" />
   <UsingTask  TaskName="Substitute"                AssemblyFile="$(HSBuildTasksPath)" />
   <UsingTask  TaskName="Aggregator"                AssemblyFile="$(HSBuildTasksPath)" />
+  <UsingTask  TaskName="Copy2"                     AssemblyFile="$(HSBuildTasksPath)" />
 
   <Import     Project="HSBuild.PkgConfig.targets" />
   <Import     Project="HSBuild.BuildSteps.targets" />
@@ -71,8 +72,6 @@
           <ConfigPreprocessor Include="PACKAGE_STRING &quot;$(PackageString)&quot;" />
           <ConfigPreprocessor Include="PACKAGE_VERSION &quot;$(Version)&quot;" />
           <ConfigPreprocessor Include="PACKAGE_DATADIR &quot;inavlid-for-win32&quot;" />
-
-          <_DestConfigHeaderItem Include="$(IntDir)config.h" />
       </ItemGroup>
 
       <!-- Always generate a new _config.h and give it the same modified time as config.h -->
@@ -94,23 +93,12 @@
         Overwrite="false"
         />
 
-      <Touch
-        Files="$(IntDir)_config.h"
-        Time="%(_DestConfigHeaderItem.ModifiedTime)"
-        Condition=" Exists('%(_DestConfigHeaderItem.Identity)') "
-        />
-
-      <!-- _config.h should have the same modified time as config.h.
-            So <Copy /> should only copy if config.h doesn't exist or size is different.
-        -->
-      <Copy
+      <Copy2
         SourceFiles="$(IntDir)_config.h"
-        Condition=" Exists('$(IntDir)_config.h') "
-        DestinationFiles="@(_DestConfigHeaderItem)"
-        SkipUnchangedFiles="true"
+        DestinationFiles="$(IntDir)config.h"
         >
-          <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
-      </Copy>
+          <Output TaskParameter="CopiedFiles" ItemName="FileWrites"/>
+      </Copy2>
 
       <Delete
         Files="$(IntDir)_config.h"
@@ -219,13 +207,11 @@
       <MakeDir Directories="$(OutDir)$(DataOutputSubDir)" />
 
       <!-- Copy all installable data files. -->
-      <Copy
+      <Copy2
         SourceFiles="@(InstallData)"
-        DestinationFolder="$(OutDir)$(DataOutputSubDir)%(InstallData.SubDirectory)"
-        SkipUnchangedFiles="true"
-        OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)">
-          <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
-      </Copy>
+        DestinationFolder="$(OutDir)$(DataOutputSubDir)%(InstallData.SubDirectory)">
+          <Output TaskParameter="CopiedFiles" ItemName="FileWrites"/>
+      </Copy2>
   </Target>
 
 </Project>
