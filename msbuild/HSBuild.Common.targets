@@ -96,9 +96,7 @@
       <Copy2
         SourceFiles="$(IntDir)_config.h"
         DestinationFiles="$(IntDir)config.h"
-        >
-          <Output TaskParameter="CopiedFiles" ItemName="FileWrites"/>
-      </Copy2>
+        />
 
       <Delete
         Files="$(IntDir)_config.h"
@@ -118,9 +116,7 @@
         Expressions="%(InFile.Expressions)"
         OutputDirectory="$(IntDir)%(InFile.SubDirectory)"
         OutputFileName="%(InFile.OutputFileName)"
-        >
-          <Output TaskParameter="WrittenFiles" ItemName="FileWrites" />
-      </Substitute>
+        />
   </Target>
 
   <!-- TARGET: Generate bison files -->

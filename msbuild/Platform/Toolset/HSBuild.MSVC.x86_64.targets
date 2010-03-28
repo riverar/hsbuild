@@ -115,7 +115,10 @@
           <GenerateSymbols>%(ClCompile.GenerateSymbols)</GenerateSymbols>
           <SymbolsFile>%(ClCompile.SymbolsFile)</SymbolsFile>
         </Obj>
-        <FileWrites Include="@(ClCompile->'%(ObjectFileName)%(FileName).obj')" Condition="'%(ClCompile.ExcludedFromBuild)'!='true'" />
+        <FileWrites
+          Include="@(ClCompile->'%(ObjectFileName)%(FileName).obj')"
+          Condition=" '%(ClCompile.ExcludedFromBuild)' != 'true' AND '%(ClCompile.ObjectFileName)' != '$(IntDir)' "
+          />
       </ItemGroup>
   </Target>
 

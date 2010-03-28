@@ -61,7 +61,6 @@
         Expressions="%(ResourceCompile.SubstitutionExpressions)"
         OutputDirectory="$(IntDir)"
         >
-          <Output TaskParameter="WrittenFiles" ItemName="FileWrites" />
           <Output TaskParameter="DestinationFiles" ItemName="ResourceCompile" />
       </Substitute>
 
@@ -79,7 +78,6 @@
         Expressions="%(ClCompile.SubstitutionExpressions)"
         OutputDirectory="$(IntDir)"
         >
-          <Output TaskParameter="WrittenFiles" ItemName="FileWrites" />
           <Output TaskParameter="DestinationFiles" ItemName="ClCompile" />
       </Substitute>
 
@@ -117,7 +115,6 @@
           <LinkCompiled>%(ClCompile.LinkCompiled)</LinkCompiled>
           <LibCompiled>%(ClCompile.LibCompiled)</LibCompiled>
         </Obj>
-        <FileWrites Include="@(ResourceCompile->'$(IntDir)%(FileName).res')" Condition="'%(ResourceCompile.ExcludedFromBuild)'!='true'" />
       </ItemGroup>
   </Target>
 
