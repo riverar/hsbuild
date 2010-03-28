@@ -186,13 +186,11 @@
       <MakeDir Directories="$(OutDir)$(IncludeOutputSubDir)" />
 
       <!-- Copy all installable header files. -->
-      <Copy
+      <Copy2
         SourceFiles="@(InstallInclude)"
-        DestinationFolder="$(OutDir)$(IncludeOutputSubDir)%(InstallInclude.SubDirectory)"
-        SkipUnchangedFiles="true"
-        OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)">
-          <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
-      </Copy>
+        DestinationFolder="$(OutDir)$(IncludeOutputSubDir)%(InstallInclude.SubDirectory)">
+          <Output TaskParameter="CopiedFiles" ItemName="FileWrites"/>
+      </Copy2>
   </Target>
 
 </Project>

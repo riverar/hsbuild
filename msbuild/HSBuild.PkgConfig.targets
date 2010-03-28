@@ -100,13 +100,11 @@
       </ItemGroup>
 
       <!-- Copy all PkgConfig files. -->
-      <Copy
+      <Copy2
         SourceFiles="@(InstallPkgConfig)"
-        DestinationFiles="$(OutDir)$(PkgConfigOutputSubDir)%(InstallPkgConfig.OutputFileName)"
-        SkipUnchangedFiles="true"
-        OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)">
-          <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
-      </Copy>
+        DestinationFiles="$(OutDir)$(PkgConfigOutputSubDir)%(InstallPkgConfig.OutputFileName)">
+          <Output TaskParameter="CopiedFiles" ItemName="FileWrites"/>
+      </Copy2>
   </Target>
 
 </Project>
