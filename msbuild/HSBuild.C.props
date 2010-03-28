@@ -16,10 +16,12 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition=" '$(Configuration)' == 'Release' ">
     <ClCompile>
+      <DebugInformationFormat           Condition="'%(ClCompile.DebugInformationFormat)'        == ''">ProgramDatabase</DebugInformationFormat>
       <FavorSizeOrSpeed                 Condition="'%(ClCompile.FavorSizeOrSpeed)'              == ''">Size</FavorSizeOrSpeed>
       <BufferSecurityCheck              Condition="'%(ClCompile.BufferSecurityCheck)'           == ''">false</BufferSecurityCheck>
       <RuntimeTypeInfo                  Condition="'%(ClCompile.RuntimeTypeInfo)'               == ''">false</RuntimeTypeInfo>
       <StringPooling                    Condition="'%(ClCompile.StringPooling)'                 == ''">true</StringPooling>
+      <MinimalRebuild                   Condition="'%(ClCompile.MinimalRebuild)'                == ''">true</MinimalRebuild>
     </ClCompile>
   </ItemDefinitionGroup>
 
