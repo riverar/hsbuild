@@ -28,6 +28,9 @@ namespace HSBuild.Commands
         {
         }
 
+        public static string Name { get { return "list"; } }
+        public static string Description { get { return "Lists modules found in module set file."; } }
+
         private static OptionEntrySpec[] ListCommandOptionEntries =
         {
             new OptionEntrySpec("all", "-a", "--all-modules", OptionEntrySpec.OptionType.None),

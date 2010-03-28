@@ -29,6 +29,9 @@ namespace HSBuild.Commands
         {
         }
 
+        public static string Name { get { return "shell"; } }
+        public static string Description { get { return "Starts a shell with environment configured by configuration used."; } }
+
         private static OptionEntrySpec[] ShellCommandOptionEntries =
         {
         };

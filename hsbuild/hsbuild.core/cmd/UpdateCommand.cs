@@ -28,6 +28,9 @@ namespace HSBuild.Commands
         {
         }
 
+        public static string Name { get { return "update"; } }
+        public static string Description { get { return "Updates specified branches and dependencies."; } }
+
         internal override OptionEntrySpec[] GetOptionEntrySpecs()
         {
             return null;

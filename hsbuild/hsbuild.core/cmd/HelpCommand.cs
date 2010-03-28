@@ -35,6 +35,16 @@ namespace HSBuild.Commands
             m_ex = ex;
         }
 
+        public static string Name { get { return "help"; } }
+        public static string Description { get { return "Prints this help information."; } }
+
+        private void PrintCommandShortHelp(IOutputEngine output, string name, string desc)
+        {
+            output.WriteOutput(OutputType.Heading, "\t" + name);
+            foreach (string line in desc.Split('\n'))
+                output.WriteOutput(OutputType.Normal, "\t\t" + line);
+        }
+
         protected override void Execute(ITaskQueue taskQueue, IModuleSetLoader loader, IOutputEngine output)
         {
             if (ErrorMsg != null)
@@ -43,17 +53,11 @@ namespace HSBuild.Commands
             output.WriteOutput(OutputType.Normal, "HSBuild " + Assembly.GetExecutingAssembly().GetName().Version.ToString());
             output.WriteOutput(OutputType.Info, "  by Haakon Sporsheim <haakon.sporsheim@gmail.com>");
             output.WriteOutput(OutputType.Heading, "\nCommands:");
-            output.WriteOutput(OutputType.Heading, "\tupdate");
-            output.WriteOutput(OutputType.Normal, "\t\tUpdates specified branches and dependencies.");
-            output.WriteOutput(OutputType.Heading, "\tlist");
-            output.WriteOutput(OutputType.Normal, "\t\tLists modules found in module set file.");
-            output.WriteOutput(OutputType.Heading, "\tbuild");
-            output.WriteOutput(OutputType.Normal, "\t\tBuilds specified branches and dependencies.");
-            output.WriteOutput(OutputType.Normal, "\t\tModules will also be fetched if they are nowhere to be found.");
-            output.WriteOutput(OutputType.Heading, "\thelp");
-            output.WriteOutput(OutputType.Normal, "\t\tPrints this help information.");
-            output.WriteOutput(OutputType.Heading, "\tshell");
-            output.WriteOutput(OutputType.Normal, "\t\tStarts a shell with environment configured by configuration used.");
+            PrintCommandShortHelp(output, ListCommand.Name, ListCommand.Description);
+            PrintCommandShortHelp(output, UpdateCommand.Name, UpdateCommand.Description);
+            PrintCommandShortHelp(output, BuildCommand.Name, BuildCommand.Description);
+            PrintCommandShortHelp(output, HelpCommand.Name, HelpCommand.Description);
+            PrintCommandShortHelp(output, ShellCommand.Name, ShellCommand.Description);
 
             //output.WriteOutput(OutputType.Normal, "\tclean:");
             //output.WriteOutput(OutputType.Normal, "\tinfo:");

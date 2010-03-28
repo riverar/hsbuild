@@ -28,6 +28,9 @@ namespace HSBuild.Commands
         {
         }
 
+        public static string Name { get { return "build"; } }
+        public static string Description { get { return "Builds specified branches and dependencies.\nModules will also be fetched if they are nowhere to be found."; } }
+
         private static OptionEntrySpec[] BuildCommandOptionEntries =
         {
             new OptionEntrySpec("Configuration", "-c", "--configuration", OptionEntrySpec.OptionType.String),
