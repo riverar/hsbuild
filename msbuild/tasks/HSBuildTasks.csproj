@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="copy.cs" />
     <Compile Include="dumpsymbols.cs" />
     <Compile Include="environment.cs" />
     <Compile Include="msmanifest.cs" />
