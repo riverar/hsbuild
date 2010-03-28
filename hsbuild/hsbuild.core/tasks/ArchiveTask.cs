@@ -76,7 +76,7 @@ namespace HSBuild.Tasks
             if (m_compression == Compression.Zip)
             {
                 FastZip zip = new FastZip();
-                zip.ExtractZip(m_tarball, m_tarball, null);
+                zip.ExtractZip(m_tarball, m_targetDir, null);
             }
             else
             {
