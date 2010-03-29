@@ -27,6 +27,9 @@ Tools.wxs - WiX source for various tool needed for HSBuild
 			<Component Id="sed" Guid="{50A9DA60-FB84-40fb-8733-66DE5284A816}">
 				<File Id="sed.exe" Source="..\tools\bin\sed.exe" KeyPath="yes"/>
 			</Component>
+			<Component Id="sort" Guid="{508BB92E-AAC7-4672-A8AC-3D9D93CD0481}">
+				<File Id="sort.exe" Source="..\tools\bin\sort.exe" KeyPath="yes"/>
+			</Component>
 			<Component Id="bisonflex_dist" Guid="{DDF82C8E-42B0-4bfa-BB2E-88637EC48268}">
 				<File Id="bisonflex_dist.exe" Source="..\tools\bin\bisonflex-dist.exe" KeyPath="yes"/>
 			</Component>
@@ -223,6 +226,7 @@ Tools.wxs - WiX source for various tool needed for HSBuild
 			<ComponentRef Id="vala" />
 			<ComponentRef Id="vapi" />
 			<ComponentRef Id="sed" />
+			<ComponentRef Id="sort" />
 			<ComponentRef Id="bisonflex_dist" />
 		</ComponentGroup>
 	</Fragment>
