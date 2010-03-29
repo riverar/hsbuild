@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
-	<?define ProductVersion="0.1.0" ?>
+	<?define ProductVersion="0.2.0" ?>
 	<?define ProductDirectoryName="HSBuild" ?>
 	<?define ManufacturerName="Haakon Sporsheim" ?>
 	<?define ProductCode="{3AC21789-4A62-4c6d-8B4D-8767A93B7CA7}"?>
