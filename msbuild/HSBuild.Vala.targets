@@ -50,7 +50,7 @@
         SymbolsFileName="%(ValaCompile.SymbolsFileName)"
         Debug="%(ValaCompile.Debug)"
         Verbose="%(ValaCompile.Verbose)"
-        ToolPath="$(HSBuildToolPath)"
+        ToolPath="$(ValaToolPath)"
         >
           <Output TaskParameter="DestinationFiles" ItemName="ClCompile"/>
           <Output TaskParameter="HeaderFile" ItemName="InstallInclude"/>
