@@ -47,6 +47,7 @@
         VapiFileName="%(ValaCompile.VapiFileName)"
         Library="%(ValaCompile.LibraryName)"
         HeaderFileName="%(ValaCompile.HeaderFileName)"
+        SymbolsFileName="%(ValaCompile.SymbolsFileName)"
         Debug="%(ValaCompile.Debug)"
         Verbose="%(ValaCompile.Verbose)"
         ToolPath="$(HSBuildToolPath)"

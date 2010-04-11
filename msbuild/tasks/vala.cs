@@ -57,6 +57,8 @@ namespace HSBuild.Tasks
       }
     }
 
+    public string SymbolsFileName { get; set; }
+
     public string VapiFileName
     {
       set { this.vapiFileName = value; }
@@ -89,10 +91,10 @@ namespace HSBuild.Tasks
     {
       get
       {
-        if (string.IsNullOrEmpty(Library))
+        if (string.IsNullOrEmpty(SymbolsFileName))
           return null;
 
-        return new TaskItem(Path.Combine(OutputDirectory, Library) + ".symbols");
+        return new TaskItem(Path.Combine(OutputDirectory, SymbolsFileName));
       }
     }
 
