@@ -80,7 +80,7 @@
     >
       <SetEnv
         Name   ="PATH"
-        Value  ="$(ExecutablePath);$(BuildOutDir)$(BinaryOutputSubDir)"
+        Value  ="$(ExecutablePath);$(HSBuildToolPath);$(BuildOutDir)$(BinaryOutputSubDir)"
         >
           <Output TaskParameter="OutputEnvironmentVariable" PropertyName="Path"/>
       </SetEnv>
