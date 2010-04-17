@@ -8,6 +8,7 @@
   <PropertyGroup>
     <BuildCompileTargets>
       $(BuildCompileTargets);
+      CreateLibOutDir;
       CCompile;
       ResourceCompile;
       TransformObjOutput;
@@ -56,6 +57,11 @@
   </PropertyGroup>
 
   <Import Project="HSBuild.Common.targets" />
+  <Target
+    Name="CreateLibOutDir"
+    >
+    <MakeDir Directories="$(OutDir)$(LibraryOutputSubDir)" />
+  </Target>
   <Import Project="Platform/Toolset/HSBuild.C.$(Platform).$(PlatformToolset).targets" />
   <UsingTask  TaskName="SetEnv"                     AssemblyFile="$(HSBuildTasksPath)" />
   <UsingTask  TaskName="DumpSymbols"                AssemblyFile="$(HSBuildTasksPath)" />
