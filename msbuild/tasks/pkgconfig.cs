@@ -70,6 +70,7 @@ namespace HSBuild.Tasks
     private const string PkgConfigToolName = "pkg-config.exe";
 
     private ITaskItem[] packages;
+    private bool staticLinking;
 
     private List<ITaskItem> cIncludes;
     private List<ITaskItem> libs;
@@ -83,6 +84,12 @@ namespace HSBuild.Tasks
     {
       get { return this.packages; }
       set { this.packages = value; }
+    }
+
+    public bool StaticLinking
+    {
+      get { return this.staticLinking; }
+      set { this.staticLinking = value; }
     }
 
     [Output]
@@ -125,6 +132,9 @@ namespace HSBuild.Tasks
       CommandLineBuilder builder = new CommandLineBuilder();
       builder.AppendSwitch("--cflags");
       builder.AppendSwitch("--libs");
+
+      if (staticLinking)
+        builder.AppendSwitch("--static");
 
       builder.AppendFileNamesIfNotNull(Packages, " ");
 

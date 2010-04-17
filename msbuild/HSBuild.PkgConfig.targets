@@ -21,10 +21,16 @@
     Name="PkgConfigFlagsQuery"
     Condition="'@(Package)' != ''"
     >
+    <ItemGroup>
+      <Package>
+        <StaticLinking Condition=" '%(Package.StaticLinking)' == '' ">false</StaticLinking>
+      </Package>
+    </ItemGroup>
     <PkgConfig
       Packages="@(Package)"
       PkgConfigPaths="$(OutDir)$(PkgConfigOutputSubDir)"
       ToolPath="$(HSBuildToolPath)"
+      StaticLinking="%(Package.StaticLinking)"
       >
         <Output TaskParameter="CIncludes" ItemName="AdditionalIncludeDirectories" />
         <Output TaskParameter="LibPaths"  ItemName="AdditionalLibraryDirectories" />
