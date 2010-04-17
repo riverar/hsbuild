@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hsbuild.core", "hsbuild.core\hsbuild.core.csproj", "{4CDA414F-4C98-40BE-A2E5-B2CDF87FDCB1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hsbuild.core.tests", "hsbuild.core\tests\hsbuild.core.tests.csproj", "{671F8554-A0C1-490C-89D1-CE4410D0FB53}"
