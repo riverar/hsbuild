@@ -235,7 +235,6 @@
       <ItemGroup>
         <!-- Add default ModuleDefinitionsFile created from @(SymbolFile) items. -->
         <Lib>
-          <ModuleDefinitionFile Condition=" '%(Lib.ModuleDefinitionFile)' == '' ">$(SymbolFileGenModuleDefFile)</ModuleDefinitionFile>
           <SubSystem Condition="'%(Lib.SubSystem)' == ''">CONSOLE</SubSystem>
         </Lib>
       </ItemGroup>
