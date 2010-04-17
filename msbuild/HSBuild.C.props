@@ -96,9 +96,6 @@
       <PreprocessKeepComments           Condition="'%(ClCompile.PreprocessKeepComments)'        == ''">false</PreprocessKeepComments>
       <PreprocessSuppressLineNumbers    Condition="'%(ClCompile.PreprocessSuppressLineNumbers)' == ''">false</PreprocessSuppressLineNumbers>
       <ProcessorNumber                  Condition="'$(CL_MPCount)'                              != ''">$(CL_MPCount)</ProcessorNumber>
-      <ProgramDataBaseFileName          Condition="'%(ClCompile.ProgramDataBaseFileName)'       == '' and
-                                                   '$(PlatformToolsetVersion)'                  != ''">%(ObjectFileName)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
-      <ProgramDataBaseFileName          Condition="'%(ClCompile.ProgramDataBaseFileName)'       == ''">$(IntDir)</ProgramDataBaseFileName>
       <RuntimeLibrary                   Condition="'%(ClCompile.RuntimeLibrary)'                == ''">MultiThreaded</RuntimeLibrary>
       <ShowIncludes                     Condition="'%(ClCompile.ShowIncludes)'                  == ''">false</ShowIncludes>
       <SuppressStartupBanner            Condition="'%(ClCompile.SuppressStartupBanner)'         == ''">true</SuppressStartupBanner>
@@ -198,4 +195,18 @@
       <UpdateFileHashes             Condition="'%(Manifest.UpdateFileHashes)'               == ''">false</UpdateFileHashes>
     </Manifest>
   </ItemDefinitionGroup>
+
+  <ItemDefinitionGroup Condition=" '$(OutputType)' != 'lib' ">
+    <ClCompile>
+      <ProgramDataBaseFileName      Condition="'%(ClCompile.ProgramDataBaseFileName)'       == '' and
+                                               '$(PlatformToolsetVersion)'                  != ''">%(ObjectFileName)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName      Condition="'%(ClCompile.ProgramDataBaseFileName)'       == ''">$(IntDir)</ProgramDataBaseFileName>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition=" '$(OutputType)' == 'lib' ">
+    <ClCompile>
+      <ProgramDataBaseFileName      Condition="'%(ClCompile.ProgramDataBaseFileName)'       == ''">$(OutDir)$(LibraryOutputSubDir)$(AssemblyName).pdb</ProgramDataBaseFileName>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
 </Project>
