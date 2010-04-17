@@ -31,7 +31,7 @@
         <Output TaskParameter="Libs"      ItemName="_PkgConfigLibs" />
     </PkgConfig>
 
-    <ItemGroup>
+    <ItemGroup Condition="'$(OutputType)'!= 'lib'">
       <AdditionalDependencies Include="@(_PkgConfigLibs->'%(Identity).lib')" />
     </ItemGroup>
   </Target>
