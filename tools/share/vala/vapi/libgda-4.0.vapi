@@ -22,7 +22,7 @@ namespace Gda {
 		public unowned Gda.Batch copy ();
 		public static GLib.Quark error_quark ();
 		public bool get_parameters (out unowned Gda.Set out_params) throws GLib.Error;
-		public unowned GLib.SList get_statements ();
+		public unowned GLib.SList<Gda.Statement> get_statements ();
 		public void remove_statement (Gda.Statement stmt);
 		public unowned string serialize ();
 		public virtual signal void changed (GLib.Object changed_stmt);
@@ -88,8 +88,8 @@ namespace Gda {
 		public static bool dsn_needs_authentication (string dsn_name);
 		public static GLib.Quark error_quark ();
 		public static unowned Gda.Config @get ();
-		public static unowned Gda.DsnInfo get_dsn_info (string dsn_name);
-		public static unowned Gda.DsnInfo get_dsn_info_at_index (int index);
+		public static Gda.DsnInfo get_dsn_info (string dsn_name);
+		public static Gda.DsnInfo get_dsn_info_at_index (int index);
 		public static int get_dsn_info_index (string dsn_name);
 		public static int get_nb_dsn ();
 		public static unowned Gda.ServerProvider get_provider (string provider_name) throws GLib.Error;
@@ -108,46 +108,30 @@ namespace Gda {
 	}
 	[CCode (cheader_filename = "libgda/libgda.h")]
 	public class Connection : GLib.Object, Gda.Lockable {
-		public void add_event (Gda.ConnectionEvent event);
-		public unowned Gda.ConnectionEvent add_event_string (string str);
-		public void add_prepared_statement (Gda.Statement gda_stmt, Gda.PStmt prepared_stmt);
 		public bool add_savepoint (string name) throws GLib.Error;
-		public unowned GLib.SList batch_execute (Gda.Batch batch, Gda.Set @params, Gda.StatementModelUsage model_usage) throws GLib.Error;
+		public unowned GLib.SList<GLib.Object> batch_execute (Gda.Batch batch, Gda.Set @params, Gda.StatementModelUsage model_usage) throws GLib.Error;
 		public bool begin_transaction (string name, Gda.TransactionIsolation level) throws GLib.Error;
-		public void clear_events_list ();
 		public void close ();
 		public void close_no_warning ();
 		public bool commit_transaction (string name) throws GLib.Error;
 		public unowned Gda.ServerOperation create_operation (Gda.ServerOperationType type, Gda.Set options) throws GLib.Error;
 		public unowned Gda.SqlParser create_parser ();
-		public void del_prepared_statement (Gda.Statement gda_stmt);
 		public bool delete_savepoint (string name) throws GLib.Error;
 		public static GLib.Quark error_quark ();
 		public unowned string get_authentication ();
 		public unowned string get_cnc_string ();
 		public unowned string get_dsn ();
-		public unowned GLib.List get_events ();
+		public unowned GLib.List<Gda.ConnectionEvent> get_events ();
 		public unowned Gda.MetaStore get_meta_store ();
 		public unowned Gda.DataModel get_meta_store_data (Gda.ConnectionMetaType meta_type, int nb_filters) throws GLib.Error;
-		public unowned Gda.DataModel get_meta_store_data_v (Gda.ConnectionMetaType meta_type, GLib.List filters) throws GLib.Error;
+		public Gda.DataModel get_meta_store_data_v (Gda.ConnectionMetaType meta_type, GLib.List<Gda.Holder> filters) throws GLib.Error;
 		public Gda.ConnectionOptions get_options ();
-		public unowned Gda.PStmt get_prepared_statement (Gda.Statement gda_stmt);
 		public unowned Gda.ServerProvider get_provider ();
 		public unowned string get_provider_name ();
 		public unowned Gda.TransactionStatus get_transaction_status ();
-		public void internal_change_transaction_state (Gda.TransactionStatusState newstate);
-		public void* internal_get_provider_data ();
-		public void internal_savepoint_added (string parent_trans, string svp_name);
-		public void internal_savepoint_removed (string svp_name);
-		public void internal_savepoint_rolledback (string svp_name);
-		public void internal_set_provider_data (void* data, GLib.DestroyNotify destroy_func);
-		public void internal_statement_executed (Gda.Statement stmt, Gda.Set @params, Gda.ConnectionEvent error);
-		public void internal_transaction_committed (string trans_name);
-		public void internal_transaction_rolledback (string trans_name);
-		public void internal_transaction_started (string parent_trans, string trans_name, Gda.TransactionIsolation isol_level);
 		public bool is_opened ();
 		public bool open () throws GLib.Error;
-		public static unowned Gda.Connection open_from_dsn (string dsn, string auth_string, Gda.ConnectionOptions options) throws GLib.Error;
+		public static unowned Gda.Connection open_from_dsn (string dsn, string? auth_string, Gda.ConnectionOptions options) throws GLib.Error;
 		public static unowned Gda.Connection open_from_string (string provider_name, string? cnc_string, string? auth_string, Gda.ConnectionOptions options) throws GLib.Error;
 		public bool perform_operation (Gda.ServerOperation op) throws GLib.Error;
 		public unowned string quote_sql_identifier (string id);
@@ -159,7 +143,7 @@ namespace Gda {
 		public unowned Gda.DataModel statement_execute_select_full (Gda.Statement stmt, Gda.Set @params, Gda.StatementModelUsage model_usage, GLib.Type[] col_types) throws GLib.Error;
 		public unowned Gda.DataModel statement_execute_select_fullv (Gda.Statement stmt, Gda.Set @params, Gda.StatementModelUsage model_usage) throws GLib.Error;
 		public bool statement_prepare (Gda.Statement stmt) throws GLib.Error;
-		public unowned string statement_to_sql (Gda.Statement stmt, Gda.Set @params, Gda.StatementSqlFlag flags, GLib.SList params_used) throws GLib.Error;
+		public unowned string statement_to_sql (Gda.Statement stmt, Gda.Set @params, Gda.StatementSqlFlag flags, GLib.SList<Gda.Holder> params_used) throws GLib.Error;
 		public static void string_split (string str, string out_cnc_params, string out_provider, string out_username, string out_password);
 		public bool supports_feature (Gda.ConnectionFeature feature);
 		public bool update_meta_store (Gda.MetaContext context) throws GLib.Error;
@@ -234,8 +218,8 @@ namespace Gda {
 		public static unowned Gda.DataModelArray copy_model (Gda.DataModel src) throws GLib.Error;
 		public unowned Gda.Row get_row (int row) throws GLib.Error;
 		public void set_n_columns (int cols);
-		[CCode (type = "GdaDataModel*", has_construct_function = false)]
-		public DataModelArray.with_g_types (int cols);
+		[CCode (sentinel = "", type = "GdaDataModel*", has_construct_function = false)]
+		public DataModelArray.with_g_types (int cols, ...);
 		[NoAccessorMethod]
 		public uint n_columns { get; set; }
 		[NoAccessorMethod]
@@ -252,7 +236,7 @@ namespace Gda {
 		public virtual unowned GLib.SList create_key_columns ();
 		[NoWrapper]
 		public virtual GLib.Value get_data_part (void* data, int length, int part);
-		public unowned GLib.SList get_errors ();
+		public unowned GLib.SList<GLib.Error> get_errors ();
 		[NoWrapper]
 		public virtual GLib.Value get_key_part (void* data, int length, int part);
 		[NoWrapper]
@@ -269,7 +253,7 @@ namespace Gda {
 		[CCode (type = "GdaDataModel*", has_construct_function = false)]
 		public DataModelDir (string basedir);
 		public void clean_errors ();
-		public unowned GLib.SList get_errors ();
+		public unowned GLib.SList<GLib.Error> get_errors ();
 		[NoAccessorMethod]
 		public string basedir { owned get; construct; }
 	}
@@ -283,7 +267,7 @@ namespace Gda {
 		public static bool from_string (Gda.DataModel model, string str, GLib.HashTable cols_trans, Gda.Set options) throws GLib.Error;
 		[CCode (cname = "gda_data_model_import_new_xml_node", type = "GdaDataModel*", has_construct_function = false)]
 		public DataModelImport.from_xml_node (Xml.Node node);
-		public unowned GLib.SList get_errors ();
+		public unowned GLib.SList<GLib.Error> get_errors ();
 		[CCode (type = "GdaDataModel*", has_construct_function = false)]
 		public DataModelImport.mem (string data, bool random_access, Gda.Set options);
 		[NoAccessorMethod]
@@ -302,8 +286,8 @@ namespace Gda {
 		public static GLib.Quark error_quark ();
 		public unowned Gda.Holder get_holder_for_field (int col);
 		public int get_row ();
-		public GLib.Value get_value_at (int col);
-		public GLib.Value get_value_for_field (string field_name);
+		public unowned GLib.Value? get_value_at (int col);
+		public unowned GLib.Value? get_value_for_field (string field_name);
 		public void invalidate_contents ();
 		public bool is_valid ();
 		public bool move_next ();
@@ -347,7 +331,7 @@ namespace Gda {
 		public int get_sample_size ();
 		public int get_sample_start ();
 		public Gda.ValueAttribute get_value_attributes (int proxy_row, int col);
-		public unowned GLib.SList get_values (int proxy_row, int cols_index, int n_cols);
+		public unowned GLib.SList<GLib.Value> get_values (int proxy_row, int cols_index, int n_cols);
 		public bool has_changed ();
 		public bool is_read_only ();
 		public bool row_has_changed (int proxy_row);
@@ -427,16 +411,6 @@ namespace Gda {
 		public int old_row;
 		public Gda.DiffType type;
 		public weak GLib.HashTable values;
-	}
-	[Compact]
-	[CCode (cheader_filename = "libgda/libgda.h")]
-	public class DsnInfo {
-		public weak string auth_string;
-		public weak string cnc_string;
-		public weak string description;
-		public bool is_system;
-		public weak string name;
-		public weak string provider;
 	}
 	[Compact]
 	[CCode (copy_function = "gda_geometricpoint_copy", free_function = "gda_geometricpoint_free", type_id = "GDA_TYPE_GEOMETRIC_POINT", cheader_filename = "libgda/libgda.h")]
@@ -609,7 +583,7 @@ namespace Gda {
 		public Gda.Connection cnc { owned get; construct; }
 		public string cnc_string { construct; }
 		public string schema { construct; }
-		public virtual signal void meta_changed (GLib.SList changes);
+		public virtual signal void meta_changed (GLib.SList<Gda.MetaStoreChange> changes);
 		public virtual signal void meta_reset ();
 		public virtual signal unowned GLib.Error suggest_update (Gda.MetaContext suggest);
 	}
@@ -631,7 +605,7 @@ namespace Gda {
 		public bool complement_schema (GLib.Value catalog, GLib.Value schema) throws GLib.Error;
 		public unowned string dump_as_graph (Gda.MetaGraphInfo info) throws GLib.Error;
 		public static GLib.Quark error_quark ();
-		public unowned GLib.SList get_all_db_objects ();
+		public GLib.SList<Gda.MetaDbObject> get_all_db_objects ();
 		public unowned Gda.MetaDbObject get_db_object (GLib.Value catalog, GLib.Value schema, GLib.Value name);
 		public unowned Gda.MetaTableColumn get_table_column (Gda.MetaTable table, GLib.Value col_name);
 		public bool sort_db_objects (Gda.MetaSortType sort_type) throws GLib.Error;
@@ -882,6 +856,8 @@ namespace Gda {
 		public weak GLib.Callback domains;
 		public weak GLib.Callback el_types;
 		public weak GLib.Callback enums;
+		public weak GLib.Callback index_cols;
+		public weak GLib.Callback indexes_tab;
 		public weak GLib.Callback key_columns;
 		public weak GLib.Callback routine_col;
 		public weak GLib.Callback routine_par;
@@ -909,7 +885,7 @@ namespace Gda {
 		public weak GLib.SList nodes_list;
 		public weak GLib.SList sources_list;
 		[CCode (has_construct_function = false)]
-		public Set (GLib.SList holders);
+		public Set (GLib.SList<Gda.Holder> holders);
 		public bool add_holder (Gda.Holder holder);
 		public unowned Gda.Set copy ();
 		public static GLib.Quark error_quark ();
@@ -1023,7 +999,7 @@ namespace Gda {
 		public void check_clean ();
 		public unowned Gda.SqlFunction copy ();
 		public unowned string serialize ();
-		public void take_args_list (GLib.SList args);
+		public void take_args_list (owned GLib.SList args);
 		public void take_name (GLib.Value value);
 	}
 	[Compact]
@@ -1267,9 +1243,9 @@ namespace Gda {
 		public weak Gda.SqlAnyPart select;
 		public weak Gda.SqlTable table;
 		public weak GLib.SList values_list;
-		public static void take_1_values_list (Gda.SqlStatement stmt, GLib.SList list);
+		public static void take_1_values_list (Gda.SqlStatement stmt, owned GLib.SList<Gda.SqlExpr> list);
 		public static void take_extra_values_list (Gda.SqlStatement stmt, GLib.SList list);
-		public static void take_fields_list (Gda.SqlStatement stmt, GLib.SList list);
+		public static void take_fields_list (Gda.SqlStatement stmt, owned GLib.SList<Gda.SqlField> list);
 		public static void take_on_conflict (Gda.SqlStatement stmt, GLib.Value value);
 		public static void take_select (Gda.SqlStatement stmt, Gda.SqlStatement select);
 		public static void take_table_name (Gda.SqlStatement stmt, GLib.Value value);
@@ -1289,13 +1265,13 @@ namespace Gda {
 		public weak GLib.SList order_by;
 		public weak Gda.SqlExpr where_cond;
 		public static void take_distinct (Gda.SqlStatement stmt, bool distinct, Gda.SqlExpr distinct_expr);
-		public static void take_expr_list (Gda.SqlStatement stmt, GLib.SList expr_list);
+		public static void take_expr_list (Gda.SqlStatement stmt, owned GLib.SList<Gda.SqlSelectField> expr_list);
 		public static void take_from (Gda.SqlStatement stmt, Gda.SqlSelectFrom from);
-		public static void take_group_by (Gda.SqlStatement stmt, GLib.SList group_by);
+		public static void take_group_by (Gda.SqlStatement stmt, owned GLib.SList<Gda.SqlExpr> group_by);
 		public static void take_having_cond (Gda.SqlStatement stmt, Gda.SqlExpr expr);
 		public static void take_limits (Gda.SqlStatement stmt, Gda.SqlExpr count, Gda.SqlExpr offset);
-		public static void take_order_by (Gda.SqlStatement stmt, GLib.SList order_by);
-		public static void take_where_cond (Gda.SqlStatement stmt, Gda.SqlExpr expr);
+		public static void take_order_by (Gda.SqlStatement stmt, owned GLib.SList<Gda.SqlSelectOrder> order_by);
+		public static void take_where_cond (Gda.SqlStatement stmt, owned Gda.SqlExpr expr);
 	}
 	[Compact]
 	[CCode (cheader_filename = "libgda/libgda.h")]
@@ -1310,7 +1286,7 @@ namespace Gda {
 	public class SqlStatementUnknown {
 		public weak Gda.SqlAnyPart any;
 		public weak GLib.SList expressions;
-		public static void take_expressions (Gda.SqlStatement stmt, GLib.SList expressions);
+		public static void take_expressions (Gda.SqlStatement stmt, owned GLib.SList<Gda.SqlExpr> expressions);
 	}
 	[Compact]
 	[CCode (cheader_filename = "libgda/libgda.h")]
@@ -1354,7 +1330,7 @@ namespace Gda {
 		public bool is_useless ();
 		public bool normalize (Gda.Connection cnc) throws GLib.Error;
 		public unowned string serialize ();
-		public unowned string to_sql_extended (Gda.Connection cnc, Gda.Set @params, Gda.StatementSqlFlag flags, GLib.SList params_used) throws GLib.Error;
+		public unowned string to_sql_extended (Gda.Connection cnc, Gda.Set @params, Gda.StatementSqlFlag flags, GLib.SList<Gda.Holder> params_used) throws GLib.Error;
 		public unowned string to_sql_real (Gda.SqlRenderingContext context) throws GLib.Error;
 		[NoAccessorMethod]
 		public void* structure { get; set; }
@@ -1392,12 +1368,6 @@ namespace Gda {
 		public Gda.TransactionStatusState state;
 		[CCode (has_construct_function = false)]
 		public TransactionStatus (string name);
-		public unowned Gda.TransactionStatusEvent add_event_sql (string sql, Gda.ConnectionEvent conn_event);
-		public unowned Gda.TransactionStatusEvent add_event_sub (Gda.TransactionStatus sub_trans);
-		public unowned Gda.TransactionStatusEvent add_event_svp (string svp_name);
-		public unowned Gda.TransactionStatus find (string str, out unowned Gda.TransactionStatusEvent destev);
-		public unowned Gda.TransactionStatus find_current (out unowned Gda.TransactionStatusEvent destev, bool unnamed_only);
-		public void free_events (Gda.TransactionStatusEvent event, bool free_after);
 	}
 	[Compact]
 	[CCode (cheader_filename = "libgda/libgda.h")]
@@ -1458,8 +1428,8 @@ namespace Gda {
 		[CCode (has_construct_function = false)]
 		public XaTransaction (uint32 format, string global_transaction_id);
 		public bool begin () throws GLib.Error;
-		public bool commit (GLib.SList cnc_to_recover) throws GLib.Error;
-		public bool commit_recovered (GLib.SList cnc_to_recover) throws GLib.Error;
+		public bool commit (out GLib.SList<Gda.Connection> cnc_to_recover) throws GLib.Error;
+		public bool commit_recovered (out GLib.SList<Gda.Connection> cnc_to_recover) throws GLib.Error;
 		public static GLib.Quark error_quark ();
 		public bool register_connection (Gda.Connection cnc, string branch) throws GLib.Error;
 		public bool rollback () throws GLib.Error;
@@ -1492,73 +1462,44 @@ namespace Gda {
 	}
 	[CCode (cheader_filename = "libgda/libgda.h")]
 	public interface DataModel : GLib.Object {
-		public bool add_data_from_xml_node (Xml.Node node) throws GLib.Error;
-		public int append_row () throws GLib.Error;
-		public int append_values (GLib.List values) throws GLib.Error;
-		public unowned Gda.DataModelIter create_iter ();
-		public unowned Gda.Column describe_column (int col);
+		[CCode (vfunc_name = "i_append_row")]
+		public virtual int append_row () throws GLib.Error;
+		[CCode (vfunc_name = "i_append_values")]
+		public virtual int append_values (GLib.List<GLib.Value> values) throws GLib.Error;
+		[CCode (vfunc_name = "i_create_iter")]
+		public virtual unowned Gda.DataModelIter create_iter ();
+		[CCode (vfunc_name = "i_describe_column")]
+		public virtual unowned Gda.Column describe_column (int col);
 		public void dump (GLib.FileStream to_stream);
 		public unowned string dump_as_string ();
 		public static GLib.Quark error_quark ();
 		public bool export_to_file (Gda.DataModelIOFormat format, string file, int cols, int nb_cols, int rows, int nb_rows, Gda.Set options) throws GLib.Error;
 		public unowned string export_to_string (Gda.DataModelIOFormat format, int cols, int nb_cols, int rows, int nb_rows, Gda.Set options);
 		public void freeze ();
-		public Gda.DataModelAccessFlags get_access_flags ();
-		public Gda.ValueAttribute get_attributes_at (int col, int row);
+		[CCode (vfunc_name = "i_get_access_flags")]
+		public virtual Gda.DataModelAccessFlags get_access_flags ();
+		[CCode (vfunc_name = "i_get_attributes_at")]
+		public virtual Gda.ValueAttribute get_attributes_at (int col, int row);
 		public int get_column_index (string name);
 		public unowned string get_column_name (int col);
 		public unowned string get_column_title (int col);
-		public int get_n_columns ();
-		public int get_n_rows ();
-		public int get_row_from_values (GLib.SList values, int cols_index);
+		[CCode (vfunc_name = "i_get_n_columns")]
+		public virtual int get_n_columns ();
+		[CCode (vfunc_name = "i_get_n_rows")]
+		public virtual int get_n_rows ();
+		public int get_row_from_values (GLib.SList<GLib.Value> values, int[] cols_index);
 		public unowned GLib.Value? get_typed_value_at (int col, int row, GLib.Type expected_type, bool nullok) throws GLib.Error;
 		public unowned GLib.Value? get_value_at (int col, int row) throws GLib.Error;
-		[NoWrapper]
-		public abstract int i_append_row () throws GLib.Error;
-		[NoWrapper]
-		public abstract int i_append_values (GLib.List values) throws GLib.Error;
-		[NoWrapper]
-		public abstract unowned Gda.DataModelIter i_create_iter ();
-		[NoWrapper]
-		public abstract unowned Gda.Column i_describe_column (int col);
-		[NoWrapper]
-		public abstract int i_find_row (GLib.SList values, int cols_index);
-		[NoWrapper]
-		public abstract Gda.DataModelAccessFlags i_get_access_flags ();
-		[NoWrapper]
-		public abstract Gda.ValueAttribute i_get_attributes_at (int col, int row);
-		[NoWrapper]
-		public abstract int i_get_n_columns ();
-		[NoWrapper]
-		public abstract int i_get_n_rows ();
-		[NoWrapper]
-		public abstract bool i_get_notify ();
-		[NoWrapper]
-		public abstract GLib.Value i_get_value_at (int col, int row) throws GLib.Error;
-		[NoWrapper]
-		public abstract bool i_iter_at_row (Gda.DataModelIter iter, int row);
-		[NoWrapper]
-		public abstract bool i_iter_next (Gda.DataModelIter iter);
-		[NoWrapper]
-		public abstract bool i_iter_prev (Gda.DataModelIter iter);
-		[NoWrapper]
-		public abstract bool i_iter_set_value (Gda.DataModelIter iter, int col, GLib.Value value) throws GLib.Error;
-		[NoWrapper]
-		public abstract bool i_remove_row (int row) throws GLib.Error;
-		[NoWrapper]
-		public abstract void i_send_hint (Gda.DataModelHint hint, GLib.Value hint_value);
-		[NoWrapper]
-		public abstract void i_set_notify (bool do_notify_changes);
-		[NoWrapper]
-		public abstract bool i_set_value_at (int col, int row, GLib.Value value) throws GLib.Error;
-		[NoWrapper]
-		public abstract bool i_set_values (int row, GLib.List values) throws GLib.Error;
-		public bool remove_row (int row) throws GLib.Error;
-		public void send_hint (Gda.DataModelHint hint, GLib.Value hint_value);
+		[CCode (vfunc_name = "i_remove_row")]
+		public virtual bool remove_row (int row) throws GLib.Error;
+		[CCode (vfunc_name = "i_send_hint")]
+		public virtual void send_hint (Gda.DataModelHint hint, GLib.Value hint_value);
 		public void set_column_name (int col, string name);
 		public void set_column_title (int col, string title);
-		public bool set_value_at (int col, int row, GLib.Value value) throws GLib.Error;
-		public bool set_values (int row, GLib.List values) throws GLib.Error;
+		[CCode (vfunc_name = "i_set_value_at")]
+		public virtual bool set_value_at (int col, int row, GLib.Value value) throws GLib.Error;
+		[CCode (vfunc_name = "i_set_values")]
+		public virtual bool set_values (int row, GLib.List<GLib.Value> values) throws GLib.Error;
 		public void thaw ();
 		public signal void changed ();
 		public signal void reset ();
@@ -1568,15 +1509,21 @@ namespace Gda {
 	}
 	[CCode (cheader_filename = "libgda/libgda.h")]
 	public interface Lockable : GLib.Object {
-		[NoWrapper]
-		public abstract void i_lock ();
-		[NoWrapper]
-		public abstract bool i_trylock ();
-		[NoWrapper]
-		public abstract void i_unlock ();
-		public void @lock ();
-		public bool trylock ();
-		public void unlock ();
+		[CCode (vfunc_name = "i_lock")]
+		public virtual void @lock ();
+		[CCode (vfunc_name = "i_trylock")]
+		public virtual bool trylock ();
+		[CCode (vfunc_name = "i_unlock")]
+		public virtual void unlock ();
+	}
+	[CCode (type_id = "GDA_TYPE_DSN_INFO", cheader_filename = "libgda/libgda.h")]
+	public struct DsnInfo {
+		public weak string name;
+		public weak string provider;
+		public weak string description;
+		public weak string cnc_string;
+		public weak string auth_string;
+		public bool is_system;
 	}
 	[CCode (type_id = "GDA_TYPE_SQL_PARSER_IFACE", cheader_filename = "libgda/libgda.h")]
 	protected struct SqlParserIface {
@@ -1655,7 +1602,8 @@ namespace Gda {
 		TYPES,
 		TABLES,
 		VIEWS,
-		FIELDS
+		FIELDS,
+		INDEXES
 	}
 	[CCode (cprefix = "GDA_CONNECTION_OPTIONS_", cheader_filename = "libgda/libgda.h")]
 	[Flags]
@@ -1817,7 +1765,7 @@ namespace Gda {
 		VIEW_DEPENDENCIES,
 		ALL
 	}
-	[CCode (cprefix = "GDA_", has_type_id = "0", cheader_filename = "libgda/libgda.h")]
+	[CCode (cprefix = "GDA_", has_type_id = false, cheader_filename = "libgda/libgda.h")]
 	public enum PrefixDir {
 		NO_DIR,
 		BIN_DIR,

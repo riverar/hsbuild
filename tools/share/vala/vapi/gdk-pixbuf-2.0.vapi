@@ -48,9 +48,9 @@ namespace Gdk {
 		public Gdk.Pixbuf rotate_simple (Gdk.PixbufRotation angle);
 		public void saturate_and_pixelate (Gdk.Pixbuf dest, float saturation, bool pixelate);
 		public bool save (string filename, string type, ...) throws GLib.Error;
-		public bool save_to_buffer (string buffer, size_t buffer_size, string type, ...) throws GLib.Error;
-		public bool save_to_bufferv (string buffer, size_t buffer_size, string type, string[] option_keys, string[] option_values) throws GLib.Error;
-		public bool save_to_callback (Gdk.PixbufSaveFunc save_func, string type) throws GLib.Error;
+		public bool save_to_buffer ([CCode (array_length_type = "gsize")] out char[] buffer, string type, ...) throws GLib.Error;
+		public bool save_to_bufferv ([CCode (array_length_type = "gsize")] out char[] buffer, string type, string[] option_keys, string[] option_values) throws GLib.Error;
+		public bool save_to_callback (Gdk.PixbufSaveFunc save_func, string type, ...) throws GLib.Error;
 		public bool save_to_callbackv (Gdk.PixbufSaveFunc save_func, string type, string[] option_keys, string[] option_values) throws GLib.Error;
 		public bool save_to_stream (GLib.OutputStream stream, string type, GLib.Cancellable cancellable) throws GLib.Error;
 		public bool savev (string filename, string type, out unowned string option_keys, out unowned string option_values) throws GLib.Error;
@@ -121,6 +121,9 @@ namespace Gdk {
 		[CCode (has_construct_function = false)]
 		public PixbufSimpleAnim (int width, int height, float rate);
 		public void add_frame (Gdk.Pixbuf pixbuf);
+		public bool get_loop ();
+		public void set_loop (bool loop);
+		public bool loop { get; set; }
 	}
 	[Compact]
 	[CCode (cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
@@ -160,15 +163,6 @@ namespace Gdk {
 		BILEVEL,
 		FULL
 	}
-	[CCode (cprefix = "GDK_PIXBUF_ERROR_", cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
-	public enum PixbufError {
-		CORRUPT_IMAGE,
-		INSUFFICIENT_MEMORY,
-		BAD_OPTION,
-		UNKNOWN_TYPE,
-		UNSUPPORTED_OPERATION,
-		FAILED
-	}
 	[CCode (cprefix = "GDK_PIXBUF_ROTATE_", cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
 	public enum PixbufRotation {
 		NONE,
@@ -176,7 +170,7 @@ namespace Gdk {
 		UPSIDEDOWN,
 		CLOCKWISE
 	}
-	[CCode (cprefix = "GDK_PIXDATA_DUMP_", has_type_id = "0", cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
+	[CCode (cprefix = "GDK_PIXDATA_DUMP_", has_type_id = false, cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
 	public enum PixdataDumpType {
 		PIXDATA_STREAM,
 		PIXDATA_STRUCT,
@@ -187,7 +181,7 @@ namespace Gdk {
 		CONST,
 		RLE_DECODER
 	}
-	[CCode (cprefix = "GDK_PIXDATA_", has_type_id = "0", cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
+	[CCode (cprefix = "GDK_PIXDATA_", has_type_id = false, cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
 	public enum PixdataType {
 		COLOR_TYPE_RGB,
 		COLOR_TYPE_RGBA,
@@ -198,8 +192,17 @@ namespace Gdk {
 		ENCODING_RLE,
 		ENCODING_MASK
 	}
+	[CCode (cprefix = "GDK_PIXBUF_ERROR_", cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
+	public errordomain PixbufError {
+		CORRUPT_IMAGE,
+		INSUFFICIENT_MEMORY,
+		BAD_OPTION,
+		UNKNOWN_TYPE,
+		UNSUPPORTED_OPERATION,
+		FAILED,
+	}
 	[CCode (cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
-	public delegate void PixbufDestroyNotify (uchar[] pixels);
+	public delegate void PixbufDestroyNotify ([CCode (array_length = false)] uchar[] pixels);
 	[CCode (cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
 	public delegate bool PixbufSaveFunc (string buf, size_t count, GLib.Error error);
 	[CCode (cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]

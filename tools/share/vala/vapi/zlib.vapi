@@ -141,12 +141,15 @@ namespace ZLib {
 		public int prime (int bits, int value);
 		public int get_header (out GZHeader head);
 	}
+	[CCode (lower_case_cprefix = "")]
 	namespace Utility {
 		[CCode (cname = "compress2")]
 		public static int compress ([CCode (array_length_type = "gulong")] uchar[] dest, [CCode (array_length_type = "gulong")] uchar[] source, int level = Level.DEFAULT_COMPRESSION);
 		[CCode (cname = "compressBound")]
 		public static int compress_bound (ulong sourceLen);
 		public static int uncompress ([CCode (array_length_type = "gulong")] uchar[] dest, [CCode (array_length_type = "gulong")] uchar[] source);
+		public static ulong adler32 (ulong crc = 0, [CCode (array_length_type = "guint")] uint8[]? buf = null);
+		public static ulong crc32 (ulong crc = 0, [CCode (array_length_type = "guint")] uint8[]? buf = null);
 	}
 	[CCode (cname = "gz_header")]
 	public struct GZHeader {
@@ -175,7 +178,7 @@ namespace ZLib {
 		[PrintfFormat]
 		public int printf (string format, ...);
 		public int puts (string s);
-		public weak string gets (char[] buf);
+		public unowned string gets (char[] buf);
 		public int flush (int flush);
 		public int rewind ();
 		public bool eof ();

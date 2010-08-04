@@ -631,17 +631,17 @@ namespace Tiff {
 		[CCode (cname = "TIFFDefaultTileSize")]
 		public void DefaultTileSize (out uint32 p1, out uint32 p2);
 		[CCode (cname = "TIFFFieldWithName")]
-		public weak FieldInfo FieldWithName (string p1);
+		public unowned FieldInfo FieldWithName (string p1);
 		[CCode (cname = "TIFFFieldWithTag")]
-		public weak FieldInfo FieldWithTag (ttag_t p1);
+		public unowned FieldInfo FieldWithTag (ttag_t p1);
 		[CCode (cname = "TIFFFileName")]
-		public weak string FileName ();
+		public unowned string FileName ();
 		[CCode (cname = "TIFFFileno")]
 		public int Fileno ();
 		[CCode (cname = "TIFFFindFieldInfo")]
-		public weak FieldInfo FindFieldInfo (ttag_t p1, DataType p2);
+		public unowned FieldInfo FindFieldInfo (ttag_t p1, DataType p2);
 		[CCode (cname = "TIFFFindFieldInfoByName")]
-		public weak FieldInfo FindFieldInfoByName (string p1, DataType p2);
+		public unowned FieldInfo FindFieldInfoByName (string p1, DataType p2);
 		[CCode (cname = "TIFFFlush")]
 		public bool Flush ();
 		[CCode (cname = "TIFFFlushData")]
@@ -743,7 +743,7 @@ namespace Tiff {
 		[CCode (cname = "TIFFSetField")]
 		public bool SetField (ttag_t p1, ...);
 		[CCode (cname = "TIFFSetFileName")]
-		public weak string SetFileName (string p1);
+		public unowned string SetFileName (string p1);
 		[CCode (cname = "TIFFSetFileno")]
 		public int SetFileno (int p1);
 		[CCode (cname = "TIFFSetMode")]
@@ -818,11 +818,11 @@ namespace Tiff {
 		[CCode (cname = "TIFFFdOpen")]
 		public static TIFF FdOpen (int p1, string p2, string p3);
 		[CCode (cname = "TIFFGetVersion")]
-		public static weak string GetVersion ();
+		public static unowned string GetVersion ();
 		[CCode (cname = "TIFFFindCODEC")]
-		public static weak Codec FindCODEC (ushort p1);
+		public static unowned Codec FindCODEC (ushort p1);
 		[CCode (cname = "TIFFGetBitRevTable")]
-		public static weak string GetBitRevTable (int p1);
+		public static unowned string GetBitRevTable (int p1);
 		[CCode (cname = "TIFFGetConfiguredCODECs")]
 		public static Codec GetConfiguredCODECs ();
 		[CCode (cname = "TIFFRGBAImageBegin")]

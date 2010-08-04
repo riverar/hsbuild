@@ -73,6 +73,8 @@ namespace Gst {
 		[NoAccessorMethod]
 		public bool can_activate_pull { get; set; }
 		[NoAccessorMethod]
+		public int64 drift_tolerance { get; set; }
+		[NoAccessorMethod]
 		public int64 latency_time { get; set; }
 		public bool provide_clock { get; set; }
 		public Gst.BaseAudioSinkSlaveMethod slave_method { get; set; }
@@ -185,7 +187,7 @@ namespace Gst {
 		NONE,
 		NUM
 	}
-	[CCode (cprefix = "GST_AUDIO_FIELD_", has_type_id = "0", cheader_filename = "gst/audio/audio.h")]
+	[CCode (cprefix = "GST_AUDIO_FIELD_", has_type_id = false, cheader_filename = "gst/audio/audio.h")]
 	public enum AudioFieldFlag {
 		RATE,
 		CHANNELS,

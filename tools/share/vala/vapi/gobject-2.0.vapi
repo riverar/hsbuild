@@ -1,6 +1,6 @@
 /* gobject-2.0.vala
  *
- * Copyright (C) 2006-2009  Jürg Billeter
+ * Copyright (C) 2006-2010  Jürg Billeter
  * Copyright (C) 2006-2008  Raffaele Sandrini
  * Copyright (C) 2007  Mathias Hasselmann
  *
@@ -57,14 +57,14 @@ namespace GLib {
 		public static Type from_name (string name);
 		public Type[] interfaces ();
 		public bool is_a (Type is_a_type);
-		public weak string name ();
+		public unowned string name ();
 		public Quark qname ();
 		public Type parent ();
 
 		public void query (out TypeQuery query);
 
 		public TypeClass class_ref ();
-		public weak TypeClass class_peek ();
+		public unowned TypeClass class_peek ();
 
 		public const Type INVALID;
 		public const Type INTERFACE;
@@ -75,7 +75,7 @@ namespace GLib {
 
 	public struct TypeQuery {
 		public Type type;
-		public weak string type_name;
+		public unowned string type_name;
 		public uint class_size;
 		public uint instance_size;
 	}
@@ -109,7 +109,7 @@ namespace GLib {
 		public virtual void unload ();
 	}
 
-	[CCode (type_id = "G_TYPE_PARAM", ref_function = "g_param_spec_ref", unref_function = "g_param_spec_unref", param_spec_function = "g_param_spec_param", get_value_function = "g_value_get_param", set_value_function = "g_value_set_param")]
+	[CCode (type_id = "G_TYPE_PARAM", ref_function = "g_param_spec_ref", unref_function = "g_param_spec_unref", param_spec_function = "g_param_spec_param", get_value_function = "g_value_get_param", set_value_function = "g_value_set_param", take_value_function = "g_value_take_param")]
 	public class ParamSpec {
 		public string name;
 		public ParamFlags flags;
@@ -130,9 +130,9 @@ namespace GLib {
 		public bool value_convert (Value src_value, Value dest_value, bool strict_validation);
 		[CCode (cname = "g_param_values_cmp")]
 		public int values_cmp (Value value1, Value value2);
-		public weak string get_blurb ();
-		public weak string get_name ();
-		public weak string get_nick ();
+		public unowned string get_blurb ();
+		public unowned string get_name ();
+		public unowned string get_nick ();
 		public void* get_qdata (Quark quark);
 		public void set_qdata (Quark quark, void* data);
 		public void set_qdata_full (Quark quark, void* data, DestroyNotify destroy);
@@ -229,14 +229,14 @@ namespace GLib {
 	public class ParamSpecEnum : ParamSpec {
 		[CCode (cname = "g_param_spec_enum")]
 		public ParamSpecEnum (string name, string nick, string blurb, Type enum_type, int default_value, ParamFlags flags);
-		public weak EnumClass enum_class;
+		public unowned EnumClass enum_class;
 		public int default_value;
 	}
 
 	public class ParamSpecFlags : ParamSpec {
 		[CCode (cname = "g_param_spec_flags")]
 		public ParamSpecFlags (string name, string nick, string blurb, Type flags_type, uint default_value, ParamFlags flags);
-		public weak FlagsClass flags_class;
+		public unowned FlagsClass flags_class;
 		public uint default_value;
 	}
 
@@ -272,9 +272,9 @@ namespace GLib {
 
 	[CCode (lower_case_csuffix = "object_class")]
 	public class ObjectClass : TypeClass {
-		public weak ParamSpec? find_property (string property_name);
+		public unowned ParamSpec? find_property (string property_name);
 		[CCode (array_length_type = "guint")]
-		public weak ParamSpec[] list_properties ();
+		public unowned ParamSpec[] list_properties ();
 		public void install_property (uint property_id, ParamSpec pspec);
 	}
 	
@@ -285,56 +285,61 @@ namespace GLib {
 	public delegate void ObjectGetPropertyFunc (Object object, uint property_id, Value value, ParamSpec pspec);
 	[CCode (has_target = false)]
 	public delegate void ObjectSetPropertyFunc (Object object, uint property_id, Value value, ParamSpec pspec);
-	[CCode (has_target = false)]
-	public delegate void WeakNotify (void *data, Object object);
+	[CCode (instance_pos = 0)]
+	public delegate void WeakNotify (Object object);
 
-	[CCode (ref_function = "g_object_ref", unref_function = "g_object_unref", marshaller_type_name = "OBJECT", get_value_function = "g_value_get_object", set_value_function = "g_value_set_object", param_spec_function = "g_param_spec_object", cheader_filename = "glib-object.h")]
+	[CCode (ref_function = "g_object_ref", unref_function = "g_object_unref", marshaller_type_name = "OBJECT", get_value_function = "g_value_get_object", set_value_function = "g_value_set_object", take_value_function = "g_value_take_object", param_spec_function = "g_param_spec_object", cheader_filename = "glib-object.h")]
 	public class Object {
 		public uint ref_count;
 
 		[CCode (has_new_function = false, construct_function = "g_object_new")]
 		public Object (...);
 
-#if VALA_0_7_6_NEW_METHODS
 		public static Object @new (Type type, ...);
-#endif
 		public static Object newv (Type type, [CCode (array_length_pos = 1.9)] Parameter[] parameters);
 
 		[CCode (cname = "G_TYPE_FROM_INSTANCE")]
 		public Type get_type ();
 		[CCode (cname = "G_OBJECT_GET_CLASS")]
 		public unowned ObjectClass get_class ();
-		public weak Object @ref ();
+		public unowned Object @ref ();
 		public void unref ();
 		public Object ref_sink ();
-		public void weak_ref (WeakNotify notify, void *data);
-		public void weak_unref (WeakNotify notify, void *data);
+		public void weak_ref (WeakNotify notify);
+		public void weak_unref (WeakNotify notify);
 		public void add_weak_pointer (void **data);
 		public void remove_weak_pointer (void **data);
 		public void get (string first_property_name, ...);
 		public void set (string first_property_name, ...);
 		public void get_property (string property_name, ref Value value);
 		public void set_property (string property_name, Value value);
-		public void* get_data (string key);
-		public void set_data (string key, void* data);
+		[CCode (simple_generics = true)]
+		public unowned T get_data<T> (string key);
+		[CCode (cname = "g_object_set_data_full", simple_generics = true)]
+		public void set_data<T> (string key, owned T data);
 		public void set_data_full (string key, void* data, DestroyNotify? destroy);
-		public void* steal_data (string key);
-		public void* get_qdata (Quark quark);
-		public void set_qdata (Quark quark, void* data);
+		[CCode (simple_generics = true)]
+		public T steal_data<T> (string key);
+		[CCode (simple_generics = true)]
+		public unowned T get_qdata<T> (Quark quark);
+		[CCode (cname = "g_object_set_qdata_full", simple_generics = true)]
+		public void set_qdata<T> (Quark quark, owned T data);
 		public void set_qdata_full (Quark quark, void* data, DestroyNotify? destroy);
-		public void* steal_qdata (Quark quark);
+		[CCode (simple_generics = true)]
+		public T steal_qdata<T> (Quark quark);
 		public void freeze_notify ();
 		public void thaw_notify ();
 		[CCode (cname = "g_object_run_dispose")]
 		public virtual void dispose ();
-		public virtual void finalize ();
 		public virtual void constructed ();
 
 		public signal void notify (ParamSpec pspec);
 		[CCode (cname = "g_object_notify")]
 		public void notify_property (string property_name);
 
-		public weak Object connect (string signal_spec, ...);
+		public unowned Object connect (string signal_spec, ...);
+		[CCode (cname = "g_signal_handler_disconnect")]
+		public void disconnect (ulong handler_id);
 
 		public void add_toggle_ref (ToggleNotify notify);
 		public void remove_toggle_ref (ToggleNotify notify);
@@ -360,27 +365,27 @@ namespace GLib {
 
 	[CCode (lower_case_csuffix = "enum")]
 	public class EnumClass : TypeClass {
-		public weak EnumValue? get_value (int value);
-		public weak EnumValue? get_value_by_name (string name);
-		public weak EnumValue? get_value_by_nick (string name);
+		public unowned EnumValue? get_value (int value);
+		public unowned EnumValue? get_value_by_name (string name);
+		public unowned EnumValue? get_value_by_nick (string name);
 		public int minimum;
 		public int maximum;
 		public uint n_values;
-		public weak EnumValue[] values;
+		public unowned EnumValue[] values;
 	}
 
 	[Compact]
 	public class EnumValue {
 		public int value;
-		public weak string value_name;
-		public weak string value_nick;
+		public unowned string value_name;
+		public unowned string value_nick;
 	}
 
 	[CCode (lower_case_csuffix = "flags")]
 	public class FlagsClass : TypeClass {
-		public weak FlagsValue? get_first_value (uint value);
-		public weak FlagsValue? get_value_by_name (string name);
-		public weak FlagsValue? get_value_by_nick (string name);
+		public unowned FlagsValue? get_first_value (uint value);
+		public unowned FlagsValue? get_value_by_name (string name);
+		public unowned FlagsValue? get_value_by_nick (string name);
 		public uint mask;
 		public uint n_values;
 		public FlagsValue[] values;
@@ -389,25 +394,25 @@ namespace GLib {
 	[Compact]
 	public class FlagsValue {
 		public int value;
-		public weak string value_name;
-		public weak string value_nick;
+		public unowned string value_name;
+		public unowned string value_nick;
 	}
 
 	[CCode (has_target = false)]
 	public delegate void ValueTransform (Value src_value, out Value dest_value);
 
-	[CCode (copy_function = "g_value_copy", destroy_function = "g_value_unset", type_id = "G_TYPE_VALUE", marshaller_type_name = "BOXED", get_value_function = "g_value_get_boxed", set_value_function = "g_value_set_boxed", type_signature = "v")]
+	[CCode (copy_function = "g_value_copy", destroy_function = "g_value_unset", type_id = "G_TYPE_VALUE", marshaller_type_name = "BOXED", get_value_function = "g_value_get_boxed", set_value_function = "g_value_set_boxed", take_value_function = "g_value_take_boxed", type_signature = "v")]
 	public struct Value {
 		[CCode (cname = "G_VALUE_HOLDS")]
 		public bool holds (Type type);
 		[CCode (cname = "G_VALUE_TYPE")]
 		public Type type ();
 		[CCode (cname = "G_VALUE_TYPE_NAME")]
-		public weak string type_name ();
+		public unowned string type_name ();
 
 		public Value (Type g_type);
 		public void copy (ref Value dest_value);
-		public weak Value? reset ();
+		public unowned Value? reset ();
 		public void init (Type g_type);
 		public void unset ();
 		public void set_instance (void* instance);
@@ -448,7 +453,7 @@ namespace GLib {
 		public void set_string (string v_string);
 		public void set_static_string (string v_string);
 		public void take_string (owned string v_string);
-		public weak string get_string ();
+		public unowned string get_string ();
 		public string dup_string ();
 		public void set_pointer (void* v_pointer);
 		public void* get_pointer ();
@@ -457,7 +462,7 @@ namespace GLib {
 		public void* dup_boxed ();
 		public void set_object (Object v_object);
 		public void take_object (owned Object v_object);
-		public weak Object get_object ();
+		public unowned Object get_object ();
 		public Object dup_object ();
 		public void set_gtype (Type v_gtype);
 		public Type get_gtype ();
@@ -503,14 +508,14 @@ namespace GLib {
 	public delegate void ClosureNotify (void* data, Closure closure);
 
 	[Compact]
-	[CCode (type_id = "G_TYPE_VALUE_ARRAY", copy_function = "g_value_array_copy")]
+	[CCode (type_id = "G_TYPE_VALUE_ARRAY", copy_function = "g_value_array_copy", free_function = "g_value_array_free")]
 	public class ValueArray {
 		public uint n_values;
 		[CCode (array_length_cname = "n_values", array_length_type = "guint")]
 		public Value[] values;
 		public ValueArray (uint n_prealloced);
 		public ValueArray copy ();
-		public weak Value? get_nth (uint index_);
+		public unowned Value? get_nth (uint index_);
 		public void append (Value value);
 		public void prepend (Value value);
 		public void insert (uint index_, Value value);
@@ -522,7 +527,7 @@ namespace GLib {
 	namespace Signal {
 		public static void query (uint signal_id, out SignalQuery query);
 		public static uint lookup (string name, Type itype);
-		public static weak string name (uint signal_id);
+		public static unowned string name (uint signal_id);
 		public static uint[] list_ids (Type itype);
 		public static void emit (void* instance, uint signal_id, Quark detail, ...);
 		public static void emit_by_name (void* instance, string detailed_signal, ...);
@@ -566,13 +571,13 @@ namespace GLib {
 
 	public struct SignalQuery {
 		public uint signal_id;
-		public weak string signal_name;
+		public unowned string signal_name;
 		public Type itype;
 		public SignalFlags signal_flags;
 		public Type return_type;
 		public uint n_params;
 		[CCode (array_length = false)]
-		public weak Type[] param_types;
+		public unowned Type[] param_types;
 	}
 
 	[CCode (cprefix = "G_SIGNAL_MATCH_", has_type_id = false)]

@@ -12,24 +12,24 @@ namespace Gst {
 		[CCode (has_construct_function = false)]
 		public DPPacketizer (Gst.DPVersion version);
 	}
-	[CCode (cprefix = "GST_DP_HEADER_FLAG_", has_type_id = "0", cheader_filename = "gst/dataprotocol/dataprotocol.h")]
+	[CCode (cprefix = "GST_DP_HEADER_FLAG_", has_type_id = false, cheader_filename = "gst/dataprotocol/dataprotocol.h")]
 	public enum DPHeaderFlag {
 		NONE,
 		CRC_HEADER,
 		CRC_PAYLOAD,
 		CRC
 	}
-	[CCode (cprefix = "GST_DP_PAYLOAD_", has_type_id = "0", cheader_filename = "gst/dataprotocol/dataprotocol.h")]
+	[CCode (cprefix = "GST_DP_PAYLOAD_", has_type_id = false, cheader_filename = "gst/dataprotocol/dataprotocol.h")]
 	public enum DPPayloadType {
 		NONE,
 		BUFFER,
 		CAPS,
 		EVENT_NONE
 	}
-	[CCode (cprefix = "", cheader_filename = "gst/dataprotocol/dataprotocol.h")]
+	[CCode (cprefix = "GST_DP_VERSION_", cheader_filename = "gst/dataprotocol/dataprotocol.h")]
 	public enum DPVersion {
-		GDP Version 0.2,
-		GDP Version 1.0
+		@0_2,
+		@1_0
 	}
 	[CCode (cheader_filename = "gst/dataprotocol/dataprotocol.h", has_target = false)]
 	public delegate bool DPHeaderFromBufferFunction (Gst.Buffer buffer, Gst.DPHeaderFlag flags, uint length, uchar header);

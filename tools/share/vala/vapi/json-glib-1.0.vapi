@@ -3,7 +3,7 @@
 [CCode (cprefix = "Json", lower_case_cprefix = "json_")]
 namespace Json {
 	[Compact]
-	[CCode (ref_function = "json_array_ref", unref_function = "json_array_unref", cheader_filename = "json-glib/json-glib.h")]
+	[CCode (ref_function = "json_array_ref", unref_function = "json_array_unref", type_id = "JSON_TYPE_ARRAY", cheader_filename = "json-glib/json-glib.h")]
 	public class Array {
 		[CCode (has_construct_function = false)]
 		public Array ();
@@ -16,7 +16,7 @@ namespace Json {
 		public void add_object_element (owned Json.Object value);
 		public void add_string_element (string value);
 		public unowned Json.Node dup_element (uint index_);
-		public void foreach_element (Json.ArrayForeach func, void* data);
+		public void foreach_element (Json.ArrayForeach func);
 		public unowned Json.Array get_array_element (uint index_);
 		public bool get_boolean_element (uint index_);
 		public double get_double_element (uint index_);
@@ -79,13 +79,13 @@ namespace Json {
 		public unowned string type_name ();
 	}
 	[Compact]
-	[CCode (ref_function = "json_object_ref", unref_function = "json_object_unref", cheader_filename = "json-glib/json-glib.h")]
+	[CCode (ref_function = "json_object_ref", unref_function = "json_object_unref", type_id = "JSON_TYPE_OBJECT", cheader_filename = "json-glib/json-glib.h")]
 	public class Object {
 		[CCode (has_construct_function = false)]
 		public Object ();
 		public void add_member (string member_name, owned Json.Node node);
 		public unowned Json.Node dup_member (string member_name);
-		public void foreach_member (Json.ObjectForeach func, void* data);
+		public void foreach_member (Json.ObjectForeach func);
 		public unowned Json.Array get_array_member (string member_name);
 		public bool get_boolean_member (string member_name);
 		public double get_double_member (string member_name);
@@ -117,7 +117,7 @@ namespace Json {
 		public uint get_current_pos ();
 		public unowned Json.Node get_root ();
 		public bool has_assignment (out unowned string variable_name);
-		public bool load_from_data (string data, ssize_t length) throws GLib.Error;
+		public bool load_from_data (string data, ssize_t length = -1) throws GLib.Error;
 		public bool load_from_file (string filename) throws GLib.Error;
 		public virtual signal void array_element (Json.Array array, int index_);
 		public virtual signal void array_end (Json.Array array);

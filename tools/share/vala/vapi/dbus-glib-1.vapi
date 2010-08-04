@@ -23,6 +23,17 @@
 
 [CCode (cheader_filename = "dbus/dbus-glib-lowlevel.h,dbus/dbus-glib.h")]
 namespace DBus {
+	public const string SERVICE_DBUS;
+	public const string PATH_DBUS;
+	public const string INTERFACE_DBUS;
+
+	public const string INTERFACE_INTROSPECTABLE;
+	public const string INTERFACE_PROPERTIES;
+	public const string INTERFACE_PEER;
+
+	[CCode (cname = "dbus_g_thread_init")]
+	public static void thread_init ();
+
 	[CCode (cprefix = "DBUS_BUS_")]
 	public enum BusType {
 		SESSION,
@@ -44,7 +55,7 @@ namespace DBus {
 		[CCode (cname = "dbus_connection_register_g_object")]
 		public void register_object (string at_path, GLib.Object object);
 
-		public bool send (RawMessage message, uint32 client_serial);
+		public bool send (RawMessage message, uint32? client_serial);
 		public RawMessage send_with_reply_and_block (RawMessage message, int timeout_milliseconds, ref RawError error);
 
 		public bool add_filter (RawHandleMessageFunction function, RawFreeFunction? free_data_function = null);
@@ -54,6 +65,12 @@ namespace DBus {
 		public void add_match (string rule, ref RawError error);
 		[CCode (cname = "dbus_bus_remove_match")]
 		public void remove_match (string rule, ref RawError error);
+		[CCode (cname = "dbus_bus_get_unique_name")]
+		public unowned string get_unique_name();
+		[CCode (cname = "dbus_bus_request_name")]
+		public int request_name(string name, uint flags, ref RawError error);
+		[CCode (cname="dbus_bus_release_name")]
+		public int release_name(string name, ref RawError error);
 	}
 
 	[CCode (cname = "DBusError", cprefix = "dbus_error_", destroy_function = "dbus_error_free")]
@@ -87,6 +104,9 @@ namespace DBus {
 		public int get_element_type ();
 		public void recurse (RawMessageIter sub);
 		public void get_basic (void* value);
+		public bool open_container (RawType arg_type, string? signature, RawMessageIter sub);
+		public bool close_container (RawMessageIter sub);
+		public bool append_basic (RawType arg_type, void* value);
 
 		[CCode (cname = "dbus_message_type_from_string")]
 		public static int type_from_string (string type);
@@ -101,7 +121,9 @@ namespace DBus {
 		[CCode (sentinel = "DBUS_TYPE_INVALID")]
 		public bool append_args (RawType first_arg_type, ...);
 		[CCode (cname = "dbus_message_iter_init")]
-		public bool iter_init( RawMessageIter iter );
+		public bool iter_init (RawMessageIter iter);
+		[CCode (cname = "dbus_message_iter_init_append")]
+		public bool iter_init_append (RawMessageIter iter);
 
 		public RawMessageType get_type ();
 		public bool   set_path (string object_path);
@@ -222,25 +244,30 @@ namespace DBus {
 	public class Connection {
 		[CCode (cname = "dbus_g_proxy_new_for_name")]
 		public Object get_object (string name, string path, string? interface_ = null);
+		[CCode (cname="dbus_g_proxy_new_for_name_owner")]
+		public Object get_object_for_name_owner (string name, string path, string? interface_ = null) throws Error;
 		[CCode (cname = "dbus_g_proxy_new_from_type")]
 		public GLib.Object get_object_from_type (string name, string path, string interface_, GLib.Type type);
 		[CCode (cname = "dbus_g_connection_register_g_object")]
 		public void register_object (string at_path, GLib.Object object);
+		[CCode (cname = "dbus_g_connection_unregister_g_object")]
+		public void unregister_object (GLib.Object object);
 		[CCode (cname = "dbus_g_connection_lookup_g_object")]
-		public weak GLib.Object lookup_object (string at_path);
+		public unowned GLib.Object lookup_object (string at_path);
 		[CCode (cname = "dbus_g_connection_get_connection")]
-		public RawConnection get_connection ();
+		public unowned RawConnection get_connection ();
 	}
 
 	[CCode (cname = "DBusGProxy", lower_case_csuffix = "g_proxy")]
 	public class Object : GLib.Object {
 		public bool call (string method, out GLib.Error error, GLib.Type first_arg_type, ...);
-		public weak ProxyCall begin_call (string method, ProxyCallNotify notify, GLib.DestroyNotify destroy, GLib.Type first_arg_type, ...);
+		public unowned ProxyCall begin_call (string method, ProxyCallNotify notify, GLib.DestroyNotify destroy, GLib.Type first_arg_type, ...);
 		public bool end_call (ProxyCall call, out GLib.Error error, GLib.Type first_arg_type, ...);
 		public void cancel_call (ProxyCall call);
-		public weak string get_path ();
-		public weak string get_bus_name ();
-		public weak string get_interface ();
+		public unowned string get_path ();
+		public unowned string get_bus_name ();
+		public unowned string get_interface ();
+		public GLib.HashTable<string,GLib.Value?> get_all (string interface_name) throws DBus.Error;
 
 		public signal void destroy ();
 	}
@@ -264,13 +291,19 @@ namespace DBus {
 	public class ProxyCall {
 	}
 
+	[CCode (cname = "DBusGMethodInvocation")]
+	public class MethodInvocation {
+	}
+
 	[Flags]
+	[CCode (cname = "uint")]
 	public enum NameFlag {
 		ALLOW_REPLACEMENT,
 		REPLACE_EXISTING,
 		DO_NOT_QUEUE
 	}
 
+	[CCode (cname = "int")]
 	public enum RequestNameReply {
 		PRIMARY_OWNER,
 		IN_QUEUE,

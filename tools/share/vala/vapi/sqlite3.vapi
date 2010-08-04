@@ -28,29 +28,70 @@ namespace Sqlite {
 	public class Database {
 		public int busy_timeout (int ms);
 		public int changes ();
-		public int exec (string sql, Callback? sqlite3_callback = null, out string errmsg = null);
+		[CCode (cname = "sqlite3_exec")]
+		public int _exec (string sql, Callback? sqlite3_callback = null, [CCode (type = "char**")] out unowned string errmsg = null);
+		[CCode (cname = "_sqlite3_exec")]
+		public int exec (string sql, Callback? sqlite3_callback = null, out string errmsg = null) {
+			unowned string sqlite_errmsg;
+			var ec = this._exec (sql, sqlite3_callback, out sqlite_errmsg);
+			if (&errmsg != null) {
+				errmsg = sqlite_errmsg;
+			}
+			Sqlite.Memory.free ((void*) sqlite_errmsg);
+			return ec;
+		}
 		public int extended_result_codes (int onoff);
 		public int get_autocommit ();
 		public void interrupt ();
 		public int64 last_insert_rowid ();
+		public int limit (Sqlite.Limit id, int new_val);
 		public int total_changes ();
-
 		public int complete (string sql);
-		public int get_table (string sql, [CCode (array_length = false)] out weak string[] resultp, out int nrow, out int ncolumn, out string errmsg);
-		public static void free_table ([CCode (array_length = false)] string[] result);
+		[CCode (cname = "sqlite3_get_table")]
+		public int _get_table (string sql, [CCode (array_length = false)] out unowned string[] resultp, out int nrow, out int ncolumn, [CCode (type = "char**")] out unowned string? errmsg = null);
+		private static void free_table ([CCode (array_length = false)] string[] result);
+		[CCode (cname = "_sqlite3_get_table")]
+		public int get_table (string sql, out string[] resultp, out int nrow, out int ncolumn, out string? errmsg = null) {
+			unowned string sqlite_errmsg;
+			unowned string[] sqlite_resultp;
+
+			var ec = this._get_table (sql, out sqlite_resultp, out nrow, out ncolumn, out sqlite_errmsg);
+
+			resultp = new string[(nrow + 1) * ncolumn];
+			for (var entry = 0 ; entry < resultp.length ; entry++ ) {
+				resultp[entry] = sqlite_resultp[entry];
+			}
+			Sqlite.Database.free_table (sqlite_resultp);
+
+			if (&errmsg != null) {
+				errmsg = sqlite_errmsg;
+			}
+			Sqlite.Memory.free ((void*) sqlite_errmsg);
+			return ec;
+		}
 		public static int open (string filename, out Database db);
 		public static int open_v2 (string filename, out Database db, int flags = OPEN_READWRITE | OPEN_CREATE, string? zVfs = null);
 		public int errcode ();
-		public weak string errmsg ();
-		public int prepare (string sql, int n_bytes, out Statement stmt, out string tail = null);
-		public int prepare_v2 (string sql, int n_bytes, out Statement stmt, out string tail = null);
+		public unowned string errmsg ();
+		public unowned Sqlite.Statement next_stmt (Sqlite.Statement? current);
+		public int prepare (string sql, int n_bytes, out Statement stmt, out unowned string tail = null);
+		public int prepare_v2 (string sql, int n_bytes, out Statement stmt, out unowned string tail = null);
+		public int set_authorizer (AuthorizeCallback? auth);
+		[CCode (cname = "sqlite3_db_status")]
+		public int status (Sqlite.DatabaseStatus op, out int pCurrent, out int pHighwater, int resetFlag = 0);
+		public int table_column_metadata (string db_name, string table_name, string column_name, out string? data_type, out string? collation_sequence, out int? not_null, out int? primary_key, out int? auto_increment);
 		public void trace (TraceCallback? xtrace);
 		public void profile (ProfileCallback? xprofile);
 		public void progress_handler (int n_opcodes, Sqlite.ProgressCallback? progress_handler);
 		public void commit_hook (CommitCallback? commit_hook);
 		public void rollback_hook (RollbackCallback? rollback_hook);
+		public void update_hook (UpdateCallback? update_hook);
+		public int create_function (string zFunctionName, int nArg, int eTextRep, void * user_data, UserFuncCallback? xFunc, UserFuncCallback? xStep, UserFuncFinishCallback? xFinal);
+		public int create_collation (string zName, int eTextRep, [CCode (delegate_target_pos = 2.9, type = "int (*)(void *, int,  const void *, int,  const void *)")] CompareCallback xCompare);
 	}
 
+	[CCode (instance_pos = 0)]
+	public delegate int AuthorizeCallback (Sqlite.Action action, string? p1, string? p2, string db_name, string? responsible);
 	[CCode (instance_pos = 0)]
 	public delegate void TraceCallback (string message);
 	[CCode (instance_pos = 0)]
@@ -58,6 +99,34 @@ namespace Sqlite {
 	public delegate int ProgressCallback ();
 	public delegate int CommitCallback ();
 	public delegate void RollbackCallback ();
+	[CCode (has_target = false)]
+	public delegate void UserFuncCallback (Sqlite.Context context, [CCode (array_length_pos = 1.1)] Sqlite.Value[] values);
+	[CCode (has_target = false)]
+	public delegate void UserFuncFinishCallback (Sqlite.Context context);
+	[CCode (instance_pos = 0)]
+	public delegate void UpdateCallback (Sqlite.Action action, string dbname, string table, int64 rowid);
+	[CCode (instance_pos = 0)]
+	public delegate int CompareCallback (int alen, void* a, int blen, void* b);
+
+	public unowned string? compileoption_get (int n);
+	public int compileoption_used (string option_name);
+	public static int complete (string sql);
+	[CCode (sentinel = "")]
+	public static int config (Sqlite.Config op, ...);
+	public unowned string libversion ();
+	public int libversion_number ();
+	[PrintfFormat]
+	public void log (int error_code, string format, ...);
+	public unowned string sourceid ();
+	public static int status (Sqlite.Status op, out int pCurrent, out int pHighwater, int resetFlag = 0);
+	public static int threadsafe ();
+
+	[CCode (cname = "SQLITE_VERSION")]
+	public const string VERSION;
+	[CCode (cname = "SQLITE_VERSION_NUMBER")]
+	public const int VERSION_NUMBER;
+	[CCode (cname = "SQLITE_SOURCE_ID")]
+	public const string SOURCE_ID;
 
 	/* Dynamically Typed Value Object */
 	[Compact]
@@ -74,7 +143,7 @@ namespace Sqlite {
 		[CCode (cname = "sqlite3_value_int64")]
 		public int64 to_int64 ();
 		[CCode (cname = "sqlite3_value_text")]
-		public weak string to_text ();
+		public unowned string to_text ();
 		[CCode (cname = "sqlite3_value_type")]
 		public int to_type ();
 		[CCode (cname = "sqlite3_value_numeric_type")]
@@ -162,6 +231,113 @@ namespace Sqlite {
 	public const int MUTEX_FAST;
 	[CCode (cname = "SQLITE_MUTEX_RECURSIVE")]
 	public const int MUTEX_RECURSIVE;
+	[CCode (cname = "SQLITE_UTF8")]
+	public const int UTF8;
+	[CCode (cname = "SQLITE_UTF16LE")]
+	public const int UTF16LE;
+	[CCode (cname = "SQLITE_UTF16BE")]
+	public const int UTF16BE;
+	[CCode (cname = "SQLITE_UTF16")]
+	public const int UTF16;
+	[CCode (cname = "SQLITE_ANY")]
+	public const int ANY;
+	[CCode (cname = "SQLITE_UTF16_ALIGNED")]
+	public const int UTF16_ALIGNED;
+
+	[CCode (cname = "int", cprefix = "SQLITE_")]
+	public enum Action {
+		CREATE_INDEX,
+		CREATE_TABLE,
+		CREATE_TEMP_INDEX,
+		CREATE_TEMP_TABLE,
+		CREATE_TEMP_TRIGGER,
+		CREATE_TEMP_VIEW,
+		CREATE_TRIGGER,
+		CREATE_VIEW,
+		DELETE,
+		DROP_INDEX,
+		DROP_TABLE,
+		DROP_TEMP_INDEX,
+		DROP_TEMP_TABLE,
+		DROP_TEMP_TRIGGER,
+		DROP_TEMP_VIEW,
+		DROP_TRIGGER,
+		DROP_VIEW,
+		INSERT,
+		PRAGMA,
+		READ,
+		SELECT,
+		TRANSACTION,
+		UPDATE,
+		ATTACH,
+		DETACH,
+		ALTER_TABLE,
+		REINDEX,
+		ANALYZE,
+		CREATE_VTABLE,
+		DROP_VTABLE,
+		FUNCTION,
+		SAVEPOINT,
+		COPY
+	}
+
+	[CCode (cname = "int", cprefix = "SQLITE_CONFIG_")]
+	public enum Config {
+		SINGLETHREAD,
+		MULTITHREAD,
+		SERIALIZED,
+		MALLOC,
+		GETMALLOC,
+		SCRATCH,
+		PAGECACHE,
+		HEAP,
+		MEMSTATUS,
+		MUTEX,
+		GETMUTEX,
+		LOOKASIDE,
+		PCACHE,
+		GETPCACHE,
+		LOG,
+	}
+
+	[CCode (cname = "int", cprefix = "SQLITE_DBSTATUS_")]
+	public enum DatabaseStatus {
+		LOOKASIDE_USED
+	}
+
+	[CCode (cname = "int", cprefix = "SQLITE_LIMIT_")]
+	public enum Limit {
+		LENGTH,
+		SQL_LENGTH,
+		COLUMN,
+		EXPR_DEPTH,
+		COMPOUND_SELECT,
+		VDBE_OP,
+		FUNCTION_ARG,
+		ATTACHED,
+		LIKE_PATTERN_LENGTH,
+		VARIABLE_NUMBER,
+		TRIGGER_DEPTH
+	}
+
+	[CCode (cname = "int", cprefix = "SQLITE_STMTSTATUS_")]
+	public enum StatementStatus {
+		FULLSCAN_STEP,
+		SORT
+	}
+
+	[CCode (cname = "int", cprefix = "SQLITE_STATUS_")]
+	public enum Status {
+		MEMORY_USED,
+		PAGECACHE_USED,
+		PAGECACHE_OVERFLOW,
+		SCRATCH_USED,
+		SCRATCH_OVERFLOW,
+		MALLOC_SIZE,
+		PARSER_STACK,
+		PAGECACHE_SIZE,
+		SCRATCH_SIZE
+	}
 
 	/* SQL Statement Object */
 	[Compact]
@@ -169,12 +345,14 @@ namespace Sqlite {
 	public class Statement {
 		public int bind_parameter_count ();
 		public int bind_parameter_index (string name);
-		public weak string bind_parameter_name (int index);
+		public unowned string bind_parameter_name (int index);
 		public int clear_bindings ();
 		public int column_count ();
 		public int data_count ();
-		public weak Database db_handle ();
+		public unowned Database db_handle ();
 		public int reset ();
+		[CCode (cname = "sqlite3_stmt_status")]
+		public int status (Sqlite.StatementStatus op, int resetFlg = 0);
 		public int step ();
 		public int bind_blob (int index, void* value, int n, GLib.DestroyNotify destroy_notify);
 		public int bind_double (int index, double value);
@@ -189,11 +367,31 @@ namespace Sqlite {
 		public double column_double (int col);
 		public int column_int (int col);
 		public int64 column_int64 (int col);
-		public weak string column_text (int col);
+		public unowned string column_text (int col);
 		public int column_type (int col);
-		public weak Value column_value (int col);
-		public weak string column_name (int index);
-		public weak string sql ();
+		public unowned Value column_value (int col);
+		public unowned string column_name (int index);
+		public unowned string column_database_name (int col);
+		public unowned string column_table_name (int col);
+		public unowned string column_origin_name (int col);
+		public unowned string sql ();
+	}
+
+	namespace Memory {
+		[CCode (cname = "sqlite3_malloc")]
+		public static void* malloc (int n_bytes);
+		[CCode (cname = "sqlite3_realloc")]
+		public static void* realloc (void* mem, int n_bytes);
+		[CCode (cname = "sqlite3_free")]
+		public static void free (void* mem);
+		[CCode (cname = "sqlite3_release_memory")]
+		public static int release (int bytes);
+		[CCode (cname = "sqlite3_memory_used")]
+		public static int64 used ();
+		[CCode (cname = "sqlite3_memory_highwater")]
+		public static int64 highwater (int reset = 0);
+		[CCode (cname = "sqlite3_soft_heap_limit")]
+		public static void soft_heap_limit (int limit);
 	}
 
 	[Compact]
@@ -202,8 +400,46 @@ namespace Sqlite {
 		[CCode (cname = "sqlite3_mutex_alloc")]
 		public Mutex (int mutex_type = MUTEX_RECURSIVE);
 		public void enter ();
+		public int held ();
+		public int notheld ();
 		public int @try ();
 		public void leave ();
+	}
+
+	[Compact, CCode (cname = "sqlite3_context", cprefix = "sqlite3_")]
+	public class Context {
+		public void result_blob (uint8[] data, GLib.DestroyNotify? destroy_notify = GLib.g_free);
+		public void result_double (double value);
+		public void result_error (string value, int error_code);
+		public void result_error_toobig ();
+		public void result_error_nomem ();
+		public void result_error_code (int error_code);
+		public void result_int (int value);
+		public void result_int64 (int64 value);
+		public void result_null ();
+		public void result_text (string value, int length = -1, GLib.DestroyNotify? destroy_notify = GLib.g_free);
+		public void result_value (Sqlite.Value value);
+		public void result_zeroblob (int n);
+
+		[CCode (simple_generics = true)]
+		public unowned T user_data<T> ();
+		[CCode (simple_generics = true)]
+		public void set_auxdata<T> (int N, owned T data);
+		[CCode (simple_generics = true)]
+		public unowned T get_auxdata<T> (int N);
+		[CCode (cname = "sqlite3_context_db_handle")]
+		public unowned Database db_handle ();
+		[CCode (cname = "sqlite3_aggregate_context")]
+		public void * aggregate (int n_bytes);
+	}
+
+	[Compact, CCode (cname = "sqlite3_backup", free_function = "sqlite3_backup_finish", cprefix = "sqlite3_backup_")]
+	public class Backup {
+		[CCode (cname = "sqlite3_backup_init")]
+		public Backup (Database dest, string dest_name, Database source, string source_name);
+		public int step (int nPage);
+		public int remaining ();
+		public int pagecount ();
 	}
 }
 

@@ -36,6 +36,9 @@ namespace X {
 		[CCode (cname = "XAllPlanes")]
 		public static ulong get_all_planes ();
 
+		[CCode (cname = "XActivateScreenSaver")]
+		public void activate_screensaver ();
+
 		[CCode (cname = "XAddToSaveSet")]
 		public int add_to_save_set (Window w);
 
@@ -81,11 +84,17 @@ namespace X {
 		[CCode (cname = "XFlush")]
 		public int flush ();
 
+		[CCode (cname = "XForceScreenSaver")]
+		public void force_screensaver (int mode);
+
 		[CCode (cname = "XGetKeyboardMapping", array_length = false)]
-		public weak uint[] get_keyboard_mapping (uint first_keycode, int keycode_count, ref int keysyms_per_keycode_return);
+		public unowned uint[] get_keyboard_mapping (uint first_keycode, int keycode_count, ref int keysyms_per_keycode_return);
 
 		[CCode (cname = "XGetModifierMapping")]
 		public ModifierKeymap get_modifier_mapping ();
+
+		[CCode (cname = "XGetScreenSaver")]
+		public void get_screensaver (out int timeout, out int interval, out int prefer_blanking, out int allow_exposures);
 
 		[CCode (cname = "XGetSelectionOwner")]
 		public Window get_selection_owner (Atom selection);
@@ -94,7 +103,7 @@ namespace X {
 		public void get_window_attributes (Window w, out WindowAttributes window_attributes_return);
 
 		[CCode (cname = "XGetWindowProperty")]
-		public int get_window_property (Window w, Atom property, long long_offset, long long_length, bool delete, Atom req_type, out Atom actual_type_return, out int actual_format_return, out ulong nitems_return, out ulong bytes_after_return, out void* prop_return);
+		public int get_window_property (Window w, Atom property, long long_offset, long long_length, bool delete, Atom req_type, out Atom actual_type_return, out int actual_format_return, out ulong nitems_return, out ulong bytes_after_return, [CCode (type = "unsigned char **")] out void* prop_return);
 
 		[CCode (cname = "XGrabButton")]
 		public int grab_button (uint button, uint modifiers, Window grab_window, bool owner_events, uint event_mask, int pointer_mode, int keyboard_mode, Window confine_to, uint cursor);
@@ -174,6 +183,9 @@ namespace X {
 		[CCode (cname = "XReparentWindow")]
 		public int reparent_window (Window w, Window parent, int x, int y);
 
+		[CCode (cname = "XResetScreenSaver")]
+		public void reset_screensaver ();
+
 		[CCode (cname = "XResizeWindow")]
 		public int resize_window (Window w, uint width, uint height);
 
@@ -184,7 +196,7 @@ namespace X {
 		public int screen_count ();
 
 		[CCode (cname = "XScreenOfDisplay")]
-		public weak Screen screen_of_display (int screen_number);
+		public unowned Screen screen_of_display (int screen_number);
 
 		[CCode (cname = "XSelectInput")]
 		public int select_input (Window w, long event_mask);
@@ -194,6 +206,9 @@ namespace X {
 
 		[CCode (cname = "XSetCloseDownMode")]
 		public void set_close_down_mode (int close_mode);
+
+		[CCode (cname = "XSetScreenSaver")]
+		public void set_screensaver (int timeout, int interval, int prefer_blanking, int allow_exposures);
 
 		[CCode (cname = "XSetSelectionOwner")]
 		public Window set_selection_owner (Atom selection, Window owner, int time);
@@ -787,7 +802,7 @@ namespace X {
 		public ClientMessageEventData data;
 	}
 
-	[CCode (cname = "RECTANGLE", has_type_id = "false")]
+	[CCode (cname = "RECTANGLE", has_type_id = false)]
 	public struct Rectangle {
 		public short x;
 		public short y;

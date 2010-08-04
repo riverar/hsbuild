@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
- * 
+ *
  * Author:
  * 	Jürg Billeter <j@bitron.ch>
  */
@@ -453,7 +453,7 @@ namespace Posix {
 	[CCode (cheader_filename = "fcntl.h")]
 	public int open (string path, int oflag, mode_t mode=0);
 	[CCode (cheader_filename = "fcntl.h")]
-	public int posix_fadvice (int fd, long offset, long len, int advice);
+	public int posix_fadvise (int fd, long offset, long len, int advice);
 	[CCode (cheader_filename = "fcntl.h")]
 	public int posix_fallocate (int fd, long offset, long len);
 
@@ -473,7 +473,7 @@ namespace Posix {
 	[CCode (cheader_filename = "arpa/inet.h")]
 	public uint32 inet_addr (string host);
 	[CCode (cheader_filename = "arpa/inet.h")]
-	public weak string inet_ntoa (InAddr addr);
+	public unowned string inet_ntoa (InAddr addr);
 	[CCode (cheader_filename = "arpa/inet.h")]
 	public uint32 htonl (uint32 hostlong);
 	[CCode (cheader_filename = "arpa/inet.h")]
@@ -902,6 +902,14 @@ namespace Posix {
 	[CCode (cname = "pid_t", default_value = "0", cheader_filename = "sys/types.h")]
 	public struct pid_t {
 	}
+
+	[CCode (cname = "struct sigaction", cheader_filename = "signal.h")]
+	public struct sigaction_t {
+		sighandler_t sa_handler;
+		sigset_t     sa_mask;
+		int          sa_flags;
+	}
+
 	[CCode (cheader_filename = "signal.h")]
 	public int kill (pid_t pid, int signum);
 	[CCode (cheader_filename = "signal.h")]
@@ -926,6 +934,8 @@ namespace Posix {
 	public int sigpending (sigset_t sigset);
 	[CCode (cheader_filename = "signal.h")]
 	public int sigwait (sigset_t sigset, out int sig);
+	[CCode (cheader_filename = "signal.h")]
+	public int sigaction (int signum, sigaction_t? act, out sigaction_t? oldact);
 
 	[CCode (has_target = false, cheader_filename = "signal.h")]
 	public delegate void sighandler_t (int signal);
@@ -975,7 +985,7 @@ namespace Posix {
 	[CCode (cheader_filename = "stdlib.h")]
 	public int system (string command);
 
-	[CCOde (has_target = false, cheader_filename = "stdlib.h")]
+	[CCode (has_target = false, cheader_filename = "stdlib.h", cname = "__compar_fn_t")]
 	public delegate int compar_fn_t (void* key1, void* key2);
 
 	[CCode (cheader_filename = "stdlib.h")]
@@ -1489,7 +1499,7 @@ namespace Posix {
 		public int tm_isdst;
 	}
 
-	[CCode (cheader_filename = "time.h")]
+	[CCode (cname = "struct timespec", cheader_filename = "time.h")]
 	public struct timespec {
 		public time_t tv_sec;
 		public long tv_nsec;
@@ -1543,6 +1553,8 @@ namespace Posix {
 	[CCode (cheader_filename = "unistd.h")]
 	public int symlink (string from, string to);
 	[CCode (cheader_filename = "unistd.h")]
+	public long sysconf (int name);
+	[CCode (cheader_filename = "unistd.h")]
 	public int rmdir (string path);
 	[CCode (cheader_filename = "unistd.h")]
 	public pid_t tcgetpgrp (int fd);
@@ -1570,6 +1582,59 @@ namespace Posix {
 	public int getpagesize ();
 	[CCode (cheader_filename = "unistd.h")]
 	public int getdtablesize ();
+
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_ARG_MAX;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_CHILD_MAX;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_HOST_NAME_MAX;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_LOGIN_NAME_MAX;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_CLK_TCK;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_OPEN_MAX;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_PAGESIZE;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_RE_DUP_MAX;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_STREAM_MAX;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_SYMLOOP_MAX;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_TTY_NAME_MAX;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_TZNAME_MAX;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_VERSION;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_BASE_MAX;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_BC_DIM_MAX;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_BC_SCALE_MAX;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_BC_STRING_MAX;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_COLL_WEIGHTS_MAX;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_EXRP_NEST_MAX;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_LINE_MAX;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_2_VERSION;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_2_C_DEV;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_2_FORT_DEV;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_2_FORT_RUN;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_2_LOCALEDEF;
+	[CCode (cheader_filename = "unistd.h")]
+	public const int _SC_2_SW_DEV;
 
 	[CCode (cheader_filename = "unistd.h")]
 	public const int STDIN_FILENO;
@@ -1617,6 +1682,8 @@ namespace Posix {
 	public int dup (int fd);
 	[CCode (cheader_filename = "unistd.h")]
 	public int dup2 (int fd1, int fd2);
+	[CCode (cheader_filename = "unistd.h")]
+	public int gethostname (char[] name);
 	[CCode (cheader_filename = "unistd.h")]
 	public pid_t getpid ();
 	[CCode (cheader_filename = "unistd.h")]
@@ -2030,7 +2097,7 @@ namespace Posix {
 		[CCode (cname = "fgetc")]
 		public int getc ();
 		[CCode (cname = "fgets", instance_pos = -1)]
-		public weak string gets (char[] s);
+		public unowned string gets (char[] s);
 		[CCode (cname = "feof")]
 		public bool eof ();
 		[CCode (cname = "fscanf"), ScanfFormat]
