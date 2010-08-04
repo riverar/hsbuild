@@ -14,4 +14,6 @@
 @copy "%~dp0\hsbuild\bin\x86\Release\hsbuild.console.exe" "%PF%\HSBuild\bin\hsbuild.exe"
 @copy "%~dp0\hsbuild\bin\x86\Release\HSbuild.Core.dll" "%PF%\HSBuild\bin"
 @copy "%~dp0\hsbuild\bin\x86\Release\ICSharpCode.SharpZipLib.dll" "%PF%\HSBuild\bin"
+
+@rmdir /S /Q "%PF%\HSBuild\tools"
 @xcopy /I /Y /E "%~dp0\tools" "%PF%\HSBuild\tools"
