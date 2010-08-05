@@ -48,6 +48,10 @@ namespace GLib {
 		public bool is_interface ();
 		[CCode (cname = "G_TYPE_IS_VALUE_TYPE")]
 		public bool is_value_type ();
+		[CCode (cname = "G_TYPE_IS_ENUM")]
+		public bool is_enum ();
+		[CCode (cname = "G_TYPE_IS_FLAGS")]
+		public bool is_flags ();
 
 		[CCode (cname = "G_TYPE_FROM_INSTANCE")]
 		public static Type from_instance (void* instance);
@@ -371,6 +375,7 @@ namespace GLib {
 		public int minimum;
 		public int maximum;
 		public uint n_values;
+		[CCode (array_length_cname = "n_values")]
 		public unowned EnumValue[] values;
 	}
 
@@ -388,6 +393,7 @@ namespace GLib {
 		public unowned FlagsValue? get_value_by_nick (string name);
 		public uint mask;
 		public uint n_values;
+		[CCode (array_length_cname = "n_values")]
 		public FlagsValue[] values;
 	}
 

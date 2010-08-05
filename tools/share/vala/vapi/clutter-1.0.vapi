@@ -7,7 +7,7 @@ namespace Clutter {
 		[CCode (cheader_filename = "clutter/clutter.h")]
 		public static uint add (uint fps, GLib.SourceFunc func);
 		[CCode (cheader_filename = "clutter/clutter.h")]
-		public static uint add_full (int priority, uint fps, GLib.SourceFunc func, GLib.DestroyNotify? notify = null);
+		public static uint add_full (int priority, uint fps, owned GLib.SourceFunc func);
 	}
 	[CCode (cprefix = "ClutterThreads", lower_case_cprefix = "clutter_threads_")]
 	namespace Threads {
@@ -16,21 +16,21 @@ namespace Clutter {
 			[CCode (cname = "clutter_threads_add_frame_source", cheader_filename = "clutter/clutter.h")]
 			public static uint add (uint fps, GLib.SourceFunc func);
 			[CCode (cname = "clutter_threads_add_frame_source_full", cheader_filename = "clutter/clutter.h")]
-			public static uint add_full (int priority, uint fps, GLib.SourceFunc func, GLib.DestroyNotify? notify = null);
+			public static uint add_full (int priority, uint fps, owned GLib.SourceFunc func);
 		}
 		[CCode (cprefix = "ClutterThreadsIdle", lower_case_cprefix = "clutter_threads_idle_")]
 		namespace Idle {
 			[CCode (cname = "clutter_threads_add_idle", cheader_filename = "clutter/clutter.h")]
 			public static uint add (GLib.SourceFunc func);
 			[CCode (cname = "clutter_threads_add_idle_full", cheader_filename = "clutter/clutter.h")]
-			public static uint add_full (int priority, GLib.SourceFunc func, GLib.DestroyNotify? notify = null);
+			public static uint add_full (int priority, owned GLib.SourceFunc func);
 		}
 		[CCode (cprefix = "ClutterThreadsTimeout", lower_case_cprefix = "clutter_threads_timeout_")]
 		namespace Timeout {
 			[CCode (cname = "clutter_threads_add_timeout", cheader_filename = "clutter/clutter.h")]
 			public static uint add (uint interval, GLib.SourceFunc func);
 			[CCode (cname = "clutter_threads_add_timeout_full", cheader_filename = "clutter/clutter.h")]
-			public static uint add_full (int priority, uint interval, GLib.SourceFunc func, GLib.DestroyNotify? notify = null);
+			public static uint add_full (int priority, uint interval, owned GLib.SourceFunc func);
 		}
 		[CCode (cheader_filename = "clutter/clutter.h")]
 		public static void enter ();
@@ -91,7 +91,7 @@ namespace Clutter {
 		public void apply_transform_to_point (Clutter.Vertex point, out Clutter.Vertex vertex);
 		public unowned Pango.Context create_pango_context ();
 		public unowned Pango.Layout create_pango_layout (string text);
-		public void get_abs_allocation_vertices (Clutter.Vertex[] verts);
+		public void get_abs_allocation_vertices ([CCode (array_length = false)] Clutter.Vertex[] verts);
 		public void get_allocation_box (out Clutter.ActorBox box);
 		public void get_allocation_geometry (out Clutter.Geometry geom);
 		public void get_allocation_vertices (Clutter.Actor ancestor, Clutter.Vertex[] verts);
@@ -516,8 +516,8 @@ namespace Clutter {
 		public static unowned Clutter.BindingPool find (string name);
 		public unowned string find_action (uint key_val, Clutter.ModifierType modifiers);
 		public static unowned Clutter.BindingPool get_for_class (void* klass);
-		public void install_action (string action_name, uint key_val, Clutter.ModifierType modifiers, owned GLib.Callback callback);
-		public void install_closure (string action_name, uint key_val, Clutter.ModifierType modifiers, GLib.Closure closure);
+		public void install_action (string action_name, uint key_val, Clutter.ModifierType modifiers, [CCode (type = "GCallback")] owned Clutter.BindingActionFunc callback);
+		public void install_closure (string action_name, uint key_val, Clutter.ModifierType modifiers, [CCode (type = "GClosure*")] owned Clutter.BindingActionFunc closure);
 		public void override_action (uint key_val, Clutter.ModifierType modifiers, owned GLib.Callback callback);
 		public void override_closure (uint key_val, Clutter.ModifierType modifiers, GLib.Closure closure);
 		public void remove_action (uint key_val, Clutter.ModifierType modifiers);
@@ -898,7 +898,7 @@ namespace Clutter {
 	public class Score : GLib.Object {
 		[CCode (has_construct_function = false)]
 		public Score ();
-		public ulong append (Clutter.Timeline parent, Clutter.Timeline timeline);
+		public ulong append (Clutter.Timeline? parent, Clutter.Timeline timeline);
 		public ulong append_at_marker (Clutter.Timeline parent, string marker_name, Clutter.Timeline timeline);
 		public bool get_loop ();
 		public unowned Clutter.Timeline get_timeline (ulong id);
@@ -969,10 +969,11 @@ namespace Clutter {
 	public class Stage : Clutter.Group, Clutter.Scriptable, Clutter.Container {
 		[CCode (type = "ClutterActor*", has_construct_function = false)]
 		public Stage ();
+		[CCode (cname = "clutter_stage_event")]
+		public bool emit_event (Clutter.Event event);
 		public void ensure_current ();
 		public void ensure_redraw ();
 		public void ensure_viewport ();
-		public bool event (Clutter.Event event);
 		public unowned Clutter.Actor get_actor_at_pos (Clutter.PickMode pick_mode, int x, int y);
 		public static unowned Clutter.Stage get_default ();
 		public bool get_fullscreen ();
@@ -1169,7 +1170,7 @@ namespace Clutter {
 	}
 	[CCode (cheader_filename = "clutter/clutter.h")]
 	public interface Container : GLib.Object {
-		public void add (...);
+		public void add (params Clutter.Actor[] actors);
 		[CCode (vfunc_name = "add")]
 		public abstract void add_actor (Clutter.Actor actor);
 		public void add_valist (Clutter.Actor first_actor, void* var_args);
@@ -1194,7 +1195,7 @@ namespace Clutter {
 		public virtual void lower_child (Clutter.Actor actor, Clutter.Actor? sibling = null);
 		[CCode (vfunc_name = "raise")]
 		public virtual void raise_child (Clutter.Actor actor, Clutter.Actor? sibling = null);
-		public void remove (...);
+		public void remove (params Clutter.Actor[] actors);
 		[CCode (vfunc_name = "remove")]
 		public abstract void remove_actor (Clutter.Actor actor);
 		public void remove_valist (Clutter.Actor first_actor, void* var_args);
@@ -1457,11 +1458,7 @@ namespace Clutter {
 		public float x;
 		public float y;
 		public float z;
-		[CCode (cname = "clutter_vertex_new", has_construct_function = false)]
-		public Vertex (float x, float y, float z);
-		public Clutter.Vertex copy ();
 		public bool equal (Clutter.Vertex vertex_b);
-		public void free ();
 	}
 	[CCode (cprefix = "CLUTTER_ACTOR_", cheader_filename = "clutter/clutter.h")]
 	[Flags]
@@ -1756,7 +1753,7 @@ namespace Clutter {
 	public delegate double AlphaFunc (Clutter.Alpha alpha);
 	[CCode (cheader_filename = "clutter/clutter.h")]
 	public delegate void BehaviourForeachFunc (Clutter.Behaviour behaviour, Clutter.Actor actor);
-	[CCode (cheader_filename = "clutter/clutter.h", has_target = false)]
+	[CCode (cheader_filename = "clutter/clutter.h")]
 	public delegate bool BindingActionFunc (GLib.Object gobject, string action_name, uint key_val, Clutter.ModifierType modifiers);
 	[CCode (cheader_filename = "clutter/clutter.h")]
 	public delegate void Callback (Clutter.Actor actor);

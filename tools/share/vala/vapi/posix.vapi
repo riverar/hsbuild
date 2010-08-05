@@ -1381,6 +1381,8 @@ namespace Posix {
 	int fstat( int fd, out Stat buf);
 	[CCode (cheader_filename = "sys/stat.h")]
 	int stat (string filename, out Stat buf);
+	[CCode (cheader_filename = "sys/stat.h")]
+	int lstat (string filename, out Stat buf);
 
 	[CCode (cheader_filename = "sys/stat.h")]
 	public int chmod (string filename, mode_t mode);
@@ -1514,6 +1516,8 @@ namespace Posix {
 	public int close (int fd);
 	[CCode (cheader_filename = "unistd.h")]
 	public int execl (string path, params string[] arg);
+	[CCode (cheader_filename = "unistd.h")]
+	public int execlp (string path, params string[] arg);
 	[CCode (cheader_filename = "unistd.h")]
 	public int pipe ([CCode (array_length = false, null_terminated = false)] int[] pipefd);
 	[CCode (cheader_filename = "unistd.h")]

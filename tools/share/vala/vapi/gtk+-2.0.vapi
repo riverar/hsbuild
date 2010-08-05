@@ -62,8 +62,8 @@ namespace Gtk {
 		[CCode (has_construct_function = false)]
 		public AccelGroup ();
 		public bool activate (GLib.Quark accel_quark, GLib.Object acceleratable, uint accel_key, Gdk.ModifierType accel_mods);
-		public void connect (uint accel_key, Gdk.ModifierType accel_mods, Gtk.AccelFlags accel_flags, GLib.Closure closure);
-		public void connect_by_path (string accel_path, GLib.Closure closure);
+		public void connect (uint accel_key, Gdk.ModifierType accel_mods, Gtk.AccelFlags accel_flags, [CCode (type = "GClosure*")] owned Gtk.AccelGroupActivate closure);
+		public void connect_by_path (string accel_path, [CCode (type = "GClosure*")] owned Gtk.AccelGroupActivate closure);
 		public bool disconnect (GLib.Closure closure);
 		public bool disconnect_key (uint accel_key, Gdk.ModifierType accel_mods);
 		public Gtk.AccelKey* find (Gtk.AccelGroupFindFunc find_func);
@@ -97,7 +97,7 @@ namespace Gtk {
 		public unowned Gtk.Widget get_accel_widget ();
 		public uint get_accel_width ();
 		public bool refetch ();
-		public void set_accel_closure (GLib.Closure accel_closure);
+		public void set_accel_closure ([CCode (type = "GClosure*")] owned Gtk.AccelGroupActivate accel_closure);
 		public void set_accel_widget (Gtk.Widget accel_widget);
 		[NoAccessorMethod]
 		public GLib.Closure accel_closure { owned get; set; }
@@ -395,6 +395,17 @@ namespace Gtk {
 		public uint n_args;
 		public weak Gtk.BindingSignal next;
 		public weak string signal_name;
+	}
+	[Compact]
+	[CCode (copy_function = "gtk_border_copy", type_id = "GTK_TYPE_BORDER", cheader_filename = "gtk/gtk.h")]
+	public class Border {
+		public int bottom;
+		public int left;
+		public int right;
+		public int top;
+		[CCode (has_construct_function = false)]
+		public Border ();
+		public Gtk.Border copy ();
 	}
 	[CCode (cheader_filename = "gtk/gtk.h")]
 	public class Box : Gtk.Container, Atk.Implementor, Gtk.Buildable, Gtk.Orientable {
@@ -1229,7 +1240,7 @@ namespace Gtk {
 		public unowned string get_icon_tooltip_markup (Gtk.EntryIconPosition icon_pos);
 		public unowned string get_icon_tooltip_text (Gtk.EntryIconPosition icon_pos);
 		public unowned Gdk.Window get_icon_window (Gtk.EntryIconPosition icon_pos);
-		public Gtk.Border get_inner_border ();
+		public unowned Gtk.Border get_inner_border ();
 		public unichar get_invisible_char ();
 		public unowned Pango.Layout get_layout ();
 		public void get_layout_offsets (int x, int y);
@@ -2275,7 +2286,7 @@ namespace Gtk {
 		public int sort_column_id;
 		public weak GLib.List sort_list;
 		public int stamp;
-		[CCode (has_construct_function = false)]
+		[CCode (sentinel = "", has_construct_function = false)]
 		public ListStore (int n_columns, ...);
 		public void append (out Gtk.TreeIter iter);
 		public void clear ();
@@ -3242,23 +3253,25 @@ namespace Gtk {
 		public bool exists ();
 		public ulong get_added ();
 		public int get_age ();
-		public bool get_application_info (string app_name, string app_exec, uint count, ulong time_);
-		public unowned string get_applications (size_t length);
+		public bool get_application_info (string app_name, out unowned string app_exec, out uint count, out ulong time_);
+		[CCode (array_length_type = "gsize")]
+		public string[] get_applications ();
 		public unowned string get_description ();
 		public unowned string get_display_name ();
-		public unowned string get_groups (size_t length);
-		public unowned Gdk.Pixbuf get_icon (int size);
+		[CCode (array_length_type = "gsize")]
+		public string[] get_groups ();
+		public Gdk.Pixbuf? get_icon (int size);
 		public unowned string get_mime_type ();
 		public ulong get_modified ();
 		public bool get_private_hint ();
-		public unowned string get_short_name ();
+		public string get_short_name ();
 		public unowned string get_uri ();
-		public unowned string get_uri_display ();
+		public string? get_uri_display ();
 		public ulong get_visited ();
 		public bool has_application (string app_name);
 		public bool has_group (string group_name);
 		public bool is_local ();
-		public unowned string last_application ();
+		public string last_application ();
 		public bool match (Gtk.RecentInfo info_b);
 	}
 	[CCode (cheader_filename = "gtk/gtk.h")]
@@ -3320,7 +3333,7 @@ namespace Gtk {
 	}
 	[CCode (cheader_filename = "gtk/gtk.h")]
 	public class Scale : Gtk.Range, Atk.Implementor, Gtk.Buildable, Gtk.Orientable {
-		public void add_mark (double value, Gtk.PositionType position, string markup);
+		public void add_mark (double value, Gtk.PositionType position, string? markup);
 		public void clear_marks ();
 		public int get_digits ();
 		public bool get_draw_value ();
@@ -4117,7 +4130,7 @@ namespace Gtk {
 		public void select_range (Gtk.TextIter ins, Gtk.TextIter bound);
 		public uchar serialize (Gtk.TextBuffer content_buffer, Gdk.Atom format, Gtk.TextIter start, Gtk.TextIter end, size_t length);
 		public void set_modified (bool setting);
-		public void set_text (string text, int len);
+		public void set_text (string text, int len = -1);
 		public void unregister_deserialize_format (Gdk.Atom format);
 		public void unregister_serialize_format (Gdk.Atom format);
 		public Gtk.TargetList copy_target_list { get; }
@@ -4824,7 +4837,7 @@ namespace Gtk {
 		public int sort_column_id;
 		public weak GLib.List sort_list;
 		public int stamp;
-		[CCode (has_construct_function = false)]
+		[CCode (sentinel = "", has_construct_function = false)]
 		public TreeStore (int n_columns, ...);
 		public void append (out Gtk.TreeIter iter, Gtk.TreeIter? parent);
 		public void clear ();
@@ -5971,17 +5984,6 @@ namespace Gtk {
 		public int width;
 		public int height;
 	}
-	[CCode (type_id = "GTK_TYPE_BORDER", cheader_filename = "gtk/gtk.h")]
-	public struct Border {
-		public int left;
-		public int right;
-		public int top;
-		public int bottom;
-		[CCode (cname = "gtk_border_new", has_construct_function = false)]
-		public Border ();
-		public Gtk.Border copy ();
-		public void free ();
-	}
 	[CCode (type_id = "GTK_TYPE_IM_CONTEXT_INFO", cheader_filename = "gtk/gtk.h")]
 	public struct IMContextInfo {
 		public weak string context_id;
@@ -7122,7 +7124,7 @@ namespace Gtk {
 	}
 	[CCode (cheader_filename = "gtk/gtk.h")]
 	public delegate void AboutDialogActivateLinkFunc (Gtk.AboutDialog about, string link_);
-	[CCode (cheader_filename = "gtk/gtk.h", has_target = false)]
+	[CCode (cheader_filename = "gtk/gtk.h")]
 	public delegate bool AccelGroupActivate (Gtk.AccelGroup accel_group, GLib.Object acceleratable, uint keyval, Gdk.ModifierType modifier);
 	[CCode (cheader_filename = "gtk/gtk.h")]
 	public delegate bool AccelGroupFindFunc (Gtk.AccelKey key, GLib.Closure closure);

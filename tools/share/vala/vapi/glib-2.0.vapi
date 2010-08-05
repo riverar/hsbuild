@@ -272,7 +272,7 @@ public struct size_t {
 	public const string FORMAT_MODIFIER;
 
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string to_string (string format = "%zu");
+	public string to_string (string format = "%" + FORMAT);
 
 	[CCode (cname = "GSIZE_TO_POINTER")]
 	public void* to_pointer ();
@@ -300,7 +300,7 @@ public struct ssize_t {
 	public const string FORMAT_MODIFIER;
 
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string to_string (string format = "%zi");
+	public string to_string (string format = "%" + FORMAT);
 
 	[CCode (cname = "MIN")]
 	public static ssize_t min (ssize_t a, ssize_t b);
@@ -365,7 +365,7 @@ public struct int16 {
 	public const string FORMAT_MODIFIER;
 
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string to_string (string format = "%hi");
+	public string to_string (string format = "%" + FORMAT);
 
 	[CCode (cname = "MIN")]
 	public static int16 min (int16 a, int16 b);
@@ -519,7 +519,7 @@ public struct int64 {
 	public const string FORMAT_MODIFIER;
 
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string to_string (string format = "%lli");
+	public string to_string (string format = "%" + FORMAT);
 
 	[CCode (cname = "MIN")]
 	public static int64 min (int64 a, int64 b);
@@ -559,7 +559,7 @@ public struct uint64 {
 	public const string FORMAT_MODIFIER;
 
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string to_string (string format = "%llu");
+	public string to_string (string format = "%" + FORMAT);
 
 	[CCode (cname = "MIN")]
 	public static uint64 min (uint64 a, uint64 b);
@@ -943,6 +943,8 @@ public class string {
 	public bool has_suffix (string suffix);
 	[CCode (cname = "g_strdup_printf"), PrintfFormat]
 	public string printf (...);
+	[CCode (cname = "g_strdup_vprintf")]
+	public string vprintf (va_list args);
 	[CCode (cname = "sscanf", cheader_filename = "stdio.h"), ScanfFormat]
 	public int scanf (...);
 	[CCode (cname = "g_strconcat")]
@@ -1162,6 +1164,14 @@ public class string {
 
 	public long length {
 		get { return this.len (); }
+	}
+
+	public uint8[] data {
+		get {
+			unowned uint8[] res = (uint8[]) this;
+			res.length = (int) this.size ();
+			return res;
+		}
 	}
 
 	public char[] to_utf8 () {
@@ -1724,6 +1734,15 @@ namespace GLib {
 		public static void* dup (void* mem, uint n);
 	}
 
+	namespace Slice {
+		public static void* alloc (size_t block_size);
+		public static void* alloc0 (size_t block_size);
+		public static void* copy (size_t block_size, void* mem_block);
+		[CCode (cname = "g_slice_free1")]
+		public static void free (size_t block_size, void* mem_block);
+		public static void free_chain_with_offset (size_t block_size, void *mem_chain, size_t next_offset);
+	}
+
 	/* IO Channels */
 
 	[Compact]
@@ -1829,6 +1848,7 @@ namespace GLib {
 	[ErrorBase]
 	[CCode (copy_function = "g_error_copy", free_function = "g_error_free")]
 	public class Error {
+		[PrintfFormat]
 		public Error (Quark domain, int code, string format, ...);
 		public Error copy ();
 		public bool matches (Quark domain, int code);
@@ -1888,7 +1908,8 @@ namespace GLib {
 
 		LEVEL_MASK
 	}
-	
+
+	public void logv (string? log_domain, LogLevelFlags log_level, string format, va_list args);
 	[Diagnostics]
 	[PrintfFormat]
 	public void log (string? log_domain, LogLevelFlags log_level, string format, ...);
@@ -1904,6 +1925,7 @@ namespace GLib {
 	public void critical (string format, ...);
 	[Diagnostics]
 	[PrintfFormat]
+	[NoReturn]
 	public void error (string format, ...);
 	[Diagnostics]
 	[PrintfFormat]
@@ -1923,6 +1945,14 @@ namespace GLib {
 		public const string METHOD;
 	}
 
+	[CCode (has_type_id = false)]
+	public struct DebugKey {
+		unowned string key;
+		uint value;
+	}
+
+	public uint parse_debug_string (string? debug_string, DebugKey[] keys);
+
 	/* String Utility Functions */
 
 	public uint strv_length ([CCode (array_length = false, array_null_terminated = true)] string[] str_array);
@@ -1936,9 +1966,9 @@ namespace GLib {
 	public static string convert (string str, ssize_t len, string to_codeset, string from_codeset, out size_t bytes_read = null, out size_t bytes_written = null) throws ConvertError;
 	public static bool get_charset (out unowned string charset);
 
+	[SimpleType]
 	public struct IConv {
-		[CCode (cname = "g_iconv_open")]
-		public IConv (string to_codeset, string from_codeset);
+		public static IConv open (string to_codeset, string from_codeset);
 		[CCode (cname = "g_iconv")]
 		public uint iconv (out string inbuf, out uint inbytes_left, out string outbuf, out uint outbytes_left);
 		public int close ();
@@ -2537,6 +2567,8 @@ namespace GLib {
 	}
 
 	public delegate void SpawnChildSetupFunc ();
+	[CCode (has_target = false, cheader_filename = "signal.h")]
+	public delegate void SignalHandlerFunc (int signum);
 
 	[CCode (lower_case_cprefix = "g_")]
 	namespace Process {
@@ -2565,6 +2597,15 @@ namespace GLib {
 		public static ProcessSignal stop_sig (int status);
 		[CCode (cname = "WIFCONTINUED", cheader_filename = "sys/wait.h")]
 		public static bool if_continued (int status);
+
+		[CCode (cname = "abort", cheader_filename = "stdlib.h")]
+		public void abort ();
+		[CCode (cname = "exit", cheader_filename = "stdlib.h")]
+		public void exit (int status);
+		[CCode (cname = "raise", cheader_filename = "signal.h")]
+		public int raise (ProcessSignal sig);
+		[CCode (cname = "signal", cheader_filename = "signal.h")]
+		public SignalHandlerFunc @signal (ProcessSignal signum, SignalHandlerFunc handler);
 	}
 	
 	[CCode (cname = "int", has_type_id = false, cheader_filename = "signal.h", cprefix = "SIG")]
@@ -2652,6 +2693,8 @@ namespace GLib {
 		[CCode (cname = "fprintf")]
 		[PrintfFormat ()]
 		public void printf (string format, ...);
+		[CCode (cname = "vfprintf")]
+		public void vprintf (string format, va_list args);
 		[CCode (cname = "fputc", instance_pos = -1)]
 		public void putc (char c);
 		[CCode (cname = "fputs", instance_pos = -1)]
@@ -2714,6 +2757,7 @@ namespace GLib {
 		public static bool test (string filename, FileTest test);
 		public static int open_tmp (string tmpl, out string name_used) throws FileError;
 		public static string read_link (string filename) throws FileError;
+		public static int error_from_errno (int err_no);
 		
 		[CCode (cname = "g_mkstemp")]
 		public static int mkstemp (string tmpl);
@@ -2733,15 +2777,19 @@ namespace GLib {
 		public static int close (int fd);
 	}
 
-	[CCode (cname = "stat")]
+	[CCode (cname = "struct stat", cheader_filename = "sys/stat.h")]
 	public struct Stat {
+		[CCode (cname = "g_stat", instance_pos = -1)]
+		public Stat (string filename);
+		[CCode (cname = "g_lstat", instance_pos = -1)]
+		public Stat.l (string filename);
 	}
 
 	[Compact]
 	[CCode (free_function = "g_dir_close")]
 	public class Dir {
 		public static Dir open (string filename, uint _flags = 0) throws FileError;
-		public unowned string read_name ();
+		public unowned string? read_name ();
 		public void rewind ();
 	}
 	
@@ -2955,12 +3003,11 @@ namespace GLib {
 		public string[] split_full (string str, ssize_t string_len = -1, int start_position = 0, RegexMatchFlags match_options = 0, int max_tokens = 0) throws RegexError;
 		public string replace (string str, ssize_t string_len, int start_position, string replacement, RegexMatchFlags match_options = 0) throws RegexError;
 		public string replace_literal (string str, ssize_t string_len, int start_position, string replacement, RegexMatchFlags match_options = 0) throws RegexError;
-		public string replace_eval (string str, ssize_t string_len, int start_position, RegexMatchFlags match_options = 0, RegexEvalCallback eval, void* user_data) throws RegexError;
+		public string replace_eval (string str, ssize_t string_len, int start_position, RegexMatchFlags match_options = 0, RegexEvalCallback eval) throws RegexError;
 		public static bool check_replacement (out bool has_references = null) throws RegexError;
 	}
 
-	[CCode (has_target = false)]
-	public delegate bool RegexEvalCallback (MatchInfo match_info, StringBuilder result, void* user_data);
+	public delegate bool RegexEvalCallback (MatchInfo match_info, StringBuilder result);
 
 	[Compact]
 	[CCode (free_function = "g_match_info_free")]
@@ -3043,6 +3090,7 @@ namespace GLib {
 		public static string escape_text (string text, ssize_t length = -1);
 		[PrintfFormat]
 		public static string printf_escaped (string format, ...);
+		public static string vprintf_escaped (string format, va_list args);
 		[CCode (sentinel = "G_MARKUP_COLLECT_INVALID")]
 		public static bool collect_attributes (string element_name, string[] attribute_names, string[] attribute_values, ...) throws MarkupError;
 	}
@@ -3238,7 +3286,10 @@ namespace GLib {
 		public static int32 rand_int_range (int32 begin, int32 end);
 		public static double rand_double ();
 		public static double rand_double_range ();
+		public static void log_set_fatal_handler (LogFatalFunc log_func);
 	}
+
+	public delegate bool LogFatalFunc (string? log_domain, LogLevelFlags log_levels, string message);
 
 	[Compact]
 	[CCode (cname = "GTestCase", ref_function = "", unref_function = "")]
@@ -3562,6 +3613,8 @@ namespace GLib {
 		public void printf (string format, ...);
 		[PrintfFormat]
 		public void append_printf (string format, ...);
+		public void vprintf (string format, va_list args);
+		public void append_vprintf (string format, va_list args);
 
 		public string str;
 		public ssize_t len;
@@ -3949,6 +4002,7 @@ namespace GLib {
 		public Variant.handle (int32 value);
 		public Variant.double (double value);
 		public Variant.string (string value);
+		public Variant.bytestring (string value);
 		public Variant.object_path (string object_path);
 		public static bool is_object_path (string object_path);
 		public Variant.signature (string signature);
@@ -3966,12 +4020,20 @@ namespace GLib {
 		public double get_double ();
 		public unowned string get_string (out size_t length = null);
 		public string dup_string ();
+		public unowned string get_bytestring ();
+		public string dup_bytestring ();
 
 		public Variant.strv (string[] value);
 		[CCode (array_length_type = "size_t")]
 		public string*[] get_strv ();
 		[CCode (array_length_type = "size_t")]
 		public string[] dup_strv ();
+
+		public Variant.bytestring_array (string[] value);
+		[CCode (array_length_type = "size_t")]
+		public string*[] get_bytestring_array ();
+		[CCode (array_length_type = "size_t")]
+		public string[] dup_bytestring_array ();
 
 		public Variant (string format, ...);
 		public void get (string format, ...);
