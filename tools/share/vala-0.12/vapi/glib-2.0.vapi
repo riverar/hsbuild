@@ -29,6 +29,7 @@
  */
 
 [SimpleType]
+[GIR (name = "gboolean")]
 [CCode (cname = "gboolean", cheader_filename = "glib.h", type_id = "G_TYPE_BOOLEAN", marshaller_type_name = "BOOLEAN", get_value_function = "g_value_get_boolean", set_value_function = "g_value_set_boolean", default_value = "FALSE", type_signature = "b")]
 [BooleanType]
 public struct bool {
@@ -87,6 +88,7 @@ public struct uchar {
 }
 
 [SimpleType]
+[GIR (name = "gint")]
 [CCode (cname = "gint", cheader_filename = "glib.h", type_id = "G_TYPE_INT", marshaller_type_name = "INT", get_value_function = "g_value_get_int", set_value_function = "g_value_set_int", default_value = "0", type_signature = "i")]
 [IntegerType (rank = 6)]
 public struct int {
@@ -123,6 +125,7 @@ public struct int {
 }
 
 [SimpleType]
+[GIR (name = "guint")]
 [CCode (cname = "guint", cheader_filename = "glib.h", type_id = "G_TYPE_UINT", marshaller_type_name = "UINT", get_value_function = "g_value_get_uint", set_value_function = "g_value_set_uint", default_value = "0U", type_signature = "u")]
 [IntegerType (rank = 7)]
 public struct uint {
@@ -156,6 +159,7 @@ public struct uint {
 }
 
 [SimpleType]
+[GIR (name = "gshort")]
 [CCode (cname = "gshort", cheader_filename = "glib.h", has_type_id = false, default_value = "0", type_signature = "n")]
 [IntegerType (rank = 4, min = -32768, max = 32767)]
 public struct short {
@@ -176,6 +180,7 @@ public struct short {
 }
 
 [SimpleType]
+[GIR (name = "gushort")]
 [CCode (cname = "gushort", cheader_filename = "glib.h", has_type_id = false, default_value = "0U", type_signature = "q")]
 [IntegerType (rank = 5, min = 0, max = 65535)]
 public struct ushort {
@@ -196,6 +201,7 @@ public struct ushort {
 }
 
 [SimpleType]
+[GIR (name = "glong")]
 [CCode (cname = "glong", cheader_filename = "glib.h", type_id = "G_TYPE_LONG", marshaller_type_name = "LONG", get_value_function = "g_value_get_long", set_value_function = "g_value_set_long", default_value = "0L")]
 [IntegerType (rank = 8)]
 public struct long {
@@ -228,6 +234,7 @@ public struct long {
 }
 
 [SimpleType]
+[GIR (name = "gulong")]
 [CCode (cname = "gulong", cheader_filename = "glib.h", type_id = "G_TYPE_ULONG", marshaller_type_name = "ULONG", get_value_function = "g_value_get_ulong", set_value_function = "g_value_set_ulong", default_value = "0UL")]
 [IntegerType (rank = 9)]
 public struct ulong {
@@ -311,6 +318,7 @@ public struct ssize_t {
 }
 
 [SimpleType]
+[GIR (name = "gint8")]
 [CCode (cname = "gint8", cheader_filename = "glib.h", type_id = "G_TYPE_CHAR", marshaller_type_name = "CHAR", get_value_function = "g_value_get_char", set_value_function = "g_value_set_char", default_value = "0", type_signature = "y")]
 [IntegerType (rank = 1, min = -128, max = 127)]
 public struct int8 {
@@ -331,6 +339,7 @@ public struct int8 {
 }
 
 [SimpleType]
+[GIR (name = "guint8")]
 [CCode (cname = "guint8", cheader_filename = "glib.h", type_id = "G_TYPE_UCHAR", marshaller_type_name = "UCHAR", get_value_function = "g_value_get_uchar", set_value_function = "g_value_set_uchar", default_value = "0U", type_signature = "y")]
 [IntegerType (rank = 3, min = 0, max = 255)]
 public struct uint8 {
@@ -351,6 +360,7 @@ public struct uint8 {
 }
 
 [SimpleType]
+[GIR (name = "gint16")]
 [CCode (cname = "gint16", cheader_filename = "glib.h", default_value = "0", type_signature = "n", has_type_id = false)]
 [IntegerType (rank = 4, min = -32768, max = 32767)]
 public struct int16 {
@@ -386,6 +396,7 @@ public struct int16 {
 }
 
 [SimpleType]
+[GIR (name = "guint16")]
 [CCode (cname = "guint16", cheader_filename = "glib.h", default_value = "0U", type_signature = "q", has_type_id = false)]
 [IntegerType (rank = 5, min = 0, max = 65535)]
 public struct uint16 {
@@ -428,6 +439,7 @@ public struct uint16 {
 }
 
 [SimpleType]
+[GIR (name = "gint32")]
 [CCode (cname = "gint32", cheader_filename = "glib.h", type_id = "G_TYPE_INT", marshaller_type_name = "INT", get_value_function = "g_value_get_int", set_value_function = "g_value_set_int", default_value = "0", type_signature = "i")]
 [IntegerType (rank = 6)]
 public struct int32 {
@@ -463,6 +475,7 @@ public struct int32 {
 }
 
 [SimpleType]
+[GIR (name = "guint32")]
 [CCode (cname = "guint32", cheader_filename = "glib.h", type_id = "G_TYPE_UINT", marshaller_type_name = "UINT", get_value_function = "g_value_get_uint", set_value_function = "g_value_set_uint", default_value = "0U", type_signature = "u")]
 [IntegerType (rank = 7)]
 public struct uint32 {
@@ -505,6 +518,7 @@ public struct uint32 {
 }
 
 [SimpleType]
+[GIR (name = "gint64")]
 [CCode (cname = "gint64", cheader_filename = "glib.h", type_id = "G_TYPE_INT64", marshaller_type_name = "INT64", get_value_function = "g_value_get_int64", set_value_function = "g_value_set_int64", default_value = "0LL", type_signature = "x")]
 [IntegerType (rank = 10)]
 public struct int64 {
@@ -545,6 +559,7 @@ public struct int64 {
 }
 
 [SimpleType]
+[GIR (name = "guint64")]
 [CCode (cname = "guint64", cheader_filename = "glib.h", type_id = "G_TYPE_UINT64", marshaller_type_name = "UINT64", get_value_function = "g_value_get_uint64", set_value_function = "g_value_set_uint64", default_value = "0ULL", type_signature = "t")]
 [IntegerType (rank = 11)]
 public struct uint64 {
@@ -580,6 +595,7 @@ public struct uint64 {
 }
 
 [SimpleType]
+[GIR (name = "gfloat")]
 [CCode (cname = "float", cheader_filename = "glib.h,float.h,math.h", type_id = "G_TYPE_FLOAT", marshaller_type_name = "FLOAT", get_value_function = "g_value_get_float", set_value_function = "g_value_set_float", default_value = "0.0F")]
 [FloatingType (rank = 1)]
 public struct float {
@@ -631,6 +647,7 @@ public struct float {
 }
 
 [SimpleType]
+[GIR (name = "gdouble")]
 [CCode (cname = "double", cheader_filename = "glib.h,float.h,math.h", type_id = "G_TYPE_DOUBLE", marshaller_type_name = "DOUBLE", get_value_function = "g_value_get_double", set_value_function = "g_value_set_double", default_value = "0.0", type_signature = "d")]
 [FloatingType (rank = 2)]
 public struct double {
@@ -689,6 +706,7 @@ public struct double {
 	}
 }
 
+[GIR (name = "glong")]
 [CCode (cheader_filename = "time.h", has_type_id = false)]
 [IntegerType (rank = 8)]
 public struct time_t {
@@ -708,6 +726,7 @@ public struct va_list {
 }
 
 [SimpleType]
+[GIR (name = "gunichar")]
 [CCode (cname = "gunichar", cprefix = "g_unichar_", cheader_filename = "glib.h", type_id = "G_TYPE_UINT", marshaller_type_name = "UINT", get_value_function = "g_value_get_uint", set_value_function = "g_value_set_uint", default_value = "0U", type_signature = "u")]
 [IntegerType (rank = 7)]
 public struct unichar {
@@ -929,6 +948,7 @@ public enum NormalizeMode {
 
 [Compact]
 [Immutable]
+[GIR (name = "utf8")]
 [CCode (cname = "char", const_cname = "const char", copy_function = "g_strdup", free_function = "g_free", cheader_filename = "stdlib.h,string.h,glib.h", type_id = "G_TYPE_STRING", marshaller_type_name = "STRING", param_spec_function = "g_param_spec_string", get_value_function = "g_value_get_string", set_value_function = "g_value_set_string", take_value_function = "g_value_take_string", type_signature = "s")]
 public class string {
 	[CCode (cname = "strstr")]
@@ -1458,6 +1478,9 @@ namespace GLib {
 		public static unowned MainContext get_thread_default ();
 		public void push_thread_default ();
 		public void pop_thread_default ();
+		public unowned string? get_name ();
+		public void set_name (string? name);
+		public static void set_name_by_id (uint tag, string? name);
 	}
 	
 	[CCode (has_target = false)]
@@ -1696,23 +1719,23 @@ namespace GLib {
 	public class AsyncQueue<G> {
 		public AsyncQueue ();
 		public void push (owned G data);
-		public void push_sorted (owned G data, CompareDataFunc func);
+		public void push_sorted (owned G data, CompareDataFunc<G> func);
 		public G pop ();
 		public G try_pop ();
 		public G timed_pop (ref TimeVal end_time);
 		public int length ();
-		public void sort (CompareDataFunc func);
+		public void sort (CompareDataFunc<G> func);
 		public void @lock ();
 		public void unlock ();
 		public void ref_unlocked ();
 		public void unref_and_unlock ();
 		public void push_unlocked (owned G data);
-		public void push_sorted_unlocked (owned G data, CompareDataFunc func);
+		public void push_sorted_unlocked (owned G data, CompareDataFunc<G> func);
 		public G pop_unlocked ();
 		public G try_pop_unlocked ();
 		public G timed_pop_unlocked (ref TimeVal end_time);
 		public int length_unlocked ();
-		public void sort_unlocked (CompareDataFunc func);
+		public void sort_unlocked (CompareDataFunc<G> func);
 	}
 
 	/* Memory Allocation */
@@ -2227,6 +2250,86 @@ namespace GLib {
 		[CCode (cname = "strptime", instance_pos = -1)]
 		public unowned string? strptime (string buf, string format);
 	}
+
+	public struct TimeSpan : int64 {
+		public const TimeSpan DAY;
+		public const TimeSpan HOUR;
+		public const TimeSpan MINUTE;
+		public const TimeSpan SECOND;
+		public const TimeSpan MILLISECOND;
+	}
+
+        [Compact]
+        [CCode (ref_function = "g_date_time_ref", unref_function = "g_date_time_unref", type_id = "G_TYPE_DATE_TIME")]
+        public class DateTime {
+		public DateTime.now (TimeZone tz);
+		public DateTime.now_local ();
+		public DateTime.now_utc ();
+		public DateTime.from_unix_local (int64 t);
+		public DateTime.from_unix_utc (int64 t);
+		public DateTime.from_timeval_local (TimeVal tv);
+		public DateTime.from_timeval_utc (TimeVal tv);
+		public DateTime (TimeZone tz, int year, int month, int day, int hour, int minute, double seconds);
+		public DateTime.local (int year, int month, int day, int hour, int minute, double seconds);
+		public DateTime.utc (int year, int month, int day, int hour, int minute, double seconds);
+		public DateTime add (TimeSpan timespan);
+		public DateTime add_years (int years);
+		public DateTime add_months (int months);
+		public DateTime add_weeks (int weeks);
+		public DateTime add_days (int days);
+		public DateTime add_hours (int hours);
+		public DateTime add_milliseconds (int milliseconds);
+		public DateTime add_minutes (int minutes);
+		public DateTime add_seconds (double seconds);
+		public DateTime add_full (int years, int months, int days, int hours = 0, int minutes = 0, double seconds = 0);
+		public int compare (DateTime dt);
+		public TimeSpan difference (DateTime end);
+		public uint hash ();
+		public bool equal (DateTime dt);
+		public void get_ymd (out int year, out int month, out int day);
+		public int get_year ();
+		public int get_month ();
+		public int get_day_of_month ();
+		public int get_week_of_year ();
+		public int get_day_of_week ();
+		public int get_day_of_year ();
+		public int get_hour ();
+		public int get_minute ();
+		public int get_second ();
+		public int get_microsecond ();
+		public double get_seconds ();
+		public int64 to_unix ();
+		public bool to_timeval (out TimeVal tv);
+		public TimeSpan get_utc_offset ();
+		public unowned string get_timezone_abbreviation ();
+		public bool is_daylight_savings ();
+		public DateTime to_timezone (TimeZone tz);
+		public DateTime to_local ();
+		public DateTime to_utc ();
+		public string format (string format);
+		public string to_string () {
+			return this.format ("%FT%H:%M:%S%z");
+		}
+	}
+
+	public enum TimeType {
+		STANDARD,
+		DAYLIGHT,
+		UNIVERSAL
+	}
+
+        [Compact]
+        [CCode (ref_function = "g_time_zone_ref", unref_function = "g_time_zone_unref")]
+        public class TimeZone {
+		public TimeZone (string identifier);
+		public TimeZone.utc ();
+		public TimeZone.local ();
+		public int find_interval (TimeType type, int64 time);
+		public int adjust_time (TimeType type, ref int64 time);
+		public unowned string get_abbreviation (int interval);
+		public int32 get_offset (int interval);
+		public bool is_dst (int interval);
+        }
 
 	/* Random Numbers */
 
@@ -3004,6 +3107,8 @@ namespace GLib {
 	public class Regex {
 		public Regex (string pattern, RegexCompileFlags compile_options = 0, RegexMatchFlags match_options = 0) throws RegexError;
 		public unowned string get_pattern ();
+		public RegexCompileFlags get_compile_flags ();
+		public RegexMatchFlags get_match_flags ();
 		public int get_max_backref ();
 		public int get_capture_count ();
 		public int get_string_number (string name);
@@ -3147,6 +3252,8 @@ namespace GLib {
 		public string get_locale_string (string group_name, string key, string? locale = null) throws KeyFileError;
 		public bool get_boolean (string group_name, string key) throws KeyFileError;
 		public int get_integer (string group_name, string key) throws KeyFileError;
+		public int64 get_int64 (string group_name, string key) throws KeyFileError;
+		public uint64 get_uint64 (string group_name, string key) throws KeyFileError;
 		public double get_double (string group_name, string key) throws KeyFileError;
 		[CCode (array_length_type = "gsize")]
 		public string[] get_string_list (string group_name, string key) throws KeyFileError;
@@ -3164,6 +3271,8 @@ namespace GLib {
 		public void set_locale_string (string group_name, string key, string locale, string str);
 		public void set_boolean (string group_name, string key, bool value);
 		public void set_integer (string group_name, string key, int value);
+		public void set_int64 (string group_name, string key, int64 value);
+		public void set_uint64 (string group_name, string key, uint64 value);
 		public void set_double (string group_name, string key, double value);
 		public void set_string_list (string group_name, string key, [CCode (type = "const gchar* const*")] string[] list);
 		public void set_locale_string_list (string group_name, string key, string locale, string[] list);
@@ -3356,7 +3465,7 @@ namespace GLib {
 		[ReturnsModifiedPointer ()]
 		public void insert_before (List<G> sibling, owned G data);
 		[ReturnsModifiedPointer ()]
-		public void insert_sorted (owned G data, CompareFunc compare_func);
+		public void insert_sorted (owned G data, CompareFunc<G> compare_func);
 		[ReturnsModifiedPointer ()]
 		public void remove (G data);
 		[ReturnsModifiedPointer ()]
@@ -3371,11 +3480,11 @@ namespace GLib {
 		[ReturnsModifiedPointer ()]
 		public void reverse ();
 		[ReturnsModifiedPointer ()]
-		public void sort (CompareFunc compare_func);
+		public void sort (CompareFunc<G> compare_func);
 		[ReturnsModifiedPointer ()]
-		public void insert_sorted_with_data (owned G data, CompareDataFunc compare_func);
+		public void insert_sorted_with_data (owned G data, CompareDataFunc<G> compare_func);
 		[ReturnsModifiedPointer ()]
-		public void sort_with_data (CompareDataFunc compare_func);
+		public void sort_with_data (CompareDataFunc<G> compare_func);
 		[ReturnsModifiedPointer ()]
 		public void concat (owned List<G> list2);
 		public void @foreach (Func func);
@@ -3387,7 +3496,7 @@ namespace GLib {
 		public unowned List<G> nth_prev (uint n);
 		
 		public unowned List<G> find (G data);
-		public unowned List<G> find_custom (G data, CompareFunc func);
+		public unowned List<G> find_custom (G data, CompareFunc<G> func);
 		public int position (List<G> llink);
 		public int index (G data);
 		
@@ -3412,7 +3521,7 @@ namespace GLib {
 		[ReturnsModifiedPointer ()]
 		public void insert_before (SList<G> sibling, owned G data);
 		[ReturnsModifiedPointer ()]
-		public void insert_sorted (owned G data, CompareFunc compare_func);
+		public void insert_sorted (owned G data, CompareFunc<G> compare_func);
 		[ReturnsModifiedPointer ()]
 		public void remove (G data);
 		[ReturnsModifiedPointer ()]
@@ -3427,11 +3536,11 @@ namespace GLib {
 		[ReturnsModifiedPointer ()]
 		public void reverse ();
 		[ReturnsModifiedPointer ()]
-		public void insert_sorted_with_data (owned G data, CompareDataFunc compare_func);
+		public void insert_sorted_with_data (owned G data, CompareDataFunc<G> compare_func);
 		[ReturnsModifiedPointer ()]
-		public void sort (CompareFunc compare_func);
+		public void sort (CompareFunc<G> compare_func);
 		[ReturnsModifiedPointer ()]
-		public void sort_with_data (CompareDataFunc compare_func);
+		public void sort_with_data (CompareDataFunc<G> compare_func);
 		[ReturnsModifiedPointer ()]
 		public void concat (owned SList<G> list2);
 		public void @foreach (Func func);
@@ -3441,7 +3550,7 @@ namespace GLib {
 		public unowned G nth_data (uint n);
 
 		public unowned SList<G> find (G data);
-		public unowned SList<G> find_custom (G data, CompareFunc func);
+		public unowned SList<G> find_custom (G data, CompareFunc<G> func);
 		public int position (SList<G> llink);
 		public int index (G data);
 
@@ -3450,12 +3559,12 @@ namespace GLib {
 	}
 
 	[CCode (has_target = false)]
-	public delegate int CompareFunc (void* a, void* b);
+	public delegate int CompareFunc<G> (G a, G b);
 
-	public delegate int CompareDataFunc (void* a, void* b);
+	public delegate int CompareDataFunc<G> (G a, G b);
 
 	[CCode (cname = "g_strcmp0")]
-	public static GLib.CompareFunc strcmp;
+	public static GLib.CompareFunc<string> strcmp;
 
 	/* Double-ended Queues */
 
@@ -3474,8 +3583,8 @@ namespace GLib {
 		public void reverse ();
 		public Queue copy ();
 		public unowned List<G> find (G data);
-		public unowned List<G> find_custom (G data, CompareFunc func);
-		public void sort (CompareDataFunc compare_func);
+		public unowned List<G> find_custom (G data, CompareFunc<G> func);
+		public void sort (CompareDataFunc<G> compare_func);
 		public void push_head (owned G data);
 		public void push_tail (owned G data);
 		public void push_nth (owned G data, int n);
@@ -3490,7 +3599,7 @@ namespace GLib {
 		public void remove_all (G data);
 		public void insert_before (List<G> sibling, owned G data);
 		public void insert_after (List<G> sibling, owned G data);
-		public void insert_sorted (owned G data, CompareDataFunc func);
+		public void insert_sorted (owned G data, CompareDataFunc<G> func);
 	}
 
 	/* Sequences */
@@ -3502,7 +3611,7 @@ namespace GLib {
 		public int get_length ();
 		public void @foreach (Func func);
 		public static void foreach_range (SequenceIter<G> begin, SequenceIter<G> end, Func func);
-		public void sort (CompareDataFunc cmp_func);
+		public void sort (CompareDataFunc<G> cmp_func);
 		public void sort_iter (SequenceIterCompareFunc<G> func);
 		public SequenceIter<G> get_begin_iter ();
 		public SequenceIter<G> get_end_iter ();
@@ -3512,14 +3621,14 @@ namespace GLib {
 		public static SequenceIter<G> insert_before (SequenceIter<G> iter, owned G data);
 		public static void move (SequenceIter<G> src, SequenceIter<G> dest);
 		public static void swap (SequenceIter<G> src, SequenceIter<G> dest);
-		public SequenceIter<G> insert_sorted (owned G data, CompareDataFunc cmp_func);
+		public SequenceIter<G> insert_sorted (owned G data, CompareDataFunc<G> cmp_func);
 		public SequenceIter<G> insert_sorted_iter (owned G data, SequenceIterCompareFunc<G> iter_cmp);
-		public static void sort_changed (SequenceIter<G> iter, CompareDataFunc cmp_func);
+		public static void sort_changed (SequenceIter<G> iter, CompareDataFunc<G> cmp_func);
 		public static void sort_changed_iter (SequenceIter<G> iter, SequenceIterCompareFunc<G> iter_cmp);
 		public static void remove (SequenceIter<G> iter);
 		public static void remove_range (SequenceIter<G> begin, SequenceIter<G> end);
 		public static void move_range (SequenceIter<G> dest, SequenceIter<G> begin, SequenceIter<G> end);
-		public SequenceIter<G> search (G data, CompareDataFunc cmp_func);
+		public SequenceIter<G> search (G data, CompareDataFunc<G> cmp_func);
 		public SequenceIter<G> search_iter (G data, SequenceIterCompareFunc<G> iter_cmp);
 		public static unowned G get (SequenceIter<G> iter);
 		public static void set (SequenceIter<G> iter, owned G data);
@@ -3550,8 +3659,8 @@ namespace GLib {
 	[CCode (ref_function = "g_hash_table_ref", unref_function = "g_hash_table_unref", type_id = "G_TYPE_HASH_TABLE", type_signature = "a{%s}")]
 	public class HashTable<K,V> {
 		[CCode (cname = "g_hash_table_new_full", simple_generics = true)]
-		public HashTable (HashFunc? hash_func, EqualFunc? key_equal_func);
-		public HashTable.full (HashFunc? hash_func, EqualFunc? key_equal_func, DestroyNotify? key_destroy_func, DestroyNotify? value_destroy_func);
+		public HashTable (HashFunc<K>? hash_func, EqualFunc<K>? key_equal_func);
+		public HashTable.full (HashFunc<K>? hash_func, EqualFunc<K>? key_equal_func, DestroyNotify? key_destroy_func, DestroyNotify? value_destroy_func);
 		public void insert (owned K key, owned V value);
 		public void replace (owned K key, owned V value);
 		public unowned V lookup (K key);
@@ -3577,30 +3686,30 @@ namespace GLib {
 	}
 
 	[CCode (has_target = false)]
-	public delegate uint HashFunc (void* key);
+	public delegate uint HashFunc<K> (K key);
 	[CCode (has_target = false)]
-	public delegate bool EqualFunc (void* a, void* b);
+	public delegate bool EqualFunc<G> (G a, G b);
 	public delegate void HFunc (void* key, void* value);
 
 	[CCode (has_target = false)]
 	public delegate void DestroyNotify (void* data);
 
 	[CCode (cname = "g_direct_hash")]
-	public static GLib.HashFunc direct_hash;
+	public static GLib.HashFunc<void*> direct_hash;
 	[CCode (cname = "g_direct_equal")]
-	public static GLib.EqualFunc direct_equal;
+	public static GLib.EqualFunc<void*> direct_equal;
 	[CCode (cname = "g_int64_hash")]
-	public static GLib.HashFunc int64_hash;
+	public static GLib.HashFunc<int64?> int64_hash;
 	[CCode (cname = "g_int64_equal")]
-	public static GLib.EqualFunc int64_equal;
+	public static GLib.EqualFunc<int64?> int64_equal;
 	[CCode (cname = "g_int_hash")]
-	public static GLib.HashFunc int_hash;
+	public static GLib.HashFunc<int?> int_hash;
 	[CCode (cname = "g_int_equal")]
-	public static GLib.EqualFunc int_equal;
+	public static GLib.EqualFunc<int?> int_equal;
 	[CCode (cname = "g_str_hash")]
-	public static GLib.HashFunc str_hash;
+	public static GLib.HashFunc<string> str_hash;
 	[CCode (cname = "g_str_equal")]
-	public static GLib.EqualFunc str_equal;
+	public static GLib.EqualFunc<string> str_equal;
 	[CCode (cname = "g_free")]
 	public static GLib.DestroyNotify g_free;
 	[CCode (cname = "g_object_unref")]
@@ -3613,6 +3722,7 @@ namespace GLib {
 	/* Strings */
 
 	[Compact]
+	[GIR (name = "String")]
 	[CCode (cname = "GString", cprefix = "g_string_", free_function = "g_string_free", type_id = "G_TYPE_GSTRING")]
 	public class StringBuilder {
 		public StringBuilder (string init = "");
@@ -3704,8 +3814,8 @@ namespace GLib {
 			this.add ((owned) data);
 			this.remove_index_fast (index);
 		}
-		public void sort (GLib.CompareFunc compare_func);
-		public void sort_with_data (GLib.CompareDataFunc compare_func);
+		public void sort (GLib.CompareFunc<G> compare_func);
+		public void sort_with_data (GLib.CompareDataFunc<G> compare_func);
 		private void set_size (int length);
 
 		public int length {
@@ -3733,8 +3843,8 @@ namespace GLib {
 		public void remove_index (uint index);
 		public void remove_index_fast (uint index);
 		public void remove_range (uint index, uint length);
-		public void sort (CompareFunc compare_func);
-		public void sort_with_data (CompareDataFunc compare_func);
+		public void sort (CompareFunc<int8> compare_func);
+		public void sort_with_data (CompareDataFunc<int8> compare_func);
 		public void set_size (uint length);
 
 		public uint len;
@@ -3865,8 +3975,8 @@ namespace GLib {
 		public void remove_index (uint index);
 		public void remove_index_fast (uint index);
 		public void remove_range (uint index, uint length);
-		public void sort (CompareFunc compare_func);
-		public void sort_with_data (CompareDataFunc compare_func);
+		public void sort (CompareFunc<G> compare_func);
+		public void sort_with_data (CompareDataFunc<G> compare_func);
 		[CCode (generic_type_pos = 0.1)]
 		public G index (uint index);
 		public void set_size (uint length);
@@ -3884,6 +3994,8 @@ namespace GLib {
 		LEVEL_ORDER
 	}
 
+	public delegate int TreeSearchFunc<K> (K key);
+
 	[Compact]
 #if GLIB_2_22
 	[CCode (ref_function = "g_tree_ref", unref_function = "g_tree_unref")]
@@ -3891,9 +4003,9 @@ namespace GLib {
 	[CCode (free_function = "g_tree_destroy")]
 #endif
 	public class Tree<K,V> {
-		public Tree (CompareFunc key_compare_func);
-		public Tree.with_data (CompareDataFunc key_compare_func);
-		public Tree.full (CompareDataFunc key_compare_func, DestroyNotify? key_destroy_func, DestroyNotify? value_destroy_func);
+		public Tree (CompareFunc<K> key_compare_func);
+		public Tree.with_data (CompareDataFunc<K> key_compare_func);
+		public Tree.full (CompareDataFunc<K> key_compare_func, DestroyNotify? key_destroy_func, DestroyNotify? value_destroy_func);
 		public void insert (owned K key, owned V value);
 		public void replace (owned K key, owned V value);
 		public int nnodes ();
@@ -3901,7 +4013,9 @@ namespace GLib {
 		public unowned V lookup (K key);
 		public bool lookup_extended (K lookup_key, K orig_key, V value);
 		public void foreach (TraverseFunc traverse_func);
-		public unowned V search (CompareFunc search_func, void* user_data);
+		public unowned V search (TreeSearchFunc<K> search_func);
+		[CCode (cname = "g_tree_search")]
+		public unowned V search_key (CompareFunc<K> search_func, K key);
 		public bool remove (K key);
 		public bool steal (K key);
 	}
@@ -3918,6 +4032,8 @@ namespace GLib {
 	public static unowned string ngettext (string msgid, string msgid_plural, ulong n);
 	[CCode (cname = "g_dgettext", cheader_filename = "glib/gi18n-lib.h")]
 	public static unowned string dgettext (string? domain, string msgid);
+	[CCode (cname = "g_dcgettext", cheader_filename = "glib/gi18n-lib.h")]
+	public static unowned string dcgettext (string? domain, string msgid, int category);
 	[CCode (cname = "g_dngettext", cheader_filename = "glib/gi18n-lib.h")]
 	public static unowned string dngettext (string? domain, string msgid, string msgid_plural, ulong n);
 	[CCode (cname = "g_dpgettext", cheader_filename = "glib/gi18n-lib.h")]
@@ -4068,7 +4184,9 @@ namespace GLib {
 		public unowned string get_type_string ();
 		public bool is_of_type (VariantType type);
 		public bool is_container ();
+		public bool is_floating ();
 		public Class classify ();
+		public int compare (Variant other);
 
 		public Variant.boolean (bool value);
 		public Variant.byte (uchar value);
@@ -4192,5 +4310,5 @@ namespace GLib {
 	public static void static_assert (bool expression);
 
 	[CCode (simple_generics = true)]
-	private static void qsort_with_data<T> (T[] elems, size_t size, [CCode (type = "GCompareDataFunc")] GLib.CompareDataFunc compare_func);
+	private static void qsort_with_data<T> (T[] elems, size_t size, [CCode (type = "GCompareDataFunc")] GLib.CompareDataFunc<T> compare_func);
 }

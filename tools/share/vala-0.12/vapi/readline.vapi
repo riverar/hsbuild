@@ -25,9 +25,9 @@ namespace Readline {
 
 	[CCode (cname = "rl_command_func_t", has_target = false)]
 	public delegate int      CommandFunc (int a, int b);
-	[CCode (cname = "rl_completion_func_t", has_target = false)]
-	public delegate string[] CompletionFunc (string str, int a, int b);
-	[CCode (cname = "rl_quote_func_t", has_target = false)]
+	[CCode (cname = "rl_completion_func_t", has_target = false, array_length = false, array_null_terminated = true)]
+	public delegate string[]? CompletionFunc (string str, int a, int b);
+	[CCode (cname = "rl_compentry_func_t", has_target = false)]
 	public delegate string?  CompentryFunc (string str, int a);
 	[CCode (cname = "rl_quote_func_t", has_target = false)]
 	public delegate string   QuoteFunc (string str, int a, string b);
@@ -851,7 +851,7 @@ namespace Readline {
 	[CCode (cname = "rl_display_match_list")]
 	public void display_match_list (string[] matches, int len, int max);
 
-	[CCode (cname = "rl_completion_matches")]
+	[CCode (cname = "rl_completion_matches", array_length = false, array_null_terminated = true)]
 	public unowned string[] completion_matches (string text, CompentryFunc func);
 
 	[CCode (cname = "rl_username_completion_function")]
@@ -980,7 +980,7 @@ namespace Readline {
 	[CCode (cname = "rl_ignore_some_completions_function")]
 	public CompignoreFunc ignore_some_completions_function;
 
-	[CCode (cname = "rl_attempt_completion_function")]
+	[CCode (cname = "rl_attempted_completion_function")]
 	public CompletionFunc attempted_completion_function;
 
 	[CCode (cname = "rl_basic_word_break_characters")]
