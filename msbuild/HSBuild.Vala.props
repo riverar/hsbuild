@@ -7,7 +7,7 @@
     <ValaCompile>
       <LibraryName Condition=" '$(OutputType)' != 'exe' AND '$(OutputType)' != 'winexe' ">$(AssemblyName)</LibraryName>
       <SymbolsFileName Condition=" '$(OutputType)' == 'dll' ">$(AssemblyName).symbols</SymbolsFileName>
-      <VapiDirectory>$(OutDir)$(DataOutputSubDir)vala-0.12/vapi</VapiDirectory>
+      <VapiDirectory>$(OutDir)$(DataOutputSubDir)vala-0.10/vapi</VapiDirectory>
     </ValaCompile>
     <InstallInclude>
       <SubDirectory>$(AssemblyName)</SubDirectory>
