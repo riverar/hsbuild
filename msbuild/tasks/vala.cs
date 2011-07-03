@@ -26,7 +26,7 @@ namespace HSBuild.Tasks
 {
   public sealed class Vala : PkgConfigToolTask
   {
-    private const string ValaToolName = "valac-0.10.exe";
+    private const string ValaToolName = "valac-0.14.exe";
 
     private List<ITaskItem> outputFiles;
     private string headerFileName;
@@ -111,7 +111,7 @@ namespace HSBuild.Tasks
 
         // On output the vapi file will most likely be added to DataFile item group,
         // which by the SubDirectory meta data will be copied to the correct directory!
-        ret.SetMetadata("SubDirectory", "vala-0.10/vapi");
+        ret.SetMetadata("SubDirectory", "vala/vapi");
         return ret;
       }
     }
