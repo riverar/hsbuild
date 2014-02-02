@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Find Visual Studio 2013 (12.0) -->
+  <PropertyGroup>
+      <PlatformToolsetVersion>120</PlatformToolsetVersion>
+
+      <VCInstallDir                                             >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\12.0\Setup\VC@ProductDir)</VCInstallDir>
+      <VCInstallDir Condition=" '$(VCInstallDir)' == '' "       >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\VisualStudio\12.0\Setup\VC@ProductDir)</VCInstallDir>
+      <VCInstallDir Condition=" '$(VCInstallDir)' == '' "       >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VCExpress\12.0\Setup\VC@ProductDir)</VCInstallDir>
+      <VCInstallDir Condition=" '$(VCInstallDir)' == '' "       >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\VCExpress\12.0\Setup\VC@ProductDir)</VCInstallDir>
+
+      <VSInstallDir                                             >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\12.0\Setup\VS@ProductDir)</VSInstallDir>
+      <VSInstallDir Condition=" '$(VSInstallDir)' == '' "       >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\VisualStudio\12.0\Setup\VS@ProductDir)</VSInstallDir>
+      <VSInstallDir Condition=" '$(VSInstallDir)' == '' "       >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VCExpress\12.0\Setup\VS@ProductDir)</VSInstallDir>
+      <VSInstallDir Condition=" '$(VSInstallDir)' == '' "       >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\VCExpress\12.0\Setup\VS@ProductDir)</VSInstallDir>
+
+      <WindowsSdkDir                                            >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v8.1@InstallationFolder)</WindowsSdkDir>
+      <WindowsSdkDir Condition=" '$(WindowsSdkDir)' == '' "     >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v8.1@InstallationFolder)</WindowsSdkDir>
+
+      <FrameworkDir                                             >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework@InstallRoot)</FrameworkDir>
+      <FrameworkDir Condition=" '$(FrameworkDir)' == '' "       >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\.NETFramework@InstallRoot)</FrameworkDir>
+
+      <FrameworkSdkDir                                          >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v8.1A@InstallationFolder)</FrameworkSdkDir>
+      <FrameworkSdkDir Condition=" '$(FrameworkSdkDir)' == '' " >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows@CurrentInstallFolder)</FrameworkSdkDir>
+      <FrameworkSdkDir Condition=" '$(FrameworkSdkDir)' == '' " >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v8.1A@InstallationFolder)</FrameworkSdkDir>
+      <FrameworkSdkDir Condition=" '$(FrameworkSdkDir)' == '' " >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows@CurrentInstallFolder)</FrameworkSdkDir>
+
+      <FrameworkVersion                                         >v4.0.30319</FrameworkVersion>
+  </PropertyGroup>
+
+  <!-- Paths -->
+  <PropertyGroup>
+      <MSVCToolPath Condition=" '$(MSVCToolPath)' == '' "       >$(VCInstallDir)bin\x86_amd64\</MSVCToolPath>
+
+
+      <ExecutablePath Condition=" '$(ExecutablePath)' == '' "   >$(VCInstallDir)bin\x86_amd64;$(VCInstallDir)bin;$(WindowsSdkDir)bin\x86;$(FrameworkSdkDir)bin\NETFX 4.5.1 Tools;$(VSInstallDir)Common7\Tools\bin;$(VSInstallDir)Common7\tools;$(VSInstallDir)Common7\ide;$(ProgramFiles)\HTML Help Workshop;$(MSBuildToolsPath);$(FrameworkDir)$(FrameworkVersion);$(FxCopDir);$(PATH);</ExecutablePath>
+      <IncludePath Condition=" '$(IncludePath)' == '' "         >$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)Include\um;$(WindowsSdkDir)Include\shared;$(WindowsSdkDir)Include\winrt;</IncludePath>
+      <ReferencePath Condition=" '$(ReferencePath)' == '' "     >$(VCInstallDir)atlmfc\lib\amd64;$(VCInstallDir)lib\amd64;</ReferencePath>
+      <LibraryPath Condition=" '$(LibraryPath)' == '' "         >$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSdkDir)Lib\winv6.3\um\x64;</LibraryPath>
+      <SourcePath Condition=" '$(SourcePath)' == '' "           >$(VCInstallDir)atlmfc\src\mfc;$(VCInstallDir)atlmfc\src\mfcm;$(VCInstallDir)atlmfc\src\atl;$(VCInstallDir)crt\src;</SourcePath>
+      <ExcludePath Condition=" '$(ExcludePath)' == '' "         >$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)Include\um;$(WindowsSdkDir)Include\shared;$(WindowsSdkDir)Include\winrt;$(MSBuildToolsPath);$(FrameworkDir)$(FrameworkVersion);$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;</ExcludePath>
+  </PropertyGroup>
+</Project>

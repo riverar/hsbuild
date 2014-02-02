@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(PlatformToolset)' == ''">
-    <PlatformToolset>v100</PlatformToolset>
-    <CRTSuffix>vc100</CRTSuffix>
+    <PlatformToolset>v120</PlatformToolset>
+    <CRTSuffix>vc120</CRTSuffix>
   </PropertyGroup>
 </Project>
