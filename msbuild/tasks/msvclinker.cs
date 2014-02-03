@@ -315,7 +315,7 @@ namespace HSBuild.Tasks
       if (LargeAddressAware)
         builder.AppendSwitch("/LARGEADDRESSAWARE");
       if (DataExecutionPrevention)
-        builder.AppendSwitch("/NXCOMPAT:NO");
+        builder.AppendSwitch("/NXCOMPAT");
       if (Profile)
         builder.AppendSwitch("/PROFILE");
       builder.AppendSwitchIfNotNull("/PGD:", ProfileGuidedDatabase);
