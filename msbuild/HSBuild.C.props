@@ -40,13 +40,6 @@
   <PropertyGroup>
     <EmbedManifest                      Condition="'$(EmbedManifest)'                           == ''">true</EmbedManifest>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(EmbedManifest)' == 'true' AND '$(OutputType)' != 'lib' ">
-    <EmbedManifestBy                                                                                  >LINK</EmbedManifestBy>
-    <!--
-    <EmbedManifestBy                    Condition="'$(LinkIncremental)'                         == 'true'">LINK</EmbedManifestBy>
-    <EmbedManifestBy                    Condition="'$(LinkIncremental)'                         != 'true'">MT</EmbedManifestBy>
-    -->
-  </PropertyGroup>
 
   <ItemDefinitionGroup>
     <!-- ClCompile -->
@@ -136,7 +129,6 @@
                                               '$(CLRSupport)'                       == '') and
                                               '%(Link.LinkDll)'                     == 'true'">$(OutDir)$(LibraryOutputSubDir)$(AssemblyName).lib</ImportLibrary>
       <OutputFile                  Condition="'%(Link.OutputFile)'                  == ''">$(OutputFile)</OutputFile>
-      <ManifestFile                Condition="'%(Link.ManifestFile)'                == ''">$(IntDir)$(TargetFileName).intermediate.manifest</ManifestFile>
       <ProgramDatabaseFile         Condition="'%(Link.ProgramDatabaseFile)'         == ''">$(OutDir)$(PDBOutputSubDir)$(TargetName).pdb</ProgramDatabaseFile>
       <Profile                     Condition="'%(Link.Profile)'                     == ''">false</Profile>
       <ProfileGuidedDatabase       Condition="'%(Link.ProfileGuidedDatabase)'       == '' and
@@ -184,16 +176,6 @@
       <SuppressStartupBanner       Condition="'%(Lib.SuppressStartupBanner)'        == ''">true</SuppressStartupBanner>
       <AcceptableNonZeroExitCodes  Condition="'%(Lib.AcceptableNonZeroExitCodes)'   == ''">$(AcceptableNonZeroExitCodes)</AcceptableNonZeroExitCodes>
     </Lib>
-
-    <!-- Manifest -->
-    <Manifest>
-      <TrackerLogDirectory          Condition="'%(Manifest.TrackerLogDirectory)'            == ''">$(IntDir)</TrackerLogDirectory>
-      <SuppressStartupBanner        Condition="'%(Manifest.SuppressStartupBanner)'          == ''">true</SuppressStartupBanner>
-      <AcceptableNonZeroExitCodes   Condition="'%(Manifest.AcceptableNonZeroExitCodes)'     == ''">$(AcceptableNonZeroExitCodes)</AcceptableNonZeroExitCodes>
-      <VerboseOutput                Condition="'%(Manifest.VerboseOutput)'                  == ''">true</VerboseOutput>
-      <GenerateCatalogFiles         Condition="'%(Manifest.GenerateCatalogFiles)'           == ''">false</GenerateCatalogFiles>
-      <UpdateFileHashes             Condition="'%(Manifest.UpdateFileHashes)'               == ''">false</UpdateFileHashes>
-    </Manifest>
   </ItemDefinitionGroup>
 
   <ItemDefinitionGroup Condition=" '$(OutputType)' != 'lib' ">

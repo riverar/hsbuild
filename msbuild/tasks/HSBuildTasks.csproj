@@ -73,8 +73,6 @@
     <Compile Include="copy.cs" />
     <Compile Include="dumpsymbols.cs" />
     <Compile Include="environment.cs" />
-    <Compile Include="msmanifest.cs" />
-    <Compile Include="msmanifestresource.cs" />
     <Compile Include="msvclib.cs" />
     <Compile Include="pkgconfigvariable.cs" />
     <Compile Include="pkgconfig.cs" />

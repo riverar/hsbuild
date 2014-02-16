@@ -12,7 +12,6 @@
       CCompile;
       ResourceCompile;
       TransformObjOutput;
-      ManifestResourceCompile;
       BuildLink;
     </BuildCompileTargets>
 
@@ -22,8 +21,6 @@
       GenerateSymbols;
       Lib;
       Link;
-      Manifest;
-      LinkEmbedManifest;
     </BuildLinkTargets>
 
     <BuildInstallTargets>

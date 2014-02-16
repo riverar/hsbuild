@@ -45,13 +45,11 @@ namespace HSBuild.Tasks
 
     public ITaskItem[] AdditionalLibraryDirectories { get; set; }
     public ITaskItem[] AdditionalDependencies { get; set; }
-    public ITaskItem[] AdditionalManifestDependencies { get; set; }
     public ITaskItem[] AdditionalOptions { get; set; }
     public string LinkErrorReporting { get; set; }
     public string ModuleDefinitionFile { get; set; }
     public string ImportLibrary { get; set; }
     public bool GenerateManifest { get; set; }
-    public string ManifestFile { get; set; }
     public string MSDOSStubFileName { get; set; }
     public bool GenerateMapFile { get; set; }
     public string MapFileName { get; set; }
@@ -290,13 +288,7 @@ namespace HSBuild.Tasks
       }
       if (GenerateManifest)
       {
-        builder.AppendSwitch("/MANIFEST");
-        builder.AppendSwitchIfNotNull("/MANIFESTFILE:", ManifestFile);
-        if (AdditionalManifestDependencies != null)
-        {
-          foreach (ITaskItem dep in AdditionalManifestDependencies)
-            builder.AppendSwitchUnquotedIfNotNull("/MANIFESTDEPENDENCY:", dep);
-        }
+        builder.AppendSwitch("/MANIFEST:EMBED");
       }
       builder.AppendSwitchIfNotNull("/MANIFESTUAC:", ManifestUACString);
       builder.AppendSwitchIfNotNull("/PDB:", ProgramDatabaseFile);
