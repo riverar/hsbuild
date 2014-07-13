@@ -26,7 +26,7 @@ namespace HSBuild.Tasks
 {
   public sealed class Vala : PkgConfigToolTask
   {
-    private const string ValaToolName = "valac-0.14.exe";
+    private const string ValaToolName = "valac-0.26.exe";
 
     private List<ITaskItem> outputFiles;
     private string headerFileName;
@@ -57,6 +57,10 @@ namespace HSBuild.Tasks
       }
     }
 
+    public string InternalHeaderFileName { get; set; }
+
+    public string InternalVapiFileName { get; set; }
+
     public string SymbolsFileName { get; set; }
 
     public string VapiFileName
@@ -83,6 +87,30 @@ namespace HSBuild.Tasks
           return null;
 
         return new TaskItem(Path.Combine(OutputDirectory, HeaderFileName));
+      }
+    }
+
+    [Output]
+    public ITaskItem InternalHeaderFile
+    {
+      get
+      {
+        if (string.IsNullOrEmpty(InternalHeaderFileName))
+          return null;
+
+        return new TaskItem(Path.Combine(OutputDirectory, InternalHeaderFileName));
+      }
+    }
+
+    [Output]
+    public ITaskItem InternalVapiFile
+    {
+      get
+      {
+        if (string.IsNullOrEmpty(InternalVapiFileName))
+          return null;
+
+        return new TaskItem(Path.Combine(OutputDirectory, InternalVapiFileName));
       }
     }
 
@@ -127,6 +155,7 @@ namespace HSBuild.Tasks
     public bool Verbose { get; set; }
     public bool KeepTemporaryFiles { get; set; }
     public bool Thread { get; set; }
+    public ITaskItem[] Defines { get; set; }
 
     #endregion
 
@@ -156,6 +185,8 @@ namespace HSBuild.Tasks
       builder.AppendSwitchUnquotedIfNotNull("--vapi=", VapiFileName);
       builder.AppendSwitchUnquotedIfNotNull("--library=", Library);
       builder.AppendSwitchUnquotedIfNotNull("--header=", HeaderFile);
+      builder.AppendSwitchUnquotedIfNotNull("--internal-header=", InternalHeaderFile);
+      builder.AppendSwitchUnquotedIfNotNull("--internal-vapi=", InternalVapiFileName);
       builder.AppendSwitchUnquotedIfNotNull("--symbols=", SymbolsFile);
 
       if (Packages != null)
@@ -175,6 +206,12 @@ namespace HSBuild.Tasks
       if (Debug) builder.AppendSwitch("-g");
       if (KeepTemporaryFiles) builder.AppendSwitch("--save-temps");
       if (Thread) builder.AppendSwitch("--thread");
+
+      if (Defines != null)
+      {
+        foreach (ITaskItem def in Defines)
+          builder.AppendSwitchIfNotNull("-D ", def);
+      }
 
       builder.AppendFileNamesIfNotNull(Sources, " ");
 

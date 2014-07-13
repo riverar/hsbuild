@@ -47,9 +47,12 @@
         VapiFileName="%(ValaCompile.VapiFileName)"
         Library="%(ValaCompile.LibraryName)"
         HeaderFileName="%(ValaCompile.HeaderFileName)"
+        InternalHeaderFileName="%(ValaCompile.InternalHeaderFileName)"
+        InternalVapiFileName="%(ValaCompile.InternalVapiFileName)"
         SymbolsFileName="%(ValaCompile.SymbolsFileName)"
         Debug="%(ValaCompile.Debug)"
         Verbose="%(ValaCompile.Verbose)"
+        Defines="%(ValaCompile.Defines)"
         ToolPath="$(ValaToolPath)"
         >
           <Output TaskParameter="DestinationFiles" ItemName="ClCompile"/>
@@ -60,6 +63,8 @@
           <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
           <Output TaskParameter="HeaderFile" ItemName="FileWrites"/>
           <Output TaskParameter="VapiFile" ItemName="FileWrites"/>
+          <Output TaskParameter="InternalHeaderFile" ItemName="FileWrites"/>
+          <Output TaskParameter="InternalVapiFile" ItemName="FileWrites"/>
           <Output TaskParameter="SymbolsFile" ItemName="FileWrites"/>
           <!-- <Output TaskParameter="GirFile" ItemName="FileWrites"/> -->
       </Vala>
