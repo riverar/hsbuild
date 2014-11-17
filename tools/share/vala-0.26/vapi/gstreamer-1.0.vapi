@@ -539,11 +539,11 @@ namespace Gst {
 		public Gst.Clock provided_clock;
 		public bool state_dirty;
 		[CCode (has_construct_function = false, returns_floating_reference = true, type = "GstElement*")]
-		public Bin (string name);
-		public bool add (owned Gst.Element element);
+		public Bin (string? name);
+		public bool add (Gst.Element element);
 		[NoWrapper]
 		public virtual bool add_element (Gst.Element element);
-		public void add_many (params owned Gst.Element[] elements);
+		public void add_many (params Gst.Element[] elements);
 		public Gst.Pad? find_unlinked_pad (Gst.PadDirection direction);
 		public Gst.Element get_by_interface (GLib.Type iface);
 		public Gst.Element? get_by_name (string name);
@@ -560,7 +560,7 @@ namespace Gst {
 		public bool remove (Gst.Element element);
 		[NoWrapper]
 		public virtual bool remove_element (Gst.Element element);
-		public void remove_many (params owned Gst.Element[] elements);
+		public void remove_many (params Gst.Element[] elements);
 		[NoAccessorMethod]
 		public bool async_handling { get; set; }
 		[NoAccessorMethod]
@@ -1017,7 +1017,7 @@ namespace Gst {
 		public void abort_state ();
 		[CCode (cname = "gst_element_class_add_metadata")]
 		public class void add_metadata (string key, string value);
-		public bool add_pad (owned Gst.Pad pad);
+		public bool add_pad (Gst.Pad pad);
 		[CCode (cname = "gst_element_class_add_pad_template")]
 		public class void add_pad_template (owned Gst.PadTemplate templ);
 		[CCode (cname = "gst_element_class_add_static_metadata")]
@@ -1691,7 +1691,7 @@ namespace Gst {
 		public Query.accept_caps (Gst.Caps caps);
 		public void add_allocation_meta (GLib.Type api, Gst.Structure? @params);
 		public void add_allocation_param (Gst.Allocator? allocator, Gst.AllocationParams? @params);
-		public void add_allocation_pool (Gst.BufferPool pool, uint size, uint min_buffers, uint max_buffers);
+		public void add_allocation_pool (Gst.BufferPool? pool, uint size, uint min_buffers, uint max_buffers);
 		public bool add_buffering_range (int64 start, int64 stop);
 		public void add_scheduling_mode (Gst.PadMode mode);
 		[CCode (has_construct_function = false)]
@@ -1774,7 +1774,7 @@ namespace Gst {
 		public void set_formatsv ([CCode (array_length_cname = "n_formats", array_length_pos = 0.5)] Gst.Format[] formats);
 		public void set_latency (bool live, Gst.ClockTime min_latency, Gst.ClockTime max_latency);
 		public void set_nth_allocation_param (uint index, Gst.Allocator? allocator, Gst.AllocationParams? @params);
-		public void set_nth_allocation_pool (uint index, Gst.BufferPool pool, uint size, uint min_buffers, uint max_buffers);
+		public void set_nth_allocation_pool (uint index, Gst.BufferPool? pool, uint size, uint min_buffers, uint max_buffers);
 		public void set_position (Gst.Format format, int64 cur);
 		public void set_scheduling (Gst.SchedulingFlags flags, int minsize, int maxsize, int align);
 		public void set_seeking (Gst.Format format, bool seekable, int64 segment_start, int64 segment_end);
@@ -2202,7 +2202,7 @@ namespace Gst {
 	public struct MapInfo {
 		public weak Gst.Memory memory;
 		public Gst.MapFlags flags;
-		[CCode (array_length = false, array_null_terminated = true)]
+		[CCode (array_length_cname = "size", array_length_type = "gsize")]
 		public weak uint8[] data;
 		public size_t size;
 		public size_t maxsize;

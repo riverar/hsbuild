@@ -99,6 +99,7 @@ namespace Rest {
 	public class Proxy : GLib.Object {
 		[CCode (has_construct_function = false)]
 		public Proxy (string url_format, bool binding_required);
+		public void add_soup_feature (Soup.SessionFeature feature);
 		public bool bind (...);
 		public unowned string get_user_agent ();
 		public virtual Rest.ProxyCall new_call ();
@@ -140,6 +141,7 @@ namespace Rest {
 		public void add_params (...);
 		public bool cancel ();
 		public bool continuous ([CCode (delegate_target_pos = 2.1)] Rest.ProxyCallContinuousCallback callback, GLib.Object weak_object) throws GLib.Error;
+		public unowned string get_function ();
 		public unowned string get_method ();
 		public unowned Rest.Params get_params ();
 		public unowned string get_payload ();

@@ -16,6 +16,8 @@ namespace Gdk {
 		public void fill (uint32 pixel);
 		public Gdk.Pixbuf? flip (bool horizontal);
 		[CCode (has_construct_function = false)]
+		public Pixbuf.from_bytes (GLib.Bytes data, Gdk.Colorspace colorspace, bool has_alpha, int bits_per_sample, int width, int height, int rowstride);
+		[CCode (has_construct_function = false)]
 		public Pixbuf.from_data ([CCode (array_length = false)] owned uint8[] data, Gdk.Colorspace colorspace, bool has_alpha, int bits_per_sample, int width, int height, int rowstride, [CCode (type = "GdkPixbufDestroyNotify")] Gdk.PixbufDestroyNotify? destroy_fn = GLib.free);
 		[CCode (has_construct_function = false)]
 		public Pixbuf.from_file (string filename) throws GLib.Error;
@@ -24,8 +26,10 @@ namespace Gdk {
 		[CCode (has_construct_function = false)]
 		public Pixbuf.from_file_at_size (string filename, int width, int height) throws GLib.Error;
 		[CCode (has_construct_function = false)]
+		[Deprecated (since = "2.32")]
 		public Pixbuf.from_inline ([CCode (array_length_cname = "data_length", array_length_pos = 0.5)] uint8[] data, bool copy_pixels = true) throws GLib.Error;
 		[CCode (cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
+		[Deprecated (since = "2.32")]
 		public static Gdk.Pixbuf from_pixdata (Gdk.Pixdata pixdata, bool copy_pixels = true) throws GLib.Error;
 		[CCode (has_construct_function = false)]
 		public Pixbuf.from_resource (string resource_path) throws GLib.Error;
@@ -45,11 +49,13 @@ namespace Gdk {
 		public size_t get_byte_length ();
 		public Gdk.Colorspace get_colorspace ();
 		public static unowned Gdk.PixbufFormat? get_file_info (string filename, out int width, out int height);
+		public static async unowned Gdk.PixbufFormat get_file_info_async (string filename, GLib.Cancellable? cancellable, out int width, out int height) throws GLib.Error;
 		public static GLib.SList<weak Gdk.PixbufFormat> get_formats ();
 		public bool get_has_alpha ();
 		public int get_height ();
 		public int get_n_channels ();
 		public unowned string get_option (string key);
+		public GLib.HashTable<weak string,weak string> get_options ();
 		[CCode (array_length = false)]
 		public unowned uint8[] get_pixels ();
 		[CCode (array_length_pos = 0.1, array_length_type = "guint")]
@@ -62,6 +68,8 @@ namespace Gdk {
 		[CCode (cname = "gdk_pixbuf_new_from_stream_at_scale_async", finish_name = "gdk_pixbuf_new_from_stream_finish")]
 		[Deprecated (replacement = "Pixbuf.from_stream_at_scale_async", since = "vala-0.18")]
 		public static async Gdk.Pixbuf new_from_stream_at_scale_async (GLib.InputStream stream, int width, int height, bool preserve_aspect_ratio, GLib.Cancellable? cancellable = null) throws GLib.Error;
+		public GLib.Bytes read_pixel_bytes ();
+		public uint8 read_pixels ();
 		public Gdk.Pixbuf? rotate_simple (Gdk.PixbufRotation angle);
 		public void saturate_and_pixelate (Gdk.Pixbuf dest, float saturation, bool pixelate);
 		public bool save (string filename, string type, ...) throws GLib.Error;
@@ -84,6 +92,8 @@ namespace Gdk {
 		public bool has_alpha { get; construct; }
 		public int height { get; construct; }
 		public int n_channels { get; construct; }
+		[NoAccessorMethod]
+		public GLib.Bytes pixel_bytes { owned get; construct; }
 		public void* pixels { get; construct; }
 		public int rowstride { get; construct; }
 		public int width { get; construct; }
@@ -176,9 +186,12 @@ namespace Gdk {
 		public uint32 height;
 		[CCode (array_length = false, array_null_terminated = true)]
 		public weak uint8[] pixel_data;
+		[Deprecated (since = "2.32")]
 		public bool deserialize ([CCode (array_length_cname = "stream_length", array_length_pos = 0.5, array_length_type = "guint")] uint8[] stream) throws GLib.Error;
 		[CCode (array_length_pos = 0.1, array_length_type = "guint")]
+		[Deprecated (since = "2.32")]
 		public uint8[] serialize ();
+		[Deprecated (since = "2.32")]
 		public GLib.StringBuilder to_csource (string name, Gdk.PixdataDumpType dump_type);
 	}
 	[CCode (cheader_filename = "gdk-pixbuf/gdk-pixbuf.h", cprefix = "GDK_COLORSPACE_", type_id = "gdk_colorspace_get_type ()")]
