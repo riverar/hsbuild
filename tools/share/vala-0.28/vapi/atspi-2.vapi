@@ -53,7 +53,7 @@ namespace Atspi {
 		public unowned string get_object_locale () throws GLib.Error;
 		public Atspi.Accessible? get_parent () throws GLib.Error;
 		public uint get_process_id () throws GLib.Error;
-		public GLib.Array<Atspi.Accessible> get_relation_set () throws GLib.Error;
+		public GLib.Array<Atspi.Relation> get_relation_set () throws GLib.Error;
 		public Atspi.Role get_role () throws GLib.Error;
 		public string get_role_name () throws GLib.Error;
 		[Deprecated (since = "2.10")]
@@ -327,7 +327,7 @@ namespace Atspi {
 	public interface TableCell : GLib.Object {
 		public GLib.GenericArray<Atspi.Accessible> get_column_header_cells () throws GLib.Error;
 		public int get_column_index () throws GLib.Error;
-		public int get_column_span (GLib.Error error);
+		public int get_column_span () throws GLib.Error;
 		public void get_row_column_span (out int row, out int column, out int row_span, out int column_span) throws GLib.Error;
 		public GLib.GenericArray<Atspi.Accessible> get_row_header_cells () throws GLib.Error;
 		public int get_row_index () throws GLib.Error;
@@ -691,6 +691,11 @@ namespace Atspi {
 		MATH,
 		RATING,
 		TIMER,
+		STATIC,
+		MATH_FRACTION,
+		MATH_ROOT,
+		SUBSCRIPT,
+		SUPERSCRIPT,
 		LAST_DEFINED;
 		public static string get_name (Atspi.Role role);
 	}
@@ -739,6 +744,7 @@ namespace Atspi {
 		VISITED,
 		CHECKABLE,
 		HAS_POPUP,
+		READ_ONLY,
 		LAST_DEFINED
 	}
 	[CCode (cheader_filename = "atspi/atspi.h", cprefix = "ATSPI_TEXT_BOUNDARY_", type_id = "atspi_text_boundary_type_get_type ()")]

@@ -24,8 +24,12 @@ namespace Peas {
 		public bool try_load_plugin (Peas.PluginInfo info);
 		[CCode (cname = "peas_engine_unload_plugin")]
 		public bool try_unload_plugin (Peas.PluginInfo info);
+		[CCode (has_construct_function = false)]
+		public Engine.with_nonglobal_loaders ();
 		[CCode (array_length = false, array_null_terminated = true)]
 		public string[] loaded_plugins { owned get; set; }
+		[NoAccessorMethod]
+		public bool nonglobal_loaders { get; construct; }
 		public void* plugin_list { get; }
 		public virtual signal void load_plugin (Peas.PluginInfo info);
 		public virtual signal void unload_plugin (Peas.PluginInfo info);
@@ -68,6 +72,8 @@ namespace Peas {
 		protected ObjectModule ();
 		public void register_extension_factory (GLib.Type iface_type, owned Peas.FactoryFunc factory_func);
 		public void register_extension_type (GLib.Type iface_type, GLib.Type extension_type);
+		[NoAccessorMethod]
+		public bool local_linkage { get; construct; }
 		[NoAccessorMethod]
 		public string module_name { owned get; construct; }
 		[NoAccessorMethod]

@@ -27,7 +27,8 @@ namespace GLib {
 		public bool launch_uris_as_manager (GLib.List uris, GLib.AppLaunchContext launch_context, GLib.SpawnFlags spawn_flags, GLib.SpawnChildSetupFunc user_setup, void* user_setup_data, GLib.DesktopAppLaunchCallback pid_callback, void* pid_callback_data) throws GLib.Error;
 		[CCode (array_length = false, array_null_terminated = true)]
 		public unowned string[] list_actions ();
-		public static void*[] search (string search_string);
+		[CCode (array_length = false, array_null_terminated = true)]
+		public static string**[] search (string search_string);
 		public static void set_desktop_env (string desktop_env);
 		public string filename { get; construct; }
 	}
@@ -72,40 +73,31 @@ namespace GLib {
 		public bool close_fd { get; set; }
 		public int fd { get; construct; }
 	}
-	[CCode (cheader_filename = "gio/gunixmounts.h", cname = "GUnixMountEntry", free_function = "g_unix_mount_free", lower_case_prefix = "g_unix_mount_")]
+	[CCode (cheader_filename = "gio/gunixmounts.h", cname = "GUnixMountEntry", free_function = "g_unix_mount_free", lower_case_cprefix = "g_unix_mount_")]
 	[Compact]
 	public class UnixMountEntry {
 		[CCode (cname = "g_unix_mount_at")]
 		public UnixMountEntry (string mount_path, uint64 time_read);
-		[CCode (cname = "g_unix_mount_compare")]
 		public int compare (GLib.UnixMountEntry mount);
 		[CCode (cheader_filename = "gio/gunixmounts.h", cname = "g_unix_mounts_get")]
 		public static GLib.List<GLib.UnixMountEntry> @get (out uint64 time_read = null);
-		[CCode (cname = "g_unix_mount_get_device_path")]
 		public unowned string get_device_path ();
-		[CCode (cname = "g_unix_mount_get_fs_type")]
 		public unowned string get_fs_type ();
-		[CCode (cname = "g_unix_mount_get_mount_path")]
 		public unowned string get_mount_path ();
-		[CCode (cname = "g_unix_mount_guess_can_eject")]
 		public bool guess_can_eject ();
-		[CCode (cname = "g_unix_mount_guess_icon")]
 		public GLib.Icon guess_icon ();
-		[CCode (cname = "g_unix_mount_guess_name")]
 		public string guess_name ();
-		[CCode (cname = "g_unix_mount_guess_should_display")]
 		public bool guess_should_display ();
-		[CCode (cname = "g_unix_mount_guess_symbolic_icon")]
 		public GLib.Icon guess_symbolic_icon ();
-		[CCode (cname = "g_unix_mount_is_readonly")]
 		public bool is_readonly ();
-		[CCode (cname = "g_unix_mount_is_system_internal")]
 		public bool is_system_internal ();
 	}
 	[CCode (cheader_filename = "gio/gunixmounts.h")]
 	public class UnixMountMonitor : GLib.Object {
 		[CCode (has_construct_function = false)]
+		[Deprecated (replacement = "UnixMountMonitor.get", since = "2.44")]
 		public UnixMountMonitor ();
+		public static GLib.UnixMountMonitor @get ();
 		public void set_rate_limit (int limit_msec);
 		public virtual signal void mountpoints_changed ();
 		public virtual signal void mounts_changed ();

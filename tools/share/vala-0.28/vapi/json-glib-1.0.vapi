@@ -42,7 +42,7 @@ namespace Json {
 		public unowned Json.Builder add_int_value (int64 value);
 		public unowned Json.Builder add_null_value ();
 		public unowned Json.Builder add_string_value (string value);
-		public unowned Json.Builder add_value (Json.Node node);
+		public unowned Json.Builder add_value (owned Json.Node node);
 		public unowned Json.Builder begin_array ();
 		public unowned Json.Builder begin_object ();
 		public unowned Json.Builder end_array ();
@@ -210,7 +210,7 @@ namespace Json {
 		public Json.Node default_serialize_property (string property_name, GLib.Value value, GLib.ParamSpec pspec);
 		public abstract bool deserialize_property (string property_name, out GLib.Value value, GLib.ParamSpec pspec, Json.Node property_node);
 		public abstract unowned GLib.ParamSpec find_property (string name);
-		public abstract void get_property (GLib.ParamSpec pspec, GLib.Value value);
+		public abstract GLib.Value get_property (GLib.ParamSpec pspec);
 		[CCode (array_length_pos = 0.1, array_length_type = "guint")]
 		public GLib.ParamSpec[] list_properties ();
 		public abstract Json.Node serialize_property (string property_name, GLib.Value value, GLib.ParamSpec pspec);

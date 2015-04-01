@@ -1789,7 +1789,7 @@ namespace GLib {
 		public void unlock ();
 	}
 
-	[CCode (destroy_function = "g_rec_mutex_clear", lvalue_access = false)]
+	[CCode (destroy_function = "g_rec_mutex_clear")]
 	public struct RecMutex {
 		public RecMutex ();
 		public void lock ();
@@ -1797,7 +1797,7 @@ namespace GLib {
 		public void unlock ();
 	}
 
-	[CCode (destroy_function = "g_rw_lock_clear", lvalue_access = false)]
+	[CCode (destroy_function = "g_rw_lock_clear")]
 	public struct RWLock {
 		public RWLock ();
 		public void writer_lock ();
@@ -1808,7 +1808,7 @@ namespace GLib {
 		public void reader_unlock ();
 	}
 
-	[CCode (destroy_function = "g_static_mutex_free", default_value = "G_STATIC_MUTEX_INIT", lvalue_access = false)]
+	[CCode (destroy_function = "g_static_mutex_free", default_value = "G_STATIC_MUTEX_INIT")]
 	[Deprecated (since = "glib-2.32", replacement = "Mutex")]
 	public struct StaticMutex {
 		public StaticMutex ();
@@ -1818,7 +1818,7 @@ namespace GLib {
 		public void lock_full ();
 	}
 
-	[CCode (destroy_function = "g_static_rec_mutex_free", default_value = "G_STATIC_REC_MUTEX_INIT", lvalue_access = false)]
+	[CCode (destroy_function = "g_static_rec_mutex_free", default_value = "G_STATIC_REC_MUTEX_INIT")]
 	[Deprecated (since = "glib-2.32", replacement = "RecMutex")]
 	public struct StaticRecMutex {
 		public StaticRecMutex ();
@@ -1828,7 +1828,7 @@ namespace GLib {
 		public void lock_full ();
 	}
 
-	[CCode (destroy_function = "g_static_rw_lock_free", default_value = "G_STATIC_RW_LOCK_INIT", lvalue_access = false)]
+	[CCode (destroy_function = "g_static_rw_lock_free", default_value = "G_STATIC_RW_LOCK_INIT")]
 	[Deprecated (since = "glib-2.32", replacement = "RWLock")]
 	public struct StaticRWLock {
 		public StaticRWLock ();
@@ -1849,7 +1849,7 @@ namespace GLib {
 		public void replace (void* data);
 	}
 
-	[CCode (destroy_function = "g_static_private_free", default_value = "G_STATIC_PRIVATE_INIT", lvalue_access = false)]
+	[CCode (destroy_function = "g_static_private_free", default_value = "G_STATIC_PRIVATE_INIT")]
 	[Deprecated (since = "glib-2.32")]
 	public struct StaticPrivate {
 		public StaticPrivate ();
@@ -1914,6 +1914,15 @@ namespace GLib {
 		public int get_max_threads ();
 		public uint get_num_threads ();
 		public uint unprocessed ();
+		[CCode (cname = "g_thread_pool_free")]
+		void _free (bool immediate, bool wait);
+		[CCode (cname = "vala__g_thread_pool_free_wrapper")]
+		public static void free (owned ThreadPool? pool, bool immediate, bool wait) {
+			ThreadPool* ptr = (owned) pool;
+			if (ptr != null) {
+				((ThreadPool)ptr)._free (immediate, wait);
+			}
+		}
 		public static void set_max_unused_threads (int max_threads);
 		public static int get_max_unused_threads ();
 		public static uint get_num_unused_threads ();
@@ -2245,7 +2254,9 @@ namespace GLib {
 
 	/* String Utility Functions */
 
+	public void strfreev (string** str_array);
 	public uint strv_length ([CCode (array_length = false, array_null_terminated = true)] string[] str_array);
+	public bool strv_contains ([CCode (array_length = false, array_null_terminated = true)] string[] str_array, string str);
 
 	[CCode (cname = "errno", cheader_filename = "errno.h")]
 	public int errno;
@@ -2255,6 +2266,7 @@ namespace GLib {
 
 	public static string convert (string str, ssize_t len, string to_codeset, string from_codeset, out size_t bytes_read = null, out size_t bytes_written = null) throws ConvertError;
 	public static bool get_charset (out unowned string charset);
+	public static bool get_filename_charsets ([CCode (array_length = false, array_null_terminated = true)] out unowned string[] charsets);
 
 	[SimpleType]
 	public struct IConv {
@@ -3323,6 +3335,8 @@ namespace GLib {
 		public void add_group (owned OptionGroup group);
 		public void set_main_group (owned OptionGroup group);
 		public unowned OptionGroup get_main_group ();
+		public void set_strict_posix (bool strict_posix);
+		public bool get_strict_posix ();
 	}
 
 	public delegate unowned string TranslateFunc (string str);
@@ -3365,7 +3379,11 @@ namespace GLib {
 	}
 
 	[Compact]
+#if GLIB_2_44
+	[CCode (ref_function = "g_option_group_ref", unref_function = "g_option_group_unref", type_id = "G_TYPE_OPTION_GROUP")]
+#else
 	[CCode (free_function = "g_option_group_free")]
+#endif
 	public class OptionGroup {
 		public OptionGroup (string name, string description, string help_description, void* user_data = null, DestroyNotify? destroy = null);
 		public void add_entries ([CCode (array_length = false)] OptionEntry[] entries);
@@ -4177,6 +4195,9 @@ namespace GLib {
 		[CCode (cname = "g_hash_table_insert")]
 		public void @set (owned K key, owned V value);
 		public List<unowned K> get_keys ();
+#if VALA_0_26
+		public (unowned K)[] get_keys_as_array ();
+#endif
 		public List<unowned V> get_values ();
 		public void @foreach (HFunc<K,V> func);
 		[CCode (cname = "g_hash_table_foreach")]
@@ -4684,7 +4705,7 @@ namespace GLib {
 
 	namespace Intl {
 		[CCode (cname = "setlocale", cheader_filename = "locale.h")]
-		public static unowned string? setlocale (LocaleCategory category, string? locale);
+		public static unowned string? setlocale (LocaleCategory category = GLib.LocaleCategory.ALL, string? locale = "");
 		[CCode (cname = "bindtextdomain", cheader_filename = "glib/gi18n-lib.h")]
 		public static unowned string? bindtextdomain (string domainname, string? dirname);
 		[CCode (cname = "textdomain", cheader_filename = "glib/gi18n-lib.h")]
@@ -4901,27 +4922,35 @@ namespace GLib {
 
 		public Variant.strv (string[] value);
 		[CCode (array_length_type = "size_t")]
+#if VALA_0_26
+		public (unowned string)[] get_strv ();
+#else
 		public string*[] get_strv ();
+#endif
 		[CCode (array_length_type = "size_t")]
 		public string[] dup_strv ();
 
 		public Variant.bytestring_array (string[] value);
 		[CCode (array_length_type = "size_t")]
+#if VALA_0_26
+		public (unowned string)[] get_bytestring_array ();
+#else
 		public string*[] get_bytestring_array ();
+#endif
 		[CCode (array_length_type = "size_t")]
 		public string[] dup_bytestring_array ();
 
-		#if GLIB_2_30
+#if GLIB_2_30
 		public Variant.objv (string[] value);
 		[CCode (array_length_type = "size_t")]
-		#if VALA_0_26
+#if VALA_0_26
 		public (unowned string)[] get_objv ();
-		#else
+#else
 		public string*[] get_objv ();
-		#endif
+#endif
 		[CCode (array_length_type = "size_t")]
 		public string[] dup_objv ();
-		#endif
+#endif
 
 		public Variant (string format, ...);
 		// note: the function changes its behaviour when end_ptr is null, so 'out char *' is wrong
@@ -5001,7 +5030,6 @@ namespace GLib {
 	}
 
 	[Compact]
-	[CCode (copy_func = "g_variant_iter_copy", free_func = "g_variant_iter_free")]
 	public class VariantIter {
 		public VariantIter (Variant value);
 		public size_t n_children ();
@@ -5027,7 +5055,7 @@ namespace GLib {
 		public bool lookup (string key, string format_string, ...);
 		public GLib.Variant lookup_value (string key, GLib.VariantType expected_type);
 		public bool contains (string key);
-		public void insert (string key, string fornat_string);
+		public void insert (string key, string format_string, ...);
 		public void insert_value (string key, GLib.Variant value);
 		public bool remove (string key);
 		public void clear ();

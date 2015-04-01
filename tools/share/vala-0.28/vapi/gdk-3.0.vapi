@@ -4622,8 +4622,10 @@ namespace Gdk {
 		public unowned string get_name ();
 		public void get_position (out unowned Gdk.Screen screen, out int x, out int y);
 		public void get_position_double (out unowned Gdk.Screen screen, out double x, out double y);
+		public unowned string? get_product_id ();
 		public Gdk.InputSource get_source ();
 		public void get_state (Gdk.Window window, [CCode (array_length = false)] double[]? axes, out Gdk.ModifierType mask);
+		public unowned string? get_vendor_id ();
 		public unowned Gdk.Window? get_window_at_position (out int win_x, out int win_y);
 		public unowned Gdk.Window? get_window_at_position_double (out double win_x, out double win_y);
 		public Gdk.GrabStatus grab (Gdk.Window window, Gdk.GrabOwnership grab_ownership, bool owner_events, Gdk.EventMask event_mask, Gdk.Cursor? cursor, uint32 time_);
@@ -4645,8 +4647,10 @@ namespace Gdk {
 		public Gdk.InputSource input_source { get; construct; }
 		public uint n_axes { get; }
 		public string? name { get; construct; }
+		public string product_id { get; construct; }
 		[NoAccessorMethod]
 		public Gdk.DeviceType type { get; construct; }
+		public string vendor_id { get; construct; }
 		public signal void changed ();
 	}
 	[CCode (cheader_filename = "gdk/gdk.h", type_id = "gdk_device_manager_get_type ()")]
@@ -5069,14 +5073,20 @@ namespace Gdk {
 		protected GLContext ();
 		public static void clear_current ();
 		public static unowned Gdk.GLContext get_current ();
+		public bool get_debug_enabled ();
 		public unowned Gdk.Display get_display ();
-		public Gdk.GLProfile get_profile ();
+		public bool get_forward_compatible ();
+		public void get_required_version (out int? major, out int? minor);
+		public unowned Gdk.GLContext get_shared_context ();
+		public void get_version (out int major, out int minor);
 		public unowned Gdk.Window get_window ();
 		public void make_current ();
+		public bool realize () throws GLib.Error;
+		public void set_debug_enabled (bool enabled);
+		public void set_forward_compatible (bool compatible);
+		public void set_required_version (int major, int minor);
 		public Gdk.Display display { get; construct; }
-		public Gdk.GLProfile profile { get; construct; }
-		[NoAccessorMethod]
-		public Gdk.GLContext shared_context { owned get; construct; }
+		public Gdk.GLContext shared_context { get; construct; }
 		public Gdk.Window window { get; construct; }
 	}
 	[CCode (cheader_filename = "gdk/gdk.h", type_id = "gdk_keymap_get_type ()")]
@@ -5186,7 +5196,7 @@ namespace Gdk {
 		public static void constrain_size (Gdk.Geometry geometry, Gdk.WindowHints flags, int width, int height, out int new_width, out int new_height);
 		public void coords_from_parent (double parent_x, double parent_y, out double x, out double y);
 		public void coords_to_parent (double x, double y, out double parent_x, out double parent_y);
-		public Gdk.GLContext create_gl_context (Gdk.GLProfile profile) throws GLib.Error;
+		public Gdk.GLContext create_gl_context () throws GLib.Error;
 		public Cairo.Surface create_similar_image_surface (int format, int width, int height, int scale);
 		public Cairo.Surface create_similar_surface (Cairo.Content content, int width, int height);
 		public void deiconify ();
@@ -5670,12 +5680,6 @@ namespace Gdk {
 	public enum FullscreenMode {
 		CURRENT_MONITOR,
 		ALL_MONITORS
-	}
-	[CCode (cheader_filename = "gdk/gdk.h", cprefix = "GDK_GL_PROFILE_", type_id = "gdk_gl_profile_get_type ()")]
-	public enum GLProfile {
-		DEFAULT,
-		LEGACY,
-		@3_2_CORE
 	}
 	[CCode (cheader_filename = "gdk/gdk.h", cprefix = "GDK_OWNERSHIP_", type_id = "gdk_grab_ownership_get_type ()")]
 	public enum GrabOwnership {
