@@ -130,7 +130,10 @@ namespace HSBuild.Tasks
           builder.AppendSwitch("/VERBOSE");
       builder.AppendSwitchIfNotNull("/MACHINE:", ParseTargetMachine());
       if (SubSystem != null)
-        builder.AppendSwitch("/SUBSYSTEM:" + SubSystem + "\",5.01\"");
+      {
+        string version = (TargetMachine == "MachineX64") ? "5.02" : "5.01";
+        builder.AppendSwitch("/SUBSYSTEM:" + SubSystem + "\"," + version + "\"");
+      }
       builder.AppendSwitchIfNotNull("/LTCG:", LinkTimeCodeGeneration);
       builder.AppendSwitchIfNotNull("/DEF:", ModuleDefinitionFile);
 
