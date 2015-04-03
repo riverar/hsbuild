@@ -105,6 +105,9 @@
         %(PreprocessorDefinitions);
         HAVE_WIN32;
         WIN32;
+        WINVER=0x0501;
+        _WIN32_WINNT=0x0501;
+        _USING_V110_SDK71_;
         _CRT_SECURE_NO_WARNINGS
       </PreprocessorDefinitions>
     </ClCompile>

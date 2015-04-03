@@ -129,7 +129,8 @@ namespace HSBuild.Tasks
       if (Verbose)
           builder.AppendSwitch("/VERBOSE");
       builder.AppendSwitchIfNotNull("/MACHINE:", ParseTargetMachine());
-      builder.AppendSwitchIfNotNull("/SUBSYSTEM:", SubSystem);
+      if (SubSystem != null)
+        builder.AppendSwitch("/SUBSYSTEM:" + SubSystem + "\",5.01\"");
       builder.AppendSwitchIfNotNull("/LTCG:", LinkTimeCodeGeneration);
       builder.AppendSwitchIfNotNull("/DEF:", ModuleDefinitionFile);
 

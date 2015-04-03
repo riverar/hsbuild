@@ -351,7 +351,8 @@ namespace HSBuild.Tasks
       builder.AppendSwitchIfNotNull("/HEAP:", HeapString);
       builder.AppendSwitchIfNotNull("/STACK:", StackString);
       builder.AppendSwitchIfNotNull("/MACHINE:", ParseTargetMachine());
-      builder.AppendSwitchIfNotNull("/SUBSYSTEM:", SubSystem);
+      if (SubSystem != null)
+        builder.AppendSwitch("/SUBSYSTEM:" + SubSystem + "\",5.01\"");
       builder.AppendSwitchIfNotNull("/DEF:", ModuleDefinitionFile);
       builder.AppendSwitchIfNotNull("/IMPLIB:", ImportLibrary);
       builder.AppendSwitchIfNotNull("/STUB:", MSDOSStubFileName);
