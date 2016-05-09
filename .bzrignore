@@ -1,8 +1,0 @@
-./**/bin
-./**/obj
-./**/*.user
-./**/*.ncb
-./**/*.suo
-./**/*.sln.cache
-./wix/x86
-./wix/x86_64

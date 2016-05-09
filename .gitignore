@@ -1,0 +1,8 @@
+*.ncb
+*.sln.cache
+*.suo
+*.user
+/wix/x86
+/wix/x86_64
+bin
+obj
