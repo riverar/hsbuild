@@ -256,7 +256,7 @@ namespace HSBuild.Core
             Environment.SetEnvironmentVariable("HSBUILD_PREFIX_PATH", prx);
 
             // MSBuild in PATH
-            var keyMSBuild = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\MSBuild\ToolsVersions\12.0");
+            var keyMSBuild = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\MSBuild\ToolsVersions\14.0");
             if (keyMSBuild != null)
             {
                 string frmwkdir = keyMSBuild.GetValue("MSBuildToolsPath").ToString();

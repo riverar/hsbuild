@@ -71,7 +71,7 @@ namespace HSBuild.Tasks
             string path;
             try
             {
-                RegistryKey msbuildKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\MSBuild\ToolsVersions\12.0");
+                RegistryKey msbuildKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\MSBuild\ToolsVersions\14.0");
                 path = msbuildKey.GetValue("MSBuildToolsPath").ToString();
             }
             catch
