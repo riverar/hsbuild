@@ -26,7 +26,7 @@ namespace HSBuild.Tasks
 {
   public sealed class Vala : PkgConfigToolTask
   {
-    private const string ValaToolName = "valac-0.28.exe";
+    private const string ValaToolName = "valac-0.34.exe";
 
     private List<ITaskItem> outputFiles;
     private string headerFileName;
