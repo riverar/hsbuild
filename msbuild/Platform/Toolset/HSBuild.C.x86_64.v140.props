@@ -18,8 +18,10 @@
       <WindowsSdkDir                                            >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v10.0@InstallationFolder)</WindowsSdkDir>
       <WindowsSdkDir Condition=" '$(WindowsSdkDir)' == '' "     >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v10.0@InstallationFolder)</WindowsSdkDir>
 
-      <WindowsSdkVersion                                           >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v10.0@ProductVersion)</WindowsSdkVersion>
-      <WindowsSdkVersion Condition=" '$(WindowsSdkVersion)' == '' ">$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v10.0@ProductVersion)</WindowsSdkVersion>
+      <WindowsSdkShortVersion                                           >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v10.0@ProductVersion)</WindowsSdkShortVersion>
+      <WindowsSdkShortVersion Condition=" '$(WindowsSdkShortVersion)' == '' ">$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v10.0@ProductVersion)</WindowsSdkShortVersion>
+
+      <WindowsSdkVersion>$(WindowsSdkShortVersion).0</WindowsSdkVersion>
 
       <FrameworkDir                                             >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework@InstallRoot)</FrameworkDir>
       <FrameworkDir Condition=" '$(FrameworkDir)' == '' "       >$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\.NETFramework@InstallRoot)</FrameworkDir>
