@@ -52,7 +52,7 @@ namespace HSBuild.VCS
         {
             m_repo = repo;
 
-            m_gitEXE = Path.Combine("C:\\Program Files\\Git\\bin\\git.exe");
+            m_gitEXE = "git.exe";
         }
 
         public override bool Exists(bool remote)

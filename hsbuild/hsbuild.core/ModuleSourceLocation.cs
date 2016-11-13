@@ -151,8 +151,7 @@ namespace HSBuild.Core
         private void ApplyPatch(ITaskQueue taskQueue, Patch patch, string localPatch, string path)
         {
             // FIXME: change Tarball::ApplyPatch to NOT use git apply!
-            string gitEXE = Path.Combine("C:\\Program Files\\Git\\bin\\git.exe");
-            taskQueue.QueueTask(new ConsoleTask(gitEXE, new string[] { "apply", "--whitespace=nowarn -p" + patch.Strip.ToString(), "\"" + localPatch + "\"" }, path));
+            taskQueue.QueueTask(new ConsoleTask("git.exe", new string[] { "apply", "--whitespace=nowarn -p" + patch.Strip.ToString(), "\"" + localPatch + "\"" }, path));
         }
 
         private Uri m_href;
